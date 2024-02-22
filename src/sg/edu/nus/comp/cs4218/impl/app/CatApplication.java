@@ -107,7 +107,7 @@ public class CatApplication implements CatInterface {
             lines = addLineNumbers(lines);
         }
 
-        return lines.toString().trim();
+        return String.join(STRING_NEWLINE, lines);
     }
 
     @Override
