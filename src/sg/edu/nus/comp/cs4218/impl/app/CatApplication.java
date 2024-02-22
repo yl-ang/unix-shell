@@ -8,8 +8,10 @@ import sg.edu.nus.comp.cs4218.impl.parser.CatArgsParser;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.*;
 
 public class CatApplication implements CatInterface {
     public static final String ERR_IS_DIR = "This is a directory";
@@ -49,8 +51,30 @@ public class CatApplication implements CatInterface {
         Boolean isLineNumber = parser.isLineNumber();
         String[] fileNames = parser.getFileNames().toArray(new String[0]);
 
-        
+        // fileNames wouldn't be null due to new String[0[, need to check length
+        if (stdin == null && fileNames.length == 0) {
+            throw new CatException(ERR_NO_INPUT);
+        }
 
+        String output = null;
+
+        // Cat if-else to run one of the cat functionalities based on conditions
+        if (fileNames.length > 0 && List.of(fileNames).contains(STRING_FLAG_PREFIX)) {
+            output = catFileAndStdin(isLineNumber, stdin, fileNames);
+        } else if (fileNames.length > 0) {
+            output = catFiles(isLineNumber, fileNames);
+        } else {
+            output = catStdin(isLineNumber, stdin);
+        }
+
+        if (output != null && !output.isEmpty()) {
+            try {
+                stdout.write(output.getBytes());
+                stdout.write(STRING_NEWLINE.getBytes());
+            } catch (Exception e) {
+                throw new CatException(ERR_WRITE_STREAM);
+            }
+        }
     }
 
     @Override
