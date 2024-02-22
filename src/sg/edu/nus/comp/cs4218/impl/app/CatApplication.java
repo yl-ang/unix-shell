@@ -5,9 +5,12 @@ import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.CatException;
 import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
 import sg.edu.nus.comp.cs4218.impl.parser.CatArgsParser;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
@@ -32,6 +35,7 @@ public class CatApplication implements CatInterface {
      */
     @Override
     public void run(String[] args, InputStream stdin, OutputStream stdout) throws AbstractApplicationException {
+
         if (args == null) {
             throw new CatException(ERR_NULL_ARGS);
         }
@@ -58,7 +62,7 @@ public class CatApplication implements CatInterface {
 
         String output = null;
 
-        // Cat if-else to run one of the cat functionalities based on conditions
+        // Determining which cat functionality to execute based on conditions
         if (fileNames.length > 0 && List.of(fileNames).contains(STRING_FLAG_PREFIX)) {
             output = catFileAndStdin(isLineNumber, stdin, fileNames);
         } else if (fileNames.length > 0) {
@@ -67,13 +71,11 @@ public class CatApplication implements CatInterface {
             output = catStdin(isLineNumber, stdin);
         }
 
-        if (output != null && !output.isEmpty()) {
-            try {
-                stdout.write(output.getBytes());
-                stdout.write(STRING_NEWLINE.getBytes());
-            } catch (Exception e) {
-                throw new CatException(ERR_WRITE_STREAM);
-            }
+        try {
+            stdout.write(output.getBytes());
+            stdout.write(StringUtils.STRING_NEWLINE.getBytes());
+        } catch (Exception e) {
+            throw new CatException(ERR_WRITE_STREAM);
         }
     }
 
@@ -84,11 +86,45 @@ public class CatApplication implements CatInterface {
 
     @Override
     public String catStdin(Boolean isLineNumber, InputStream stdin) throws AbstractApplicationException {
-        return null;
+
+        if (isLineNumber == null) {
+            throw new CatException(ERR_NULL_ARGS);
+        }
+
+        if (stdin == null) {
+            throw new CatException(ERR_NO_ISTREAM);
+        }
+
+        List<String> lines;
+
+        try {
+            lines = IOUtils.getLinesFromInputStream(stdin);
+        } catch (Exception e) {
+            throw new CatException(ERR_READING_STREAM);
+        }
+
+        if (isLineNumber) {
+            lines = addLineNumbers(lines);
+        }
+
+        return lines.toString().trim();
     }
 
     @Override
     public String catFileAndStdin(Boolean isLineNumber, InputStream stdin, String... fileName) throws AbstractApplicationException {
         return null;
+    }
+
+
+    private List<String> addLineNumbers(List<String> lines) {
+        List<String> numberedLines = new ArrayList<>();
+        int lineNumber = 1;
+
+        for (String line : lines) {
+            numberedLines.add(lineNumber + " " + line);
+            lineNumber++;
+        }
+
+        return numberedLines;
     }
 }
