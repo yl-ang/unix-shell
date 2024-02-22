@@ -3,9 +3,13 @@ package sg.edu.nus.comp.cs4218.impl.app;
 import sg.edu.nus.comp.cs4218.app.CatInterface;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.CatException;
+import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
+import sg.edu.nus.comp.cs4218.impl.parser.CatArgsParser;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 
 public class CatApplication implements CatInterface {
     public static final String ERR_IS_DIR = "This is a directory";
@@ -26,7 +30,27 @@ public class CatApplication implements CatInterface {
      */
     @Override
     public void run(String[] args, InputStream stdin, OutputStream stdout) throws AbstractApplicationException {
-        // TODO: To implement
+        if (args == null) {
+            throw new CatException(ERR_NULL_ARGS);
+        }
+
+        if (stdout == null) {
+            throw new CatException(ERR_NO_OSTREAM);
+        }
+
+        CatArgsParser parser = new CatArgsParser();
+
+        try {
+            parser.parse(args);
+        } catch (InvalidArgsException e) {
+            throw new CatException(e.getMessage());
+        }
+
+        Boolean isLineNumber = parser.isLineNumber();
+        String[] fileNames = parser.getFileNames().toArray(new String[0]);
+
+        
+
     }
 
     @Override
