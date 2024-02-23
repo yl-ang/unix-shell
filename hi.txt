@@ -1,2 +1,2 @@
-hello
-okay
+Test txt file for wc
+Second line

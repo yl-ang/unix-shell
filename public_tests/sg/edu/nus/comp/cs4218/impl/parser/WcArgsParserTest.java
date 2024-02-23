@@ -93,6 +93,21 @@ class WcArgsParserTest {
     }
 
     @Test
+    void parse_threeFlagsGivenTogether_threeFlagsPresent() throws WcException {
+        String[] args = {"-clw"};
+        try {
+            wcArgsParser.parse(args);
+        } catch (InvalidArgsException e) {
+            throw new WcException(e.getMessage());
+        }
+
+        assertTrue(wcArgsParser.isWordCount(), "isWordCount returns False when flag -clw is given");
+        assertTrue(wcArgsParser.isLineCount(), "isLineCount returns False when flag -clw is given");
+        assertTrue(wcArgsParser.isByteCount(), "isByteCount returns False when flag -clw is given");
+    }
+
+
+    @Test
     void getFileNames_FileNamesInArgs_fileNames() throws WcException {
         String[] args = {"file1.txt", "file2.txt", "-c"};
         try {
