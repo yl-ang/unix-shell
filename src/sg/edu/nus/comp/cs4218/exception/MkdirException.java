@@ -4,7 +4,13 @@ public class MkdirException extends AbstractApplicationException {
 
     private static final long serialVersionUID = -7005801205007805286L;
 
+    public static final String INVALID_DIR = ": No such file or directory";
+
     public MkdirException(String message) {
         super("mkdir: " + message);
+    }
+
+    public MkdirException(String message, String folderPath) {
+        super("mkdir: " + folderPath + message);
     }
 }
