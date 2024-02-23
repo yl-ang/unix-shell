@@ -16,7 +16,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
@@ -25,6 +27,19 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_CURR_DIR;
 public class LsApplication implements LsInterface {
 
     private final static String PATH_CURR_DIR = STRING_CURR_DIR + CHAR_FILE_SEP;
+
+    private static String getFileExtension(String fileName) {
+        Path path = Paths.get(fileName);
+        String fileExtension = "";
+        if (path.getFileName() != null) {
+            String fileNameStr = path.getFileName().toString();
+            int dotIndex = fileNameStr.lastIndexOf('.');
+            if (dotIndex >= 0 && dotIndex < fileNameStr.length() - 1) {
+                fileExtension = fileNameStr.substring(dotIndex + 1);
+            }
+        }
+        return fileExtension.toLowerCase(Locale.getDefault());
+    }
 
     @Override
     public String listFolderContent(Boolean isRecursive, Boolean isSortByExt,
@@ -153,6 +168,21 @@ public class LsApplication implements LsInterface {
         List<String> fileNames = new ArrayList<>();
         for (Path path : contents) {
             fileNames.add(path.getFileName().toString());
+        }
+
+        if (isSortByExt) {
+            Comparator<String> fileExtensionComparator = (fileOne, fileTwo) -> {
+                String fileExtensionOne = getFileExtension(fileOne);
+                String fileExtensionTwo = getFileExtension(fileTwo);
+                if (!fileExtensionOne.isEmpty() && fileExtensionTwo.isEmpty()) {
+                    return 1;
+                } else if (fileExtensionOne.isEmpty() && !fileExtensionTwo.isEmpty()) {
+                    return -1;
+                } else {
+                    return fileExtensionOne.compareTo(fileExtensionTwo);
+                }
+            };
+            fileNames.sort(fileExtensionComparator);
         }
 
         StringBuilder result = new StringBuilder();
