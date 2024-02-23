@@ -4,6 +4,7 @@ import sg.edu.nus.comp.cs4218.app.CatInterface;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.CatException;
 import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
+import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.parser.CatArgsParser;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
@@ -80,8 +81,41 @@ public class CatApplication implements CatInterface {
     }
 
     @Override
-    public String catFiles(Boolean isLineNumber, String... fileName) throws AbstractApplicationException {
-        return null;
+    public String catFiles(Boolean isLineNumber, String... fileNames) throws AbstractApplicationException {
+        if (isLineNumber == null) {
+            throw new CatException(ERR_NULL_ARGS);
+        }
+
+        if (fileNames == null || fileNames.length == 0) {
+            throw new CatException(ERR_NO_FILE_ARGS);
+        }
+
+        List<String> outputLines = new ArrayList<>();
+
+        for (String fileName : fileNames) {
+            InputStream fileInputStream = null;
+
+            try {
+                fileInputStream = IOUtils.openInputStream(fileName);
+                List<String> fileLines = IOUtils.getLinesFromInputStream(fileInputStream);
+
+                if (isLineNumber) {
+                    fileLines = addLineNumbers(fileLines);
+                }
+
+                outputLines.addAll(fileLines);
+            } catch (Exception e) {
+                throw new CatException(ERR_READING_FILE + ": " + fileName);
+            } finally {
+                try {
+                    IOUtils.closeInputStream(fileInputStream);
+                } catch (ShellException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        return String.join(StringUtils.STRING_NEWLINE, outputLines);
     }
 
     @Override
