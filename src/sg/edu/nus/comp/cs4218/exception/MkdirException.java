@@ -6,9 +6,9 @@ public class MkdirException extends AbstractApplicationException {
 
     public static final String INVALID_DIR = ": No such file or directory";
 
-    public static final String ERROR_FOLDER_EXISTS = ": File exists";
+    public static final String ERR_FOLDER_EXISTS = ": File exists";
 
-    public static final String ERROR_MAKE_FOLDER_FAILED = "Failed to create folder.";
+    public static final String ERR_MAKE_FOLDER_FAILED = "Failed to create folder.";
 
     public MkdirException(String message) {
         super("mkdir: " + message);

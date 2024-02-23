@@ -37,6 +37,7 @@ public class MkdirApplication implements MkdirInterface {
         if (args == null) {
             throw new MkdirException(ERR_NULL_ARGS);
         }
+
         MkdirParser mkdirParser = new MkdirParser();
         try {
             mkdirParser.parse(args);
@@ -44,37 +45,35 @@ public class MkdirApplication implements MkdirInterface {
             throw new MkdirException(e.getMessage());
         }
 
-        Boolean parent = mkdirParser.isCreateParent();
+        Boolean createParent = mkdirParser.isCreateParent();
         String[] folderPaths = mkdirParser.getFolderPath().toArray(new String[0]);
 
-        if (!parent) {
-            for (String folderPath : folderPaths) {
-                if (!isParentExists(folderPath)) {
-                    throw new MkdirException(INVALID_DIR, folderPath);
-                } else {
-                    createFolder(folderPath);
-                }
+        for (String folderPath : folderPaths) {
+            if (!createParent && !isParentExists(folderPath)) {
+                throw new MkdirException(INVALID_DIR, folderPath);
             }
-        } else {
-            for (String folderPath : folderPaths) {
-                createFolder(folderPath);
-            }
+
+            createFolder(folderPath);
         }
     }
+
     @Override
     public void createFolder(String... folderNames) throws MkdirException {
         String currentDirectory = Environment.currentDirectory;
+
         for (String folderPath : folderNames) {
             File folder = new File(currentDirectory + FOLDER_SEPARATOR + folderPath);
-            if (!folder.exists()) {
-                if (!folder.mkdirs()) {
-                    throw new MkdirException(ERROR_MAKE_FOLDER_FAILED);
-                }
-            } else {
-                throw new MkdirException(ERROR_FOLDER_EXISTS, folderPath);
+
+            if (folder.exists()) {
+                throw new MkdirException(ERR_FOLDER_EXISTS, folderPath);
+            }
+
+            if (!folder.mkdirs()) {
+                throw new MkdirException(ERR_MAKE_FOLDER_FAILED);
             }
         }
     }
+
 
     private boolean isParentExists(String folderPath) {
         String currentDirectory = Environment.currentDirectory;
