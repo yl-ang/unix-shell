@@ -1,6 +1,5 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.app.MkdirInterface;
 import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
@@ -21,7 +20,7 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
 public class MkdirApplication implements MkdirInterface {
 
     private final static int SINGLE_FOLDER_COUNT = 1;
-    private final static String FOLDER_SEPARATOR = "/";
+    private final static String FOLDER_SEPARATOR = File.separator;
 
     /**
      * Runs the mkdir application with the specified arguments.
