@@ -47,7 +47,7 @@ public class WcApplication implements WcInterface {
             if (wcArgsParser.getFileNames().isEmpty()) {
                 result = countFromStdin(wcArgsParser.isByteCount(), wcArgsParser.isLineCount(), wcArgsParser.isWordCount(), stdin);
             } else {
-                result = countFromFiles(wcArgsParser.isByteCount(), wcArgsParser.isLineCount(), wcArgsParser.isWordCount(), wcArgsParser.getFileNames().toArray(new String[0]));
+                result = countFromFiles(wcArgsParser.isByteCount(), wcArgsParser.isLineCount(), wcArgsParser.isWordCount(), wcArgsParser.getFileNames().toArray(new String[LINES_INDEX]));
             }
         } catch (Exception e) {
             // Will never happen
@@ -107,22 +107,28 @@ public class WcApplication implements WcInterface {
             }
 
             // Update total count
-            totalLines += count[0];
-            totalWords += count[1];
-            totalBytes += count[2];
+            totalLines += count[LINES_INDEX];
+            totalWords += count[WORDS_INDEX];
+            totalBytes += count[BYTES_INDEX];
 
             // Format all output: " %7d %7d %7d %s"
             // Output in the following order: lines words bytes filename
             StringBuilder sb = new StringBuilder(); //NOPMD
             if (isLines) {
-                sb.append(String.format(NUMBER_FORMAT, count[0]));
+                sb.append(String.format(NUMBER_FORMAT, count[LINES_INDEX]));
             }
             if (isWords) {
-                sb.append(String.format(NUMBER_FORMAT, count[1]));
+                sb.append(String.format(NUMBER_FORMAT, count[WORDS_INDEX]));
             }
             if (isBytes) {
-                sb.append(String.format(NUMBER_FORMAT, count[2]));
+                sb.append(String.format(NUMBER_FORMAT, count[BYTES_INDEX]));
             }
+            if (!isLines && !isWords && !isBytes) {
+                sb.append(String.format(NUMBER_FORMAT, count[LINES_INDEX]));
+                sb.append(String.format(NUMBER_FORMAT, count[WORDS_INDEX]));
+                sb.append(String.format(NUMBER_FORMAT, count[BYTES_INDEX]));
+            }
+
             sb.append(String.format(" %s", file));
             result.add(sb.toString());
         }
@@ -137,6 +143,11 @@ public class WcApplication implements WcInterface {
                 sb.append(String.format(NUMBER_FORMAT, totalWords));
             }
             if (isBytes) {
+                sb.append(String.format(NUMBER_FORMAT, totalBytes));
+            }
+            if (!isLines && !isWords && !isBytes) {
+                sb.append(String.format(NUMBER_FORMAT, totalLines));
+                sb.append(String.format(NUMBER_FORMAT, totalWords));
                 sb.append(String.format(NUMBER_FORMAT, totalBytes));
             }
             sb.append(" total");
@@ -164,13 +175,18 @@ public class WcApplication implements WcInterface {
 
         StringBuilder sb = new StringBuilder(); //NOPMD
         if (isLines) {
-            sb.append(String.format(NUMBER_FORMAT, count[0]));
+            sb.append(String.format(NUMBER_FORMAT, count[LINES_INDEX]));
         }
         if (isWords) {
-            sb.append(String.format(NUMBER_FORMAT, count[1]));
+            sb.append(String.format(NUMBER_FORMAT, count[WORDS_INDEX]));
         }
         if (isBytes) {
-            sb.append(String.format(NUMBER_FORMAT, count[2]));
+            sb.append(String.format(NUMBER_FORMAT, count[BYTES_INDEX]));
+        }
+        if (!isLines && !isWords && !isBytes) {
+            sb.append(String.format(NUMBER_FORMAT, count[LINES_INDEX]));
+            sb.append(String.format(NUMBER_FORMAT, count[WORDS_INDEX]));
+            sb.append(String.format(NUMBER_FORMAT, count[BYTES_INDEX]));
         }
 
         return sb.toString();
