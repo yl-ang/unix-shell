@@ -7,6 +7,7 @@ import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
 import sg.edu.nus.comp.cs4218.exception.MkdirException;
 import sg.edu.nus.comp.cs4218.impl.parser.MkdirParser;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.FileSystems;
@@ -14,7 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static sg.edu.nus.comp.cs4218.exception.MkdirException.INVALID_DIR;
+import static sg.edu.nus.comp.cs4218.exception.MkdirException.*;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
 
 public class MkdirApplication implements MkdirInterface {
@@ -51,21 +52,35 @@ public class MkdirApplication implements MkdirInterface {
                 if (!isParentExists(folderPath)) {
                     throw new MkdirException(INVALID_DIR, folderPath);
                 } else {
-                    // TODO: Create folder
+                    createFolder(folderPath);
                 }
+            }
+        } else {
+            for (String folderPath : folderPaths) {
+                createFolder(folderPath);
             }
         }
     }
     @Override
     public void createFolder(String... folderNames) throws MkdirException {
-
+        String currentDirectory = Environment.currentDirectory;
+        for (String folderPath : folderNames) {
+            File folder = new File(currentDirectory + FOLDER_SEPARATOR + folderPath);
+            if (!folder.exists()) {
+                if (!folder.mkdirs()) {
+                    throw new MkdirException(ERROR_MAKE_FOLDER_FAILED);
+                }
+            } else {
+                throw new MkdirException(ERROR_FOLDER_EXISTS, folderPath);
+            }
+        }
     }
 
     private boolean isParentExists(String folderPath) {
         String currentDirectory = Environment.currentDirectory;
         String[] foldersInPath = folderPath.split(FOLDER_SEPARATOR);
 
-        if (foldersInPath.length == 1) {
+        if (foldersInPath.length == SINGLE_FOLDER_COUNT) {
             return true; // Single folder, always exists
         }
 
