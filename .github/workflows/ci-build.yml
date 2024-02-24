@@ -2,7 +2,7 @@ name: ci-build
 on: [pull_request]
 
 jobs:
-  stylecheck:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
