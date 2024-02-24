@@ -14,7 +14,7 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class WcApplication implements WcInterface {
 
-    private static final String NUMBER_FORMAT = " %7d";
+    private static final String NUMBER_FORMAT = "\t%d";
     private static final int LINES_INDEX = 0;
     private static final int WORDS_INDEX = 1;
     private static final int BYTES_INDEX = 2;
@@ -111,7 +111,7 @@ public class WcApplication implements WcInterface {
             totalWords += count[WORDS_INDEX];
             totalBytes += count[BYTES_INDEX];
 
-            // Format all output: " %7d %7d %7d %s"
+            // Format all output: " \t%d \t%d \t%d %s"
             // Output in the following order: lines words bytes filename
             StringBuilder sb = new StringBuilder(); //NOPMD
             if (isLines) {
@@ -192,6 +192,7 @@ public class WcApplication implements WcInterface {
         return sb.toString();
     }
 
+    // Does not fit project description and there are usages, ignored
     @Override
     public String countFromFileAndStdin(Boolean isBytes, Boolean isLines, Boolean isWords, InputStream stdin, String... fileName) throws AbstractApplicationException {
         // TODO: To implement

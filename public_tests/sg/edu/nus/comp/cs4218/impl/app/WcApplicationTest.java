@@ -45,6 +45,16 @@ class WcApplicationTest {
         wcApplication = new WcApplication();
     }
 
+    @AfterAll
+    static void tearDown() throws IOException {
+        try {
+            Files.deleteIfExists(Paths.get(testFileName));
+            Files.deleteIfExists(Paths.get(emptyTestFileName));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     /*
      * null stream
      * normal report
@@ -98,10 +108,12 @@ class WcApplicationTest {
 
     /*one file no arg show all
     one file arg show in seq
+
     * no file ,exception
     file dont exist, exception
     dir, exception
     no perm, exception
+
     * many files, no arg show all, show count
     * many files, one arg, show count
     many files, arg show in seq, show count
@@ -111,6 +123,7 @@ class WcApplicationTest {
     @Test
     void countFromFiles_nullFileName_ThrowException() throws WcException {
         try {
+//            String fileName = null;
             WcException exception = assertThrows(WcException.class, () -> wcApplication.countFromFiles(false, false, false, null));
             assertEquals(new WcException(ERR_GENERAL).getMessage(), exception.getMessage());
         } catch (Exception e) {
@@ -122,8 +135,8 @@ class WcApplicationTest {
     void countFromFiles_fileDoesNotExist_ThrowException() throws WcException {
         try {
             String fileName = "randomFileName1234.txt";
-            WcException exception = assertThrows(WcException.class, () -> wcApplication.countFromFiles(false, false, false, fileName));
-            assertEquals(new WcException(ERR_FILE_NOT_FOUND).getMessage(), exception.getMessage());
+            String output = wcApplication.countFromFiles(false, false, false, fileName); // lines words bytes
+            assertEquals("wc: " + ERR_FILE_NOT_FOUND, output);
         } catch (Exception e) {
             throw new WcException(e.getMessage());
         }
@@ -133,8 +146,8 @@ class WcApplicationTest {
     void countFromFiles_fileNameIsDirectory_ThrowException() throws WcException {
         try {
             String fileName = "production";
-            WcException exception = assertThrows(WcException.class, () -> wcApplication.countFromFiles(false, false, false, fileName));
-            assertEquals(new WcException(ERR_IS_DIR).getMessage(), exception.getMessage());
+            String output = wcApplication.countFromFiles(false, false, false, fileName); // lines words bytes
+            assertEquals("wc: " + ERR_IS_DIR, output);
         } catch (Exception e) {
             throw new WcException(e.getMessage());
         }
@@ -142,34 +155,107 @@ class WcApplicationTest {
 
     @Test
     void countFromFiles_fileNoReadPermission_ThrowException() throws WcException {
+        Path filePath = null;
         try {
-            Set<PosixFilePermission> noReadPermission = PosixFilePermissions.fromString("-wx-wx-wx");
+            Set<PosixFilePermission> noReadPermission = PosixFilePermissions.fromString("--x--x--x");
             FileAttribute<?> permissions = PosixFilePermissions.asFileAttribute(noReadPermission);
-            Path filePath = Paths.get("fileWithNoReadPermissions.txt");
+            String fileName = "fileWithNoReadPermissions.txt";
+            filePath = Paths.get(fileName);
             Files.createFile(filePath, permissions);
 
-            WcException exception = assertThrows(WcException.class, () -> wcApplication.countFromFiles(false, false, false, null));
-            assertEquals(new WcException(ERR_NO_PERM).getMessage(), exception.getMessage());
+            String output = wcApplication.countFromFiles(false, false, false, filePath.toString()); // lines words bytes
+            assertEquals("wc: " + ERR_NO_PERM, output);
         } catch (Exception e) {
             throw new WcException(e.getMessage());
+        } finally {
+            if (filePath != null) {
+                try {
+                    Files.deleteIfExists(filePath);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
     @Test
-    void countFromFiles_noFlags_showLinesWordsBytes() throws WcException {
+    void countFromFiles_noFlags_showLinesWordsBytesSeperatedByTab() throws WcException {
         try {
             String output = wcApplication.countFromFiles(false, false, false, testFileName); // lines words bytes
-            assertEquals("       1       7      32 wcTestFile.txt", output);
+            assertEquals("\t1\t7\t32 wcTestFile.txt", output);
         } catch (Exception e) {
             throw new WcException(e.getMessage());
         }
     }
 
     @Test
-    void countFromFiles_twoFlags_showFlagsInSequence() throws WcException {
+    void countFromFiles_twoFlags_showFlagsInSequenceSeperatedByTab() throws WcException {
         try {
             String output = wcApplication.countFromFiles(true, true, false, testFileName); // lines words bytes
-            assertEquals("       1      32 wcTestFile.txt", output);
+            assertEquals("\t1\t32 wcTestFile.txt", output);
+        } catch (Exception e) {
+            throw new WcException(e.getMessage());
+        }
+    }
+
+    @Test
+    void countFromFiles_multipleFileNamesNoFlags_showLinesWordsBytesAndTotalSeperatedByTab() throws WcException {
+        try {
+            String[] fileNames = {testFileName, testFileName};
+            String output = wcApplication.countFromFiles(false, false, false, fileNames); // lines words bytes
+            assertEquals("\t1\t7\t32 wcTestFile.txt\n\t1\t7\t32 wcTestFile.txt\n\t2\t14\t64 total", output);
+        } catch (Exception e) {
+            throw new WcException(e.getMessage());
+        }
+    }
+
+    @Test
+    void countFromFiles_multipleFileNamesTwoFlags_showFlagsInSequenceAndTotalSeperatedByTab() throws WcException {
+        try {
+            String[] fileNames = {testFileName, testFileName};
+            String output = wcApplication.countFromFiles(false, true, true, fileNames); // lines words bytes
+            assertEquals("\t1\t7 wcTestFile.txt\n\t1\t7 wcTestFile.txt\n\t2\t14 total", output);
+        } catch (Exception e) {
+            throw new WcException(e.getMessage());
+        }
+    }
+
+    @Test
+    void countFromFiles_jsonFileNoFlags_showLinesWordsBytesSeperatedByTab() throws WcException {
+        String jsonFileName = "wcTestFile.json";
+        Path path = Paths.get(jsonFileName);
+        String jsonContent = """
+                {
+                  "name": "John Doe",
+                  "age": 30,
+                  "city": "New York"
+                }""";
+        try {
+            Files.writeString(path, jsonContent);
+            String output = wcApplication.countFromFiles(false, false, false, jsonFileName); // lines words bytes
+            assertEquals("\t4\t10\t59 wcTestFile.json", output);
+            Files.deleteIfExists(path);
+        } catch (Exception e) {
+            throw new WcException(e.getMessage());
+        }
+    }
+
+    @Test
+    void countFromFiles_xmlFileNoFlags_showLinesWordsBytesSeperatedByTab() throws WcException {
+        String xmlFileName = "wcTestFile.xml";
+        Path path = Paths.get(xmlFileName);
+        String xmlContent = """
+                <?xml version="1.0"?>
+                <user>
+                  <name>John Doe</name>
+                  <age>30</age>
+                  <city>New York</city>
+                </user>""";
+        try {
+            Files.writeString(path, xmlContent);
+            String output = wcApplication.countFromFiles(false, false, false, xmlFileName); // lines words bytes
+            assertEquals("\t5\t9\t100 wcTestFile.xml", output);
+            Files.deleteIfExists(path);
         } catch (Exception e) {
             throw new WcException(e.getMessage());
         }
@@ -192,7 +278,7 @@ class WcApplicationTest {
     }
 
     @Test
-    void countFromStdin_noFlags_showLinesWordsBytes() throws WcException {
+    void countFromStdin_noFlags_showLinesWordsBytesSeperatedByTab() throws WcException {
         InputStream input = null;
         String output;
         try {
@@ -206,11 +292,11 @@ class WcApplicationTest {
         } catch (ShellException e) {
             throw new WcException(e.getMessage());
         }
-        assertEquals("       1       7      32", output);
+        assertEquals("\t1\t7\t32", output);
     }
 
     @Test
-    void countFromStdin_twoFlags_showFlagsInSequence() throws WcException {
+    void countFromStdin_twoFlags_showFlagsInSequenceSeperatedByTab() throws WcException {
         InputStream input = null;
         String output;
         try {
@@ -224,7 +310,7 @@ class WcApplicationTest {
         } catch (ShellException e) {
             throw new WcException(e.getMessage());
         }
-        assertEquals("       1       7", output);
+        assertEquals("\t1\t7", output);
     }
 
 
