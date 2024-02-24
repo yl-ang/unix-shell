@@ -53,7 +53,7 @@ public final class RegexArgument {
 
     public void appendAsterisk() {
         plaintext.append(CHAR_ASTERISK);
-        regex.append("[^" + StringUtils.fileSeparator() + "]*");
+        regex.append("[^").append(StringUtils.fileSeparator()).append("]*");
         isRegex = true;
     }
 
