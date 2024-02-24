@@ -12,7 +12,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="US"/>
     <property name="sun.boot.library.path" value="/Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home/lib"/>
-    <property name="sun.java.command" value="/Users/yongler/IdeaProjects/cs4218-project-2024-team04/target/surefire/surefirebooter11892209518641979615.jar /Users/yongler/IdeaProjects/cs4218-project-2024-team04/target/surefire 2024-02-24T15-10-56_118-jvmRun1 surefire17385336680457696894tmp surefire_0522896612610121030tmp"/>
+    <property name="sun.java.command" value="/Users/yongler/IdeaProjects/cs4218-project-2024-team04/target/surefire/surefirebooter7092544873356066523.jar /Users/yongler/IdeaProjects/cs4218-project-2024-team04/target/surefire 2024-02-24T15-36-39_550-jvmRun1 surefire8914428146549410736tmp surefire_08534722000861609615tmp"/>
     <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="/Users/yongler/IdeaProjects/cs4218-project-2024-team04/target/test-classes:/Users/yongler/IdeaProjects/cs4218-project-2024-team04/target/classes:/Users/yongler/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.9.1/junit-jupiter-engine-5.9.1.jar:/Users/yongler/.m2/repository/org/junit/platform/junit-platform-engine/1.9.1/junit-platform-engine-1.9.1.jar:/Users/yongler/.m2/repository/org/opentest4j/opentest4j/1.2.0/opentest4j-1.2.0.jar:/Users/yongler/.m2/repository/org/junit/platform/junit-platform-commons/1.9.1/junit-platform-commons-1.9.1.jar:/Users/yongler/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.9.1/junit-jupiter-api-5.9.1.jar:/Users/yongler/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:"/>
@@ -28,7 +28,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
-    <property name="surefire.real.class.path" value="/Users/yongler/IdeaProjects/cs4218-project-2024-team04/target/surefire/surefirebooter11892209518641979615.jar"/>
+    <property name="surefire.real.class.path" value="/Users/yongler/IdeaProjects/cs4218-project-2024-team04/target/surefire/surefirebooter7092544873356066523.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.runtime.version" value="17.0.10+11-LTS-240"/>

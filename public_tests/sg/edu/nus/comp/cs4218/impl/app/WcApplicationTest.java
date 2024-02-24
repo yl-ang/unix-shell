@@ -356,6 +356,26 @@ class WcApplicationTest {
     }
 
     @Test
+    void run_fileNameGivenWithArgsSeparate_countFromFileWithFlagsInSequence() throws WcException {
+        String inputData = "Hello World\nThis is a test\n";
+        InputStream input = new ByteArrayInputStream(inputData.getBytes());
+        OutputStream output = new ByteArrayOutputStream();
+        try {
+            String[] args = {"-c", "-l", testFileName};
+            wcApplication.run(args, input, output); // lines words bytes
+            assertEquals("\t1\t32 wcTestFile.txt\n", output.toString());
+        } catch (Exception e) {
+            throw new WcException(e.getMessage());
+        }
+
+        try {
+            IOUtils.closeInputStream(input);
+        } catch (ShellException e) {
+            throw new WcException(e.getMessage());
+        }
+    }
+
+    @Test
     void run_multipleFileNamesGiven_countFromFilesWithTotal() throws WcException {
         OutputStream output = new ByteArrayOutputStream();
         try {
