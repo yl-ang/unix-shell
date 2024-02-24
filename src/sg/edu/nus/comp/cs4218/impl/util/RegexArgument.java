@@ -11,18 +11,17 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_ASTERISK;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
 
 @SuppressWarnings("PMD.AvoidStringBufferField")
 public final class RegexArgument {
     private StringBuilder plaintext;
     private StringBuilder regex;
-    private boolean isRegex;
+    private boolean isRegexVariable;
 
     public RegexArgument() {
         this.plaintext = new StringBuilder();
         this.regex = new StringBuilder();
-        this.isRegex = false;
+        this.isRegexVariable = false;
     }
 
     public RegexArgument(String str) {
@@ -35,7 +34,7 @@ public final class RegexArgument {
     public RegexArgument(String str, String text, boolean isRegex) {
         this();
         this.plaintext.append(text);
-        this.isRegex = isRegex;
+        this.isRegexVariable = isRegex;
         this.regex.append(".*"); // We want to match filenames
         for (char c : str.toCharArray()) {
             if (c == CHAR_ASTERISK) {
@@ -54,13 +53,13 @@ public final class RegexArgument {
     public void appendAsterisk() {
         plaintext.append(CHAR_ASTERISK);
         regex.append("[^" + StringUtils.fileSeparator() + "]*");
-        isRegex = true;
+        isRegexVariable = true;
     }
 
     public void merge(RegexArgument other) {
         plaintext.append(other.plaintext);
         regex.append(other.regex);
-        isRegex = isRegex || other.isRegex;
+        isRegexVariable = isRegexVariable || other.isRegexVariable;
     }
 
     public void merge(String str) {
@@ -71,7 +70,7 @@ public final class RegexArgument {
     public List<String> globFiles() {
         List<String> globbedFiles = new LinkedList<>();
 
-        if (isRegex) {
+        if (isRegexVariable) {
             Pattern regexPattern = Pattern.compile(regex.toString());
             String dir = "";
             String tokens[] = plaintext.toString().replaceAll("\\\\", "/").split("/");
@@ -133,7 +132,7 @@ public final class RegexArgument {
     }
 
     public boolean isRegex() {
-        return isRegex;
+        return isRegexVariable;
     }
 
     public boolean isEmpty() {

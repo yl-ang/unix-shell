@@ -6,10 +6,7 @@ import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.exception.WcException;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -64,9 +61,7 @@ class WcApplicationTest {
 
     @Test
     void getCountReport_inputNull_throwException() throws AbstractApplicationException {
-        InputStream input = null;
-
-        WcException exception = assertThrows(WcException.class, () -> wcApplication.getCountReport(input));
+        WcException exception = assertThrows(WcException.class, () -> wcApplication.getCountReport(null));
         assertEquals(new WcException(ERR_NULL_STREAMS).getMessage(), exception.getMessage());
     }
 
@@ -313,7 +308,6 @@ class WcApplicationTest {
         assertEquals("\t1\t7", output);
     }
 
-
     @Test
     @Disabled
     void countFromFileAndStdin() {
@@ -326,7 +320,63 @@ class WcApplicationTest {
      * many files, 2 flag, print cum with count in sequence
      * */
     @Test
-    void run() {
+    void run_noArgsGiven_countFromStdin() throws WcException {
+        InputStream input = null;
+        OutputStream output = new ByteArrayOutputStream();
+        try {
+            input = IOUtils.openInputStream(testFileName);
+            String[] args = {};
+            wcApplication.run(args, input, output); // lines words bytes
+            assertEquals("\t1\t7\t32\n", output.toString());
+        } catch (Exception e) {
+            throw new WcException(e.getMessage());
+        }
+
+        try {
+            IOUtils.closeInputStream(input);
+        } catch (ShellException e) {
+            throw new WcException(e.getMessage());
+        }
+    }
+
+    @Test
+    void run_fileNameGivenWithArgsTogether_countFromFileWithFlagsInSequence() throws WcException {
+        String inputData = "Hello World\nThis is a test\n";
+        InputStream input = new ByteArrayInputStream(inputData.getBytes());
+        OutputStream output = new ByteArrayOutputStream();
+        try {
+            String[] args = {"-cl", testFileName};
+            wcApplication.run(args, input, output); // lines words bytes
+            assertEquals("\t1\t32 wcTestFile.txt\n", output.toString());
+        } catch (Exception e) {
+            throw new WcException(e.getMessage());
+        }
+
+        try {
+            IOUtils.closeInputStream(input);
+        } catch (ShellException e) {
+            throw new WcException(e.getMessage());
+        }
+    }
+
+    @Test
+    void run_multipleFileNamesGiven_countFromFilesWithTotal() throws WcException {
+        InputStream input = null;
+        OutputStream output = new ByteArrayOutputStream();
+        try {
+            input = IOUtils.openInputStream(testFileName);
+            String[] args = {testFileName, testFileName};
+            wcApplication.run(args, input, output); // lines words bytes
+            assertEquals("\t1\t7\t32 wcTestFile.txt\n\t1\t7\t32 wcTestFile.txt\n\t2\t14\t64 total\n", output.toString());
+        } catch (Exception e) {
+            throw new WcException(e.getMessage());
+        }
+
+        try {
+            IOUtils.closeInputStream(input);
+        } catch (ShellException e) {
+            throw new WcException(e.getMessage());
+        }
     }
 
 
