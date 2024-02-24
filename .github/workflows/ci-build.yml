@@ -1,0 +1,19 @@
+name: ci-build
+on: [pull_request]
+
+jobs:
+  stylecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'oracle'
+          java-version: '17'
+          cache: maven
+
+      - name: Run Build
+        run: mvn clean package
