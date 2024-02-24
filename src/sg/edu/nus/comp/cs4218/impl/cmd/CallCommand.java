@@ -34,7 +34,7 @@ public class CallCommand implements Command {
     @Override
     public void evaluate(InputStream stdin, OutputStream stdout)
             throws AbstractApplicationException, ShellException, FileNotFoundException {
-        if (argsList == null || argsList.isEmpty()) {
+        if (argsList != null && !argsList.isEmpty()) {
             throw new ShellException(ERR_SYNTAX);
         }
 
