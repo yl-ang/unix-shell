@@ -5,16 +5,16 @@ import java.util.List;
 public class WcArgsParser extends ArgsParser {
     public static final char BYTE_COUNT_FLAG = 'c';
 
-    public static final char FLAG_IS_LINE_COUNT = 'l';
+    public static final char LINE_COUNT_FLAG = 'l';
 
-    public static final char FLAG_IS_WORD_COUNT = 'w';
+    public static final char WORD_COUNT_FLAG = 'w';
 
     public WcArgsParser() {
         super();
 
         legalFlags.add(BYTE_COUNT_FLAG);
-        legalFlags.add(FLAG_IS_LINE_COUNT);
-        legalFlags.add(FLAG_IS_WORD_COUNT);
+        legalFlags.add(LINE_COUNT_FLAG);
+        legalFlags.add(WORD_COUNT_FLAG);
     }
 
     public Boolean isByteCount() {
@@ -22,11 +22,11 @@ public class WcArgsParser extends ArgsParser {
     }
 
     public Boolean isLineCount() {
-        return flags.contains(FLAG_IS_LINE_COUNT);
+        return flags.contains(LINE_COUNT_FLAG);
     }
 
     public Boolean isWordCount() {
-        return flags.contains(FLAG_IS_WORD_COUNT);
+        return flags.contains(WORD_COUNT_FLAG);
     }
 
     public List<String> getFileNames() {
