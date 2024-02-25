@@ -1,8 +1,8 @@
-name: ci-stylecheck
-on: [push, pull_request]
+name: ci-test
+on: [push]
 
 jobs:
-  stylecheck:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -15,23 +15,5 @@ jobs:
           java-version: '17'
           cache: maven
 
-      - name: Run PMD Stylecheck
-        run: mvn clean pmd:pmd -Dformat=csv
-
-      - name: Print PMD Stylecheck
-        run: |
-          #!/bin/bash
-          cd scripts
-          chmod +x print-pmd-result.sh
-          ./print-pmd-result.sh
-        shell: bash
-
-      - name: Upload PMD results
-        uses: actions/upload-artifact@v4
-        with:
-          name: stylecheck-${{ github.sha }}
-          path: target/pmd.csv
-          retention-days: 7
-          if-no-files-found: warn
-
-
+      - name: Run Tests
+        run: mvn test

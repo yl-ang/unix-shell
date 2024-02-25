@@ -1,0 +1,37 @@
+name: ci-stylecheck
+on: [push]
+
+jobs:
+  stylecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'oracle'
+          java-version: '17'
+          cache: maven
+
+      - name: Run PMD Stylecheck
+        run: mvn clean pmd:pmd -Dformat=csv
+
+      - name: Print PMD Stylecheck
+        run: |
+          #!/bin/bash
+          cd scripts
+          chmod +x print-pmd-result.sh
+          ./print-pmd-result.sh
+        shell: bash
+
+      - name: Upload PMD results
+        uses: actions/upload-artifact@v4
+        with:
+          name: stylecheck-${{ github.sha }}
+          path: target/pmd.csv
+          retention-days: 7
+          if-no-files-found: warn
+
+
