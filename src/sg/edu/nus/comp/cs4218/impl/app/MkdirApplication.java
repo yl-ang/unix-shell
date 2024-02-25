@@ -52,20 +52,26 @@ public class MkdirApplication implements MkdirInterface {
                 throw new MkdirException(INVALID_DIR, folderPath);
             }
 
+            if (!createParent && isFolderExists(folderPath)) {
+                throw new MkdirException(ERR_FOLDER_EXISTS, folderPath);
+            }
+
             createFolder(folderPath);
         }
     }
 
+    /**
+     * Creates the required folders in the folderPaths.
+     *
+     * @param folderPaths The paths of the folders to be created.
+     * @throws MkdirException If the creation of any folder fails.
+     */
     @Override
-    public void createFolder(String... folderNames) throws MkdirException {
+    public void createFolder(String... folderPaths) throws MkdirException {
         String currentDirectory = Environment.currentDirectory;
 
-        for (String folderPath : folderNames) {
+        for (String folderPath : folderPaths) {
             File folder = new File(currentDirectory + FOLDER_SEPARATOR + folderPath);
-
-            if (folder.exists()) {
-                throw new MkdirException(ERR_FOLDER_EXISTS, folderPath);
-            }
 
             if (!folder.mkdirs()) {
                 throw new MkdirException(ERR_MAKE_FOLDER_FAILED);
@@ -73,7 +79,23 @@ public class MkdirApplication implements MkdirInterface {
         }
     }
 
+    /**
+     * Checks if the folders exists in the folderPath.
+     *
+     * @param folderPath The path of the folders to be checked.
+     */
+    private boolean isFolderExists(String folderPath) {
+        String currentDirectory = Environment.currentDirectory;
+        String currentPath = currentDirectory + FOLDER_SEPARATOR + folderPath;
+        Path path = FileSystems.getDefault().getPath(currentPath);
+        return Files.exists(path);
+    }
 
+    /**
+     * Checks if the parent folders exists in the folderPath.
+     *
+     * @param folderPath The path of the folders to be checked.
+     */
     private boolean isParentExists(String folderPath) {
         String currentDirectory = Environment.currentDirectory;
         String[] foldersInPath = folderPath.split(FOLDER_SEPARATOR);
@@ -85,18 +107,13 @@ public class MkdirApplication implements MkdirInterface {
         // Concatenate the path elements to check each parent folder
         String currentPath = currentDirectory + FOLDER_SEPARATOR;
         for (int i = 0; i < foldersInPath.length - 1; i++) {
-            currentPath += foldersInPath[i];
+            currentPath += foldersInPath[i] + FOLDER_SEPARATOR;
             Path path = FileSystems.getDefault().getPath(currentPath);
 
             if (!Files.exists(path) || !Files.isDirectory(path)) {
                 return false; // Parent folder does not exist or is not a directory
             }
         }
-
-        return true; // All parent folders exist
-    }
-
-    private Path getRelativeToCwd(Path path) {
-        return Paths.get(Environment.currentDirectory).relativize(path);
+        return true;
     }
 }
