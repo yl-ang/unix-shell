@@ -71,7 +71,12 @@ public class MkdirApplication implements MkdirInterface {
         String currentDirectory = Environment.currentDirectory;
 
         for (String folderPath : folderPaths) {
-            File folder = new File(currentDirectory + FOLDER_SEPARATOR + folderPath);
+            String path = currentDirectory + FOLDER_SEPARATOR + folderPath;
+            File folder = new File(path);
+
+            if (isFolderExists(folderPath)) {
+                continue;
+            }
 
             if (!folder.mkdirs()) {
                 throw new MkdirException(ERR_MAKE_FOLDER_FAILED);
