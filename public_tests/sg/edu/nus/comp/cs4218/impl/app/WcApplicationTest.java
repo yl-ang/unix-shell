@@ -52,12 +52,6 @@ class WcApplicationTest {
         }
     }
 
-    /*
-     * null stream
-     * normal report
-     * file empty
-     * ioexception file too big?
-     * */
 
     @Test
     void getCountReport_inputNull_throwException() throws AbstractApplicationException {
@@ -97,24 +91,10 @@ class WcApplicationTest {
         assertArrayEquals(expectedCount, count);
     }
 
-    /*one file no arg show all
-    one file arg show in seq
 
-    * no file ,exception
-    file dont exist, exception
-    dir, exception
-    no perm, exception
-
-    * many files, no arg show all, show count
-    * many files, one arg, show count
-    many files, arg show in seq, show count
-    non text files
-    *
-    * */
     @Test
     void countFromFiles_nullFileName_ThrowException() throws WcException {
         try {
-//            String fileName = null;
             WcException exception = assertThrows(WcException.class, () -> wcApplication.countFromFiles(false, false, false, null));
             assertEquals(new WcException(ERR_GENERAL).getMessage(), exception.getMessage());
         } catch (Exception e) {
@@ -252,10 +232,7 @@ class WcApplicationTest {
         }
     }
 
-    /*one file no arg show all
-    one file 2 arg show in seq
-    * no file ,exception
-    * */
+
     @Test
     void countFromStdin_nullInput_ThrowException() throws WcException {
         InputStream input = null;
@@ -304,17 +281,7 @@ class WcApplicationTest {
         assertEquals("\t1\t7", output);
     }
 
-//    @Test
-//    @Disabled
-//    void countFromFileAndStdin() {
-//    }
 
-    /*
-     * no files, take from stdin
-     * one file
-     * many files, print cum with all
-     * many files, 2 flag, print cum with count in sequence
-     * */
     @Test
     void run_noArgsGiven_countFromStdin() throws WcException {
         InputStream input = null;

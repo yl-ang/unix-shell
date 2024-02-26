@@ -88,6 +88,9 @@ fabric.properties
 # Compiled class file
 *.class
 
+target/maven-status
+target/surefire-reports
+
 # Log file
 *.log
 
