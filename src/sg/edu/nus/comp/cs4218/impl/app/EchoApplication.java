@@ -1,7 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
 import sg.edu.nus.comp.cs4218.app.EchoInterface;
-import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.EchoException;
 
 import java.io.IOException;
@@ -10,6 +9,7 @@ import java.io.OutputStream;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_WHITESPACE;
 
 /**
  * The echo command writes its arguments separated by spaces and terminates by a newline on the
@@ -31,7 +31,8 @@ public class EchoApplication implements EchoInterface {
         if (args.length == 0) {
             result = STRING_NEWLINE;
         } else {
-            result = String.join(" ", args);
+            result = String.join(STRING_WHITESPACE, args);
+            result = result + STRING_NEWLINE;
         }
 
         return result;
