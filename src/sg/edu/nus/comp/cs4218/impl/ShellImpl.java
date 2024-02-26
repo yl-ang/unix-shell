@@ -24,7 +24,8 @@ public class ShellImpl implements Shell {
      * @param args List of strings arguments, unused.
      */
     public static void main(String... args) {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        InputStreamReader inputStreamReader = new InputStreamReader(System.in);
+        BufferedReader reader = new BufferedReader(inputStreamReader);
         Shell shell = new ShellImpl();
 
         while (true) {
@@ -35,6 +36,8 @@ public class ShellImpl implements Shell {
                 try {
                     commandString = reader.readLine();
                 } catch (IOException e) {
+                    inputStreamReader.close();
+                    reader.close();
                     return; // Streams are closed, terminate process
                 }
 
