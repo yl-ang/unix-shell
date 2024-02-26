@@ -116,7 +116,7 @@ class WcApplicationTest {
     @Test
     void countFromFiles_fileNameIsDirectory_ThrowException() throws WcException {
         try {
-            String fileName = "production";
+            String fileName = "src";
             String output = wcApplication.countFromFiles(false, false, false, fileName); // lines words bytes
             assertEquals("wc: " + ERR_IS_DIR, output);
         } catch (Exception e) {
