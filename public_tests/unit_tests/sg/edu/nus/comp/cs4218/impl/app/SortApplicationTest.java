@@ -1,4 +1,4 @@
-package public_tests.unit_tests.sg.edu.nus.comp.cs4218.impl.app;
+package unit_tests.sg.edu.nus.comp.cs4218.impl.app;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
