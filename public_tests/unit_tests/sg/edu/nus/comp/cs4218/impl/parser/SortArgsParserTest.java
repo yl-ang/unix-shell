@@ -22,28 +22,28 @@ class SortArgsParserTest {
     }
 
     @Test
-    void testIsFirstWordNumber() throws InvalidArgsException {
+    void isFirstWordNumber_TestIsFirstWordNumber_FlagIsFirstWordNumber() throws InvalidArgsException {
         assertFalse(parser.isFirstWordNumber());
         parser.parse(FLAG_IS_FIRST_NUM);
         assertTrue(parser.isFirstWordNumber());
     }
 
     @Test
-    void testIsReverseOrder() throws InvalidArgsException {
+    void isReverseOrder_TestIsReverseOrder_FlagIsRevOrder() throws InvalidArgsException {
         assertFalse(parser.isReverseOrder());
         parser.parse(FLAG_IS_REV_ORDER);
         assertTrue(parser.isReverseOrder());
     }
 
     @Test
-    void testIsCaseIndependent() throws InvalidArgsException {
+    void isCaseIndependent_TestIsCaseIndependent_FlagIsCaseIndependent() throws InvalidArgsException {
         assertFalse(parser.isCaseIndependent());
         parser.parse(FLAG_IS_CASE_IGNORE);
         assertTrue(parser.isCaseIndependent());
     }
 
     @Test
-    void testGetFileNames() throws InvalidArgsException {
+    void getFileNames_TestGetFileNames_ShouldGetCorrectFileNames() throws InvalidArgsException {
         parser.parse("-n", "file1.txt", "file2.txt");
         List<String> fileNames = parser.getFileNames();
         assertEquals(2, fileNames.size());
