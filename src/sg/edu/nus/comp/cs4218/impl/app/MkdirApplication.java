@@ -12,9 +12,10 @@ import java.io.OutputStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
-import static sg.edu.nus.comp.cs4218.exception.MkdirException.*;
+import static sg.edu.nus.comp.cs4218.exception.MkdirException.ERR_FOLDER_EXISTS;
+import static sg.edu.nus.comp.cs4218.exception.MkdirException.ERR_MAKE_FOLDER_FAILED;
+import static sg.edu.nus.comp.cs4218.exception.MkdirException.INVALID_DIR;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
 
 public class MkdirApplication implements MkdirInterface {
