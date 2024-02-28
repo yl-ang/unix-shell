@@ -23,6 +23,11 @@ public class CatApplication implements CatInterface {
     public static final String ERR_WRITE_STREAM = "Could not write to output stream";
     public static final String ERR_NULL_STREAMS = "Null Pointer Exception";
     public static final String ERR_GENERAL = "Exception Caught";
+    private int lineNumber;
+
+    public CatApplication() {
+        this.lineNumber = 1;
+    }
 
     /**
      * Runs the cat application with the specified arguments.
@@ -114,7 +119,7 @@ public class CatApplication implements CatInterface {
                 }
             }
         }
-
+        lineNumber = 0;
         return String.join(StringUtils.STRING_NEWLINE, outputLines);
     }
 
@@ -140,7 +145,7 @@ public class CatApplication implements CatInterface {
         if (isLineNumber) {
             lines = addLineNumbers(lines);
         }
-
+        lineNumber = 0;
         return String.join(STRING_NEWLINE, lines);
     }
 
@@ -163,18 +168,17 @@ public class CatApplication implements CatInterface {
                 output.add(catFiles(isLineNumber, name));
             }
         }
+        lineNumber = 0;
         return String.join(STRING_NEWLINE, output);
     }
 
     private List<String> addLineNumbers(List<String> lines) {
         List<String> numberedLines = new ArrayList<>();
-        int lineNumber = 1;
 
         for (String line : lines) {
             numberedLines.add(lineNumber + " " + line);
             lineNumber++;
         }
-
         return numberedLines;
     }
 }
