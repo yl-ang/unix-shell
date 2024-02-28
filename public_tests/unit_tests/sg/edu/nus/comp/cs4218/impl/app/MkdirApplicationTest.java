@@ -79,14 +79,14 @@ public class MkdirApplicationTest {
     }
 
     @Test
-    void run_validArgsSingleFolder_ShouldCreateFolder() throws MkdirException {
+    void run_ValidArgsSingleFolder_ShouldCreateFolder() throws MkdirException {
         mkdirApplication.run(VALID_ARGS_WITH_SINGLE_FOLDER, System.in, System.out);
         assertTrue(Files.exists(Paths.get(getFullPath(VALID_ARGS_WITH_SINGLE_FOLDER[0]))),
                 "Folder should created");
     }
 
     @Test
-    void run_validArgsWithParentFolder_ShouldCreateFolders() throws MkdirException {
+    void run_ValidArgsWithParentFolder_ShouldCreateFolders() throws MkdirException {
         mkdirApplication.run(VALID_ARGS_WITH_PARENT_FLAG, System.in, System.out);
         assertTrue(Files.exists(Paths.get(getFullPath(VALID_ARGS_WITH_PARENT_FLAG[1]))),
                 "Folder should created");
@@ -94,7 +94,7 @@ public class MkdirApplicationTest {
     }
 
     @Test
-    void run_validArgsWithMultipleFolderWithParentFlag_ShouldCreateFolders() throws MkdirException {
+    void run_ValidArgsWithMultipleFolderWithParentFlag_ShouldCreateFolders() throws MkdirException {
         mkdirApplication.run(VALID_ARGS_WITH_MULTIPLE_FOLDER_WITH_PARENT_FLAG, System.in, System.out);
         assertTrue(Files.exists(Paths.get(getFullPath(VALID_ARGS_WITH_MULTIPLE_FOLDER_WITH_PARENT_FLAG[1]))),
                 "Folder should created");
@@ -116,7 +116,7 @@ public class MkdirApplicationTest {
     }
 
     @Test
-    void run_invalidArgsParentNoExists_ShowThrowError() throws MkdirException {
+    void run_InvalidArgsParentNoExists_ShowThrowError() throws MkdirException {
 
         Exception exception = assertThrows(MkdirException.class,
                 () -> mkdirApplication.run(INVALID_ARGS_PARENT_NO_EXISTS, System.in, System.out));
@@ -124,7 +124,7 @@ public class MkdirApplicationTest {
     }
 
     @Test
-    void run_invalidArgsFolderExists_ShowThrowError() throws MkdirException {
+    void run_InvalidArgsFolderExists_ShowThrowError() throws MkdirException {
         File file = new File(TEST_DIRECTORY + File.separator + FOLDER_WITHOUT_PARENT_DIRECTORY);
         file.mkdirs();
         Exception exception = assertThrows(MkdirException.class,
@@ -133,7 +133,7 @@ public class MkdirApplicationTest {
     }
 
     @Test
-    void run_invalidArgsFolderExistsWithParent_ShowThrowError() throws MkdirException {
+    void run_InvalidArgsFolderExistsWithParent_ShowThrowError() throws MkdirException {
         File file = new File(FOLDER_CREATE_EXISTS_FOR_TEST);
         file.mkdirs();
         Exception exception = assertThrows(MkdirException.class,
