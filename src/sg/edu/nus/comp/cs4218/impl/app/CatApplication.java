@@ -155,15 +155,15 @@ public class CatApplication implements CatInterface {
             throw new CatException(ERR_NO_FILE_ARGS);
         }
 
-        StringBuilder output = new StringBuilder();
-        for (String name: fileName) {
+        List<String> output = new ArrayList<String>();
+        for (String name : fileName) {
             if (name.equals("-")) {
-                output.append(catStdin(isLineNumber, stdin));
+                output.add(catStdin(isLineNumber, stdin));
             } else {
-                output.append(catFiles(isLineNumber, name));
+                output.add(catFiles(isLineNumber, name));
             }
         }
-        return output.toString();
+        return String.join(STRING_NEWLINE, output);
     }
 
     private List<String> addLineNumbers(List<String> lines) {
