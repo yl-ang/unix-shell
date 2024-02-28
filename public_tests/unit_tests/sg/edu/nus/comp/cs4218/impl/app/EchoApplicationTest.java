@@ -22,7 +22,7 @@ public class EchoApplicationTest {
 
     private static class MockOutputStream extends OutputStream {
         @Override
-        public void write(int b) throws IOException {
+        public void write(int b) throws IOException {  //NOPMD
             throw new IOException("Simulated IOException");
         }
     }
@@ -30,7 +30,7 @@ public class EchoApplicationTest {
     private static EchoApplication echoApplication;
     private static MockOutputStream mockOutputStream;
     private static final String[] VALID_ARGS_INPUT = {"Hello", "*", "\n", "  ", "World", "Java", "Echo", "Test"};
-    private static final String VALID_ARGS_INPUT_STR = "Hello * \n    World Java Echo Test";
+    private static final String VALID_ARGS_INPUT_STR = "Hello * \n    World Java Echo Test\n";
     private static final String[] VALID_ARGS_INPUT_EMPTY = new String[0];
 
     @BeforeEach
