@@ -56,7 +56,7 @@ public class CatApplication implements CatInterface {
         Boolean isLineNumber = parser.isLineNumber();
         String[] fileNames = parser.getFileNames().toArray(new String[0]);
 
-        // fileNames wouldn't be null due to new String[0[, need to check length
+        // fileNames wouldn't be null due to new String, need to check length
         if (stdin == null && fileNames.length == 0) {
             throw new CatException(ERR_NO_INPUT);
         }
@@ -145,10 +145,26 @@ public class CatApplication implements CatInterface {
     }
 
     @Override
-    public String catFileAndStdin(Boolean isLineNumber, InputStream stdin, String... fileName) throws AbstractApplicationException {
-        return null;
-    }
+    public String catFileAndStdin(Boolean isLineNumber, InputStream stdin, String... fileName)
+            throws AbstractApplicationException {
+        if (stdin == null) {
+            throw new CatException(ERR_NO_ISTREAM);
+        }
 
+        if (fileName == null || fileName.length == 0) {
+            throw new CatException(ERR_NO_FILE_ARGS);
+        }
+
+        StringBuilder output = new StringBuilder();
+        for (String name: fileName) {
+            if (name.equals("-")) {
+                output.append(catStdin(isLineNumber, stdin));
+            } else {
+                output.append(catFiles(isLineNumber, name));
+            }
+        }
+        return output.toString();
+    }
 
     private List<String> addLineNumbers(List<String> lines) {
         List<String> numberedLines = new ArrayList<>();
