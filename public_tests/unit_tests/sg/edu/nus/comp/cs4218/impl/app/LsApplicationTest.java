@@ -32,13 +32,13 @@ class LsApplicationTest {
     private static final String FILE_ONE = "file1.iml";
     private static final String FILE_TWO = "file2.xml";
     private static final String FILE_THREE = "file3.txt";
-    private static final String FILE_FOUR = "file4.iml";
+    private static final String FILE_FOUR = "file4.txt";
 
     /*
     Folder Structure for test
     -folder1
       -folder2
-        -file4.iml
+        -file4.txt
       -file1.iml
       -file2.xml
     -file3.txt
@@ -49,10 +49,10 @@ class LsApplicationTest {
         lsApplication = new LsApplication();
         deleteDir(new File(TEST_PATH));
         Files.createDirectories(Paths.get(TEST_PATH + FOLDER_ONE + CHAR_FILE_SEP + FOLDER_TWO));
-        Files.createFile(Paths.get(TEST_PATH + FOLDER_ONE + CHAR_FILE_SEP + FOLDER_TWO + CHAR_FILE_SEP + FILE_FOUR));
         Files.createFile(Paths.get(TEST_PATH + FOLDER_ONE + CHAR_FILE_SEP + FILE_ONE));
         Files.createFile(Paths.get(TEST_PATH + FOLDER_ONE + CHAR_FILE_SEP + FILE_TWO));
         Files.createFile(Paths.get(TEST_PATH + FILE_THREE));
+        Files.createFile(Paths.get(TEST_PATH + FOLDER_ONE + CHAR_FILE_SEP + FOLDER_TWO + CHAR_FILE_SEP + FILE_FOUR));
     }
 
     @BeforeEach
@@ -104,11 +104,11 @@ class LsApplicationTest {
     @Test
     void listFolderContent_GivenValidMultiplePathsNoOptions_ShouldReturnValidPathString() throws AbstractApplicationException {
         String validPath1 = TEST_FOLDER_NAME;
-        String validPath2 = TEST_FOLDER_NAME + FOLDER_ONE + CHAR_FILE_SEP + FOLDER_TWO;
+        String validPath2 = TEST_FOLDER_NAME + CHAR_FILE_SEP + FOLDER_ONE + CHAR_FILE_SEP + FOLDER_TWO;
         String lsOutput = lsApplication.listFolderContent(false, false, validPath1, validPath2);
         String expectedOutput = TEST_FOLDER_NAME + ":" + NEW_LINE + FILE_THREE + STRING_NEWLINE + FOLDER_ONE +
-                STRING_NEWLINE + STRING_NEWLINE + TEST_FOLDER_NAME + FOLDER_ONE + CHAR_FILE_SEP + FOLDER_TWO +
-                ":" + STRING_NEWLINE + FILE_FOUR;
+                STRING_NEWLINE + STRING_NEWLINE + TEST_FOLDER_NAME + CHAR_FILE_SEP + FOLDER_ONE + CHAR_FILE_SEP +
+                FOLDER_TWO + ":" + STRING_NEWLINE + FILE_FOUR;
         assertEquals(expectedOutput, lsOutput);
     }
 }
