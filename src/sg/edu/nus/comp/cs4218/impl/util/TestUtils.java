@@ -2,7 +2,7 @@ package sg.edu.nus.comp.cs4218.impl.util;
 
 import java.io.File;
 
-public final class TestUtils {
+public class TestUtils {
     private TestUtils() {
     }
 
