@@ -24,4 +24,10 @@ public class CommandBuilderTest {
         // WHEN / THEN
         assertThrows(ShellException.class, () -> CommandBuilder.parseCommand(null, applicationRunner));
     }
+
+    @Test
+    void parseCommand_BlankCommandString_ShouldThrowShellException() {
+        // WHEN / THEN
+        assertThrows(ShellException.class, () -> CommandBuilder.parseCommand("", applicationRunner));
+    }
 }
