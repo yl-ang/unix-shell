@@ -246,7 +246,7 @@ public class LsApplication implements LsInterface {
      * @return
      */
     private Path resolvePath(String directory) {
-        if (directory.charAt(0) == '/') {
+        if (directory.length() > 0 && directory.charAt(0) == '/') {
             // This is an absolute path
             return Paths.get(directory).normalize();
         }
