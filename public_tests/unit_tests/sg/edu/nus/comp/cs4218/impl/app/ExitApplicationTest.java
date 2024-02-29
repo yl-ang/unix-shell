@@ -9,7 +9,7 @@ class ExitApplicationTest {
     ExitApplication exitApplication = new ExitApplication();
 
     @Test
-    void testTerminateExecutionWithCustomExitAction() throws Exception {
+    void terminateExecution_WithCustomExitAction_CallsExitAction() throws Exception {
         // Given
         Runnable mockExitAction = mock(Runnable.class);
         exitApplication.setExitAction(mockExitAction);
