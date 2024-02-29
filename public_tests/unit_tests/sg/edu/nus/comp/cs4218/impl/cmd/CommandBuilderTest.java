@@ -30,6 +30,8 @@ public class CommandBuilderTest {
     @InjectMocks
     CommandBuilder commandBuilder;
 
+    public static final String ERR_SYNTAX = "Invalid syntax";
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
@@ -38,12 +40,21 @@ public class CommandBuilderTest {
     @Test
     void parseCommand_NullCommandString_ShouldThrowShellException() {
         // WHEN / THEN
-        assertThrows(ShellException.class, () -> commandBuilder.parseCommand(null, applicationRunner));
+        ShellException exception = assertThrows(ShellException.class, () -> commandBuilder.parseCommand(null, applicationRunner));
+        assertEquals("shell: " + ERR_SYNTAX, exception.getMessage());
     }
 
     @Test
     void parseCommand_BlankCommandString_ShouldThrowShellException() {
         // WHEN / THEN
-        assertThrows(ShellException.class, () -> commandBuilder.parseCommand("", applicationRunner));
+        ShellException exception = assertThrows(ShellException.class, () -> commandBuilder.parseCommand("", applicationRunner));
+        assertEquals("shell: " + ERR_SYNTAX, exception.getMessage());
+    }
+
+    @Test
+    void parseCommand_CommandStringWithBlankSpaces_ShouldThrowShellException() {
+        // WHEN / THEN
+        ShellException exception = assertThrows(ShellException.class, () -> commandBuilder.parseCommand("   ", applicationRunner));
+        assertEquals("shell: " + ERR_SYNTAX, exception.getMessage());
     }
 }
