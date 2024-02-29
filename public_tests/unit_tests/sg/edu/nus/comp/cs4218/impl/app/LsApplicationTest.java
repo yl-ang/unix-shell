@@ -111,4 +111,7 @@ class LsApplicationTest {
                 FOLDER_TWO + ":" + STRING_NEWLINE + FILE_FOUR;
         assertEquals(expectedOutput, lsOutput);
     }
+
+    // https://github.com/nus-cs4218/cs4218-project-2024-team04/issues/30
+    //TODO(@yuqitanyq)
 }
