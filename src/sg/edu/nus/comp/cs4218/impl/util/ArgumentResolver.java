@@ -96,6 +96,7 @@ public class ArgumentResolver {
                             appendParsedArgIntoSegment(parsedArgsSegment, firstOutputArg);
                         }
 
+//                        parsedArgsSegment.addAll(subOutputSegment);
                     } else {
                         // don't tokenize subCommand output
                         appendParsedArgIntoSegment(parsedArgsSegment,
