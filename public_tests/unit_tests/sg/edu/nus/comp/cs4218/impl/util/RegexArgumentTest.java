@@ -23,7 +23,7 @@ class RegexArgumentTest {
     }
 
     @Test
-    void testConstructorWithoutArgs_EmptyStringNotRegex() {
+    void testConstructor_WithoutArgs_EmptyStringNotRegex() {
         assertFalse(regexArg.isRegex());
         assertTrue(regexArg.isEmpty());
     }
@@ -60,16 +60,23 @@ class RegexArgumentTest {
     }
 
     @Test
-    void appendAsterisk_asteriskAppended() {
+    void appendAsterisk_noArgs_asteriskAppended() {
         regexArg.appendAsterisk();
         assertFalse(regexArg.isEmpty());
         assertEquals("*", regexArg.toString());
     }
 
     @Test
-    void appendAsterisk_isRegex() {
+    void appendAsterisk_noArgs_isRegex() {
         regexArg.appendAsterisk();
         assertTrue(regexArg.isRegex());
+    }
+
+    @Test
+    void merge_nullStringArg_nothingHappens() {
+        RegexArgument regexArg2 = new RegexArgument(null);
+        regexArg.merge(regexArg2);
+        assertEquals("", regexArg.toString());
     }
 
     @Test
@@ -128,7 +135,7 @@ class RegexArgumentTest {
     }
 
     @Test
-    void testToString() {
+    void testToString_nonEmptyPlaintext_plaintext() {
         regexArg.append('c');
         assertEquals("c", regexArg.toString());
     }

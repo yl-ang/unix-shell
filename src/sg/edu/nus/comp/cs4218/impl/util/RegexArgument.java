@@ -59,12 +59,18 @@ public final class RegexArgument {
     }
 
     public void merge(RegexArgument other) {
+        if (other == null) {
+            return;
+        }
         plaintext.append(other.plaintext);
         regex.append(other.regex);
         isRegex = isRegex || other.isRegex;
     }
 
     public void merge(String str) {
+        if (str == null) {
+            return;
+        }
         plaintext.append(str);
         regex.append(Pattern.quote(str));
     }
@@ -113,10 +119,12 @@ public final class RegexArgument {
      */
     private List<String> traverseAndFilter(Pattern regexPattern, File node, boolean isAbsolute, boolean onlyDirectories) {
         List<String> matches = new ArrayList<>();
-        if (regexPattern == null || !node.canRead() || !node.isDirectory()) {
+        if (regexPattern == null || node == null || !node.canRead() || !node.isDirectory()) {
             return matches;
         }
-        for (String current : node.list()) {
+        String[] list = node.list();
+        if (list == null) return matches;
+        for (String current : list) {
             File nextNode = new File(node, current);
             String match = isAbsolute
                     ? nextNode.getPath()
