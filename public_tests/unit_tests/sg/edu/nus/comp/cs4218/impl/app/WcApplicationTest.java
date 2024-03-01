@@ -1,9 +1,10 @@
-package sg.edu.nus.comp.cs4218.impl.app;
+package unit_tests.sg.edu.nus.comp.cs4218.impl.app;
 
 import org.junit.jupiter.api.*;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.exception.WcException;
+import sg.edu.nus.comp.cs4218.impl.app.WcApplication;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 import java.io.*;
@@ -265,20 +266,16 @@ class WcApplicationTest {
 
     @Test
     void countFromStdin_twoFlags_showFlagsInSequenceSeperatedByTab() throws WcException {
-        InputStream input = null;
-        String output;
+        OutputStream output = new ByteArrayOutputStream();
         try {
-            input = IOUtils.openInputStream(testFileName);
-            output = wcApplication.countFromStdin(false, true, true, input); // lines words bytes
+            InputStream input = IOUtils.openInputStream(testFileName);
+            String[] args = {testFileName, "-"};
+            wcApplication.run(args, input, output); // lines words bytes
+            assertEquals("\t1\t7\t32 wcTestFile.txt\n\t1\t7\t32\n\t2\t14\t64 total\n", output.toString());
+            IOUtils.closeInputStream(input);
         } catch (Exception e) {
             throw new WcException(e.getMessage());
         }
-        try {
-            IOUtils.closeInputStream(input);
-        } catch (ShellException e) {
-            throw new WcException(e.getMessage());
-        }
-        assertEquals("\t1\t7", output);
     }
 
 
@@ -302,10 +299,21 @@ class WcApplicationTest {
         }
     }
 
+
+    @Test
+    void countFromFileAndStdin_fileNameAndDashGiven_showFlagsInSequenceAndTotal() throws WcException {
+        try {
+            String[] fileNames = {testFileName, testFileName};
+            String output = wcApplication.countFromFiles(false, true, true, fileNames); // lines words bytes
+            assertEquals("\t1\t7 wcTestFile.txt\n\t1\t7 wcTestFile.txt\n\t2\t14 total", output);
+        } catch (Exception e) {
+            throw new WcException(e.getMessage());
+        }
+    }
+
     @Test
     void run_fileNameGivenWithArgsTogether_countFromFileWithFlagsInSequence() throws WcException {
-        String inputData = "Hello World\nThis is a test\n";
-        InputStream input = new ByteArrayInputStream(inputData.getBytes());
+        InputStream input = System.in;
         OutputStream output = new ByteArrayOutputStream();
         try {
             String[] args = {"-cl", testFileName};
@@ -324,8 +332,7 @@ class WcApplicationTest {
 
     @Test
     void run_fileNameGivenWithArgsSeparate_countFromFileWithFlagsInSequence() throws WcException {
-        String inputData = "Hello World\nThis is a test\n";
-        InputStream input = new ByteArrayInputStream(inputData.getBytes());
+        InputStream input = System.in;
         OutputStream output = new ByteArrayOutputStream();
         try {
             String[] args = {"-c", "-l", testFileName};
@@ -346,10 +353,24 @@ class WcApplicationTest {
     void run_multipleFileNamesGiven_countFromFilesWithTotal() throws WcException {
         OutputStream output = new ByteArrayOutputStream();
         try {
-            InputStream input = IOUtils.openInputStream(testFileName);
+            InputStream input = System.in;
             String[] args = {testFileName, testFileName};
             wcApplication.run(args, input, output); // lines words bytes
             assertEquals("\t1\t7\t32 wcTestFile.txt\n\t1\t7\t32 wcTestFile.txt\n\t2\t14\t64 total\n", output.toString());
+            IOUtils.closeInputStream(input);
+        } catch (Exception e) {
+            throw new WcException(e.getMessage());
+        }
+    }
+
+    @Test
+    void run_fileNamesAndDashGiven_countFromFilesAndStdinWithTotal() throws WcException {
+        OutputStream output = new ByteArrayOutputStream();
+        try {
+            InputStream input = IOUtils.openInputStream(testFileName);
+            String[] args = {testFileName, "-"};
+            wcApplication.run(args, input, output); // lines words bytes
+            assertEquals("\t1\t7\t32 wcTestFile.txt\n\t1\t7\t32\n\t2\t14\t64 total\n", output.toString());
             IOUtils.closeInputStream(input);
         } catch (Exception e) {
             throw new WcException(e.getMessage());

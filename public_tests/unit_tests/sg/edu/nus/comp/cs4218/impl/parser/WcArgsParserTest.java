@@ -1,8 +1,9 @@
-package sg.edu.nus.comp.cs4218.impl.parser;
+package unit_tests.sg.edu.nus.comp.cs4218.impl.parser;
 
 import org.junit.jupiter.api.*;
 import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
 import sg.edu.nus.comp.cs4218.exception.WcException;
+import sg.edu.nus.comp.cs4218.impl.parser.WcArgsParser;
 
 import java.util.ArrayList;
 import java.util.Arrays;
