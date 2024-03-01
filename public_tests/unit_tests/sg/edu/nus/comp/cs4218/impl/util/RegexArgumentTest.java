@@ -78,7 +78,7 @@ class RegexArgumentTest {
         regexArg.merge(regexArg2);
         assertEquals("", regexArg.toString());
     }
-
+ 
     @Test
     void merge_regexArgumentInstanceProvided_plainTextUpdated() {
         RegexArgument regexArg2 = new RegexArgument("regexArg2");
