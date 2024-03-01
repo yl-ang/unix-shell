@@ -119,7 +119,6 @@ public class CatApplication implements CatInterface {
                 }
             }
         }
-        lineNumber = 0;
         return String.join(StringUtils.STRING_NEWLINE, outputLines);
     }
 
@@ -145,7 +144,6 @@ public class CatApplication implements CatInterface {
         if (isLineNumber) {
             lines = addLineNumbers(lines);
         }
-        lineNumber = 0;
         return String.join(STRING_NEWLINE, lines);
     }
 
@@ -168,7 +166,7 @@ public class CatApplication implements CatInterface {
                 output.add(catFiles(isLineNumber, name));
             }
         }
-        lineNumber = 0;
+        lineNumber = 1;
         return String.join(STRING_NEWLINE, output);
     }
 
