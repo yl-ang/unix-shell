@@ -17,7 +17,6 @@ import sg.edu.nus.comp.cs4218.impl.util.CommandBuilder;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 public class CommandBuilderTest {
 
@@ -54,7 +53,93 @@ public class CommandBuilderTest {
     @Test
     void parseCommand_CommandStringWithBlankSpaces_ShouldThrowShellException() {
         // WHEN / THEN
-        ShellException exception = assertThrows(ShellException.class, () -> commandBuilder.parseCommand("   ", applicationRunner));
+        ShellException exception = assertThrows(ShellException.class, () -> commandBuilder.parseCommand(
+                "   ", applicationRunner));
         assertEquals("shell: " + ERR_SYNTAX, exception.getMessage());
     }
+
+    @Test
+    void parseCommand_InvalidCommandString_ShouldThrowShellException() {
+        String invalidCommandString = ";";
+        assertThrows(ShellException.class, () -> commandBuilder.parseCommand(invalidCommandString,
+                applicationRunner));
+    }
+
+    @Test
+    void parseCommand_validCommandStringWithoutSequenceAndPipe_ShouldReturnCallCommand() throws ShellException {
+        // GIVEN
+        String commandString = "echo Hello";
+
+        // WHEN
+        Command finalCommand = CommandBuilder.parseCommand(commandString, applicationRunner);
+
+        // THEN
+        assertTrue(finalCommand instanceof CallCommand);
+    }
+
+    @Test
+    void parseCommand_validCommandStringWithRedirection_ShouldReturnCallCommandWithRedirection() throws ShellException {
+        // GIVEN
+        String commandString = "echo Hello > output.txt";
+
+        // WHEN
+        Command finalCommand = CommandBuilder.parseCommand(commandString, applicationRunner);
+
+        // THEN
+        assertTrue(finalCommand instanceof CallCommand);
+        List<String> tokens = ((CallCommand) finalCommand).getArgsList();
+        assertEquals(4, tokens.size());
+        assertEquals("echo", tokens.get(0));
+        assertEquals("Hello", tokens.get(1));
+        assertEquals(">", tokens.get(2));
+        assertEquals("output.txt", tokens.get(3));
+    }
+
+    @Test
+    void parseCommand_validCommandStringWithPipe_ShouldReturnPipeCommand() throws ShellException {
+        // GIVEN
+        String commandString = "echo Hello | grep Hello";
+
+        // WHEN
+        Command finalCommand = CommandBuilder.parseCommand(commandString, applicationRunner);
+
+        // THEN
+        assertInstanceOf(PipeCommand.class, finalCommand);
+        List<CallCommand> pipeCommands = ((PipeCommand) finalCommand).getCallCommands();
+        assertEquals(2, pipeCommands.size());
+    }
+
+    @Test
+    void parseCommand_validCommandStringWithSemicolon_ShouldReturnSequenceCommand() throws ShellException {
+        // GIVEN
+        String commandString = "echo Hello ; ls";
+
+        // WHEN
+        Command finalCommand = CommandBuilder.parseCommand(commandString, applicationRunner);
+
+        // THEN
+        assertInstanceOf(SequenceCommand.class, finalCommand);
+        List<Command> sequenceCommands = ((SequenceCommand) finalCommand).getCommands();
+        assertEquals(2, sequenceCommands.size());
+    }
+
+    @Test
+    void parseCommand_invalidCommandStringWithMismatchedQuote_ShouldThrowShellException() {
+        // GIVEN
+        String commandString = "echo 'Hello World";
+
+        // THEN
+        assertThrows(ShellException.class, () -> CommandBuilder.parseCommand(commandString, applicationRunner));
+    }
+
+    @Test
+    void parseCommand_invalidCommandStringWithMismatchedSemiColon_ShouldThrowShellException() {
+
+        // GIVEN
+        String commandString = ";echo Hello World";
+
+        // THEN
+        assertThrows(ShellException.class, () -> CommandBuilder.parseCommand(commandString, applicationRunner));
+    }
+
 }
