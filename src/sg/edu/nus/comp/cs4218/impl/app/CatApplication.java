@@ -23,6 +23,11 @@ public class CatApplication implements CatInterface {
     public static final String ERR_WRITE_STREAM = "Could not write to output stream";
     public static final String ERR_NULL_STREAMS = "Null Pointer Exception";
     public static final String ERR_GENERAL = "Exception Caught";
+    private int lineNumber;
+
+    public CatApplication() {
+        this.lineNumber = 1;
+    }
 
     /**
      * Runs the cat application with the specified arguments.
@@ -80,6 +85,15 @@ public class CatApplication implements CatInterface {
         }
     }
 
+    /**
+    * Concatenates and prints the content of the specified files to the output stream.
+    * Optionally, adds line numbers if specified.
+    *
+    * @param isLineNumber Boolean flag indicating whether to add line numbers.
+    * @param fileNames    Array of file names to concatenate and print.
+    * @return Concatenated content of the specified files.
+    * @throws AbstractApplicationException If an exception occurs during file reading or processing.
+    */
     @Override
     public String catFiles(Boolean isLineNumber, String... fileNames) throws AbstractApplicationException {
         if (isLineNumber == null) {
@@ -114,10 +128,19 @@ public class CatApplication implements CatInterface {
                 }
             }
         }
-
         return String.join(StringUtils.STRING_NEWLINE, outputLines);
     }
 
+
+    /**
+    * Concatenates and prints the content of the standard input stream to the output stream.
+    * Optionally, adds line numbers if specified.
+    *
+    * @param isLineNumber Boolean flag indicating whether to add line numbers.
+    * @param stdin        InputStream representing standard input.
+    * @return Concatenated content of the standard input stream.
+    * @throws AbstractApplicationException If an exception occurs during input stream reading or processing.
+    */
     @Override
     public String catStdin(Boolean isLineNumber, InputStream stdin) throws AbstractApplicationException {
 
@@ -140,10 +163,19 @@ public class CatApplication implements CatInterface {
         if (isLineNumber) {
             lines = addLineNumbers(lines);
         }
-
         return String.join(STRING_NEWLINE, lines);
     }
 
+    /**
+    * Concatenates and prints the content of the specified files and standard input stream to the output stream.
+    * Optionally, adds line numbers if specified.
+    *
+    * @param isLineNumber Boolean flag indicating whether to add line numbers.
+    * @param stdin        InputStream representing standard input.
+    * @param fileName     Array of file names to concatenate with standard input.
+    * @return Concatenated content of the specified files and standard input stream.
+    * @throws AbstractApplicationException If an exception occurs during file reading or processing.
+    */
     @Override
     public String catFileAndStdin(Boolean isLineNumber, InputStream stdin, String... fileName)
             throws AbstractApplicationException {
@@ -155,26 +187,31 @@ public class CatApplication implements CatInterface {
             throw new CatException(ERR_NO_FILE_ARGS);
         }
 
-        StringBuilder output = new StringBuilder();
-        for (String name: fileName) {
+
+        List<String> output = new ArrayList<String>();
+        for (String name : fileName) {
             if (name.equals("-")) {
-                output.append(catStdin(isLineNumber, stdin));
+                output.add(catStdin(isLineNumber, stdin));
             } else {
-                output.append(catFiles(isLineNumber, name));
+                output.add(catFiles(isLineNumber, name));
             }
         }
-        return output.toString();
+        lineNumber = 1;
+        return String.join(STRING_NEWLINE, output);
     }
 
+    /**
+    * Adds line numbers to the list of lines.
+    *
+    * @param lines List of lines to which line numbers will be added.
+    * @return List of lines with line numbers.
+    */
     private List<String> addLineNumbers(List<String> lines) {
         List<String> numberedLines = new ArrayList<>();
-        int lineNumber = 1;
-
         for (String line : lines) {
             numberedLines.add(lineNumber + " " + line);
             lineNumber++;
         }
-
         return numberedLines;
     }
 }
