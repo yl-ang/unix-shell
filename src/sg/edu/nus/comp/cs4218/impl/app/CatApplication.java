@@ -187,6 +187,7 @@ public class CatApplication implements CatInterface {
             throw new CatException(ERR_NO_FILE_ARGS);
         }
 
+
         List<String> output = new ArrayList<String>();
         for (String name : fileName) {
             if (name.equals("-")) {
@@ -207,7 +208,6 @@ public class CatApplication implements CatInterface {
     */
     private List<String> addLineNumbers(List<String> lines) {
         List<String> numberedLines = new ArrayList<>();
-
         for (String line : lines) {
             numberedLines.add(lineNumber + " " + line);
             lineNumber++;
