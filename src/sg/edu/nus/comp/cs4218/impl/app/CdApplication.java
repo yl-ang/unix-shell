@@ -17,10 +17,8 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 
 public class CdApplication implements CdInterface {
 
-
-
     @Override
-    public void changeToDirectory(String path) throws AbstractApplicationException {
+    public void changeToDirectory(String path) throws CdException {
         Environment.currentDirectory = getNormalizedAbsolutePath(path);
     }
 
@@ -35,14 +33,14 @@ public class CdApplication implements CdInterface {
      */
     @Override
     public void run(String[] args, InputStream stdin, OutputStream stdout)
-            throws AbstractApplicationException {
+            throws CdException {
         if (args == null) {
             throw new CdException(ERR_NULL_ARGS);
         }
         changeToDirectory(args[0]);
     }
 
-    private String getNormalizedAbsolutePath(String pathStr) throws AbstractApplicationException {
+    private String getNormalizedAbsolutePath(String pathStr) throws CdException {
         if (StringUtils.isBlank(pathStr)) {
             throw new CdException(ERR_NO_ARGS);
         }
