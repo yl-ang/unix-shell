@@ -23,6 +23,11 @@ public class CatApplication implements CatInterface {
     public static final String ERR_WRITE_STREAM = "Could not write to output stream";
     public static final String ERR_NULL_STREAMS = "Null Pointer Exception";
     public static final String ERR_GENERAL = "Exception Caught";
+    private int lineNumber;
+
+    public CatApplication() {
+        this.lineNumber = 1;
+    }
 
     /**
      * Runs the cat application with the specified arguments.
@@ -123,7 +128,6 @@ public class CatApplication implements CatInterface {
                 }
             }
         }
-
         return String.join(StringUtils.STRING_NEWLINE, outputLines);
     }
 
@@ -159,7 +163,6 @@ public class CatApplication implements CatInterface {
         if (isLineNumber) {
             lines = addLineNumbers(lines);
         }
-
         return String.join(STRING_NEWLINE, lines);
     }
 
@@ -184,15 +187,16 @@ public class CatApplication implements CatInterface {
             throw new CatException(ERR_NO_FILE_ARGS);
         }
 
-        StringBuilder output = new StringBuilder();
-        for (String name: fileName) {
+        List<String> output = new ArrayList<String>();
+        for (String name : fileName) {
             if (name.equals("-")) {
-                output.append(catStdin(isLineNumber, stdin));
+                output.add(catStdin(isLineNumber, stdin));
             } else {
-                output.append(catFiles(isLineNumber, name));
+                output.add(catFiles(isLineNumber, name));
             }
         }
-        return output.toString();
+        lineNumber = 1;
+        return String.join(STRING_NEWLINE, output);
     }
 
     /**
@@ -203,13 +207,11 @@ public class CatApplication implements CatInterface {
     */
     private List<String> addLineNumbers(List<String> lines) {
         List<String> numberedLines = new ArrayList<>();
-        int lineNumber = 1;
 
         for (String line : lines) {
             numberedLines.add(lineNumber + " " + line);
             lineNumber++;
         }
-
         return numberedLines;
     }
 }
