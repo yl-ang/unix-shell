@@ -30,21 +30,22 @@ public final class RegexArgument {
         merge(str);
     }
 
+//    NOTE: not used, commented out for now
     // Used for `find` command.
     // `text` here corresponds to the folder that we want to look in.
-    public RegexArgument(String str, String text, boolean isRegex) {
-        this();
-        this.plaintext.append(text);
-        this.isRegex = isRegex;
-        this.regex.append(".*"); // We want to match filenames
-        for (char c : str.toCharArray()) {
-            if (c == CHAR_ASTERISK) {
-                this.regex.append("[^" + StringUtils.fileSeparator() + "]*");
-            } else {
-                this.regex.append(Pattern.quote(String.valueOf(c)));
-            }
-        }
-    }
+//    public RegexArgument(String str, String text, boolean isRegex) {
+//        this();
+//        this.plaintext.append(text);
+//        this.isRegex = isRegex;
+//        this.regex.append(".*"); // We want to match filenames
+//        for (char c : str.toCharArray()) {
+//            if (c == CHAR_ASTERISK) {
+//                this.regex.append("[^" + StringUtils.fileSeparator() + "]*");
+//            } else {
+//                this.regex.append(Pattern.quote(String.valueOf(c)));
+//            }
+//        }
+//    }
 
     public void append(char chr) {
         plaintext.append(chr);
