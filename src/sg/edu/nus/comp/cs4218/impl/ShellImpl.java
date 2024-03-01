@@ -30,7 +30,6 @@ public class ShellImpl implements Shell {
 
         while (true) {
             try {
-                String currentDirectory = Environment.currentDirectory;
                 String commandString;
                 System.out.print("> ");
                 try {
