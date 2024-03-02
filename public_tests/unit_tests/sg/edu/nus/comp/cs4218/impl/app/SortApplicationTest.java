@@ -29,8 +29,8 @@ class SortApplicationTest {
     private static final String TEST_FOLDER_NAME = "tmpSortTestFolder" + File.separator;
     static String file = "file.txt";
     static String file2 = "file2.txt";
-    static String path = TEST_DIRECTORY + file;
-    static String path2 = TEST_DIRECTORY + file2;
+    static String path = TEST_DIRECTORY + File.separator + file;
+    static String path2 = TEST_DIRECTORY + File.separator + file2;
 
     @BeforeAll
     static void setup() throws IOException {
@@ -44,14 +44,6 @@ class SortApplicationTest {
         Files.createFile(Paths.get(path2));
         Files.write(Paths.get(path), ("10" + STRING_NEWLINE + "1" + STRING_NEWLINE + "2").getBytes(), APPEND);
         Files.write(Paths.get(path2), ("a" + STRING_NEWLINE + "A" + STRING_NEWLINE + "ab" + STRING_NEWLINE + "AB").getBytes(), APPEND);
-    }
-
-    @BeforeEach
-    void init() {
-        // Clean up test folder
-        sg.edu.nus.comp.cs4218.Environment.currentDirectory = TEST_DIRECTORY;
-        File folder = new File(TEST_DIRECTORY);
-        emptyFolder(folder, false);
     }
 
     @AfterAll
