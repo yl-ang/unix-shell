@@ -94,7 +94,17 @@ class IOUtilsTest {
 
     @AfterEach
     void tearDown() {
-        new File(TEST_TXT).delete();
+        File testTxtFile = new File(TEST_TXT);
+        File nonExistentTxtFile = new File(NON_EXISTENT_TXT);
+
+        if (testTxtFile.exists()) {
+            testTxtFile.delete();
+        }
+
+        if (nonExistentTxtFile.exists()) {
+            nonExistentTxtFile.delete();
+        }
+
         System.setProperty("user.dir", originCurrentDirectory);
     }
 }
