@@ -50,14 +50,17 @@ public class IORedirectionHandler {
             if (!isRedirOperator(arg)) {
                 noRedirArgsList.add(arg);
             } else {
-                // if current arg is < or >, fast-forward to the next arg to extract the specified file
-                String file = argsIterator.next();
-
-                // if the next arg is also a redirection operator, only consider the last one
-                while (argsIterator.hasNext() && isRedirOperator(argsIterator.next())) {
-                    // do nothing, just keep iterating until the last redirection operator
+                // fast forward to last item
+                while (argsIterator.hasNext()) {
+                    argsIterator.next();
                 }
-                argsIterator.previous(); // move the iterator back one step
+                // move the iterator back one step
+                argsIterator.previous();
+                argsIterator.previous();
+                if (!isRedirOperator(argsIterator.next())) {
+                    throw new ShellException(ERR_SYNTAX);
+                }
+                String file = argsIterator.next();
 
                 // handle quoting + globing + command substitution in file arg
                 List<String> fileSegment = argumentResolver.resolveOneArgument(file);
