@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
+import java.io.File;
 import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,7 +44,7 @@ class StringUtilsTest {
     void testFileSeparator_OnWindows_ReturnsBackslash() {
         // Simulating Windows OS
         System.setProperty("os.name", "Windows");
-        assertEquals("\\", StringUtils.fileSeparator());
+        assertEquals("\\" + File.separator, StringUtils.fileSeparator());
     }
 
     @Test
