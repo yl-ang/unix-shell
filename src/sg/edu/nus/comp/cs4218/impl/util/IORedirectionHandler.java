@@ -1,19 +1,23 @@
 package sg.edu.nus.comp.cs4218.impl.util;
 
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.exception.DirectoryNotFoundException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_MULTIPLE_STREAMS;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_REDIR_INPUT;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_REDIR_OUTPUT;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.*;
 
 public class IORedirectionHandler {
     private final List<String> argsList;
@@ -82,6 +86,19 @@ public class IORedirectionHandler {
                     IOUtils.closeOutputStream(outputStream);
                     if (!outputStream.equals(origOutputStream)) { // Already have a stream
                         throw new ShellException(ERR_MULTIPLE_STREAMS);
+                    }
+                    String filePath = Environment.currentDirectory + CHAR_FILE_SEP + file;
+                    Path path = Paths.get(filePath);
+                    try {
+                        // Check if the file exists
+                        if (!Files.exists(path)) {
+                            // If the file doesn't exist, create it
+                            Files.createFile(path);
+                        }
+                    } catch (IOException e) {
+                        // Handle potential IO exceptions
+                        String errorMessage = String.format("%s %s %s", ERR_FILE_NOT_FOUND, CHAR_COLON, e.getMessage());
+                        throw new FileNotFoundException(errorMessage);
                     }
                     outputStream = IOUtils.openOutputStream(file);
                 }
