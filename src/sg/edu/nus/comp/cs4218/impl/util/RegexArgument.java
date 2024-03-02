@@ -29,21 +29,22 @@ public final class RegexArgument {
         merge(str);
     }
 
+//    NOTE: not used, commented out for now
     // Used for `find` command.
     // `text` here corresponds to the folder that we want to look in.
-    public RegexArgument(String str, String text, boolean isRegex) {
-        this();
-        this.plaintext.append(text);
-        this.isRegex = isRegex;
-        this.regex.append(".*"); // We want to match filenames
-        for (char c : str.toCharArray()) {
-            if (c == CHAR_ASTERISK) {
-                this.regex.append("[^" + StringUtils.fileSeparator() + "]*");
-            } else {
-                this.regex.append(Pattern.quote(String.valueOf(c)));
-            }
-        }
-    }
+//    public RegexArgument(String str, String text, boolean isRegex) {
+//        this();
+//        this.plaintext.append(text);
+//        this.isRegex = isRegex;
+//        this.regex.append(".*"); // We want to match filenames
+//        for (char c : str.toCharArray()) {
+//            if (c == CHAR_ASTERISK) {
+//                this.regex.append("[^" + StringUtils.fileSeparator() + "]*");
+//            } else {
+//                this.regex.append(Pattern.quote(String.valueOf(c)));
+//            }
+//        }
+//    }
 
     public void append(char chr) {
         plaintext.append(chr);
@@ -57,12 +58,18 @@ public final class RegexArgument {
     }
 
     public void merge(RegexArgument other) {
+        if (other == null) {
+            return;
+        }
         plaintext.append(other.plaintext);
         regex.append(other.regex);
         isRegex = isRegex || other.isRegex;
     }
 
     public void merge(String str) {
+        if (str == null) {
+            return;
+        }
         plaintext.append(str);
         regex.append(Pattern.quote(str));
     }
@@ -111,10 +118,12 @@ public final class RegexArgument {
      */
     private List<String> traverseAndFilter(Pattern regexPattern, File node, boolean isAbsolute, boolean onlyDirectories) {
         List<String> matches = new ArrayList<>();
-        if (regexPattern == null || !node.canRead() || !node.isDirectory()) {
+        if (regexPattern == null || node == null || !node.canRead() || !node.isDirectory()) {
             return matches;
         }
-        for (String current : node.list()) {
+        String[] list = node.list();
+        if (list == null) return matches;
+        for (String current : list) {
             File nextNode = new File(node, current);
             String match = isAbsolute
                     ? nextNode.getPath()
