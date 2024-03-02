@@ -28,23 +28,41 @@ class IOUtilsTest {
     }
 
     @Test
-    void testOpenInputStream_FromExistingFile() {
+    void testOpenInputStreamFromExistingFile_ShouldNotThrow() {
         assertDoesNotThrow(() -> openInputStream(TEST_TXT));
     }
 
     @Test
-    void testOpenInputStream_FromNonExistentFile() {
+    void testOpenInputStreamFromNonExistentFile_ShouldThrow() {
         assertThrows(ShellException.class, () -> openInputStream(NON_EXISTENT_TXT));
     }
 
     @Test
-    void testOpenOutputStream_FromExistingFile() {
+    void testOpenOutputStreamFromExistingFile_ShouldNotThrow() {
         assertDoesNotThrow(() -> openOutputStream(TEST_TXT));
     }
 
     @Test
-    void testOpenOutputStream_FromNonExistentFile() {
+    void testOpenOutputStreamFromNonExistentFile_ShouldThrow() {
         assertThrows(FileNotFoundException.class, () -> openOutputStream(NON_EXISTENT_TXT));
+    }
+
+    @Test
+    void testCloseOutputStream_Success() throws FileNotFoundException, ShellException {
+        OutputStream outputStream = openOutputStream(TEST_TXT);
+        assertDoesNotThrow(() -> closeOutputStream(outputStream));
+        assertFalse(outputStream.toString().isEmpty());
+    }
+
+    @Test
+    void testCloseOutputStreamNullOutputStream_ShouldNotThrow() {
+        assertDoesNotThrow(() -> closeOutputStream(null));
+    }
+
+    @Test
+    void testCloseOutputStreamSystemOut_ShouldNotThrow() {
+        OutputStream systemOut = System.out;
+        assertDoesNotThrow(() -> closeOutputStream(systemOut));
     }
 
     @Test
@@ -54,19 +72,14 @@ class IOUtilsTest {
     }
 
     @Test
-    void testCloseOutputStream_Success() throws FileNotFoundException, ShellException {
-        OutputStream outputStream = openOutputStream(TEST_TXT);
-        assertDoesNotThrow(() -> closeOutputStream(outputStream));
-    }
-
-    @Test
-    void testCloseInputStream_NullInputStream() {
+    void testCloseInputStreamNullInputStream_ShouldNotThrow() {
         assertDoesNotThrow(() -> closeInputStream(null));
     }
 
     @Test
-    void testCloseOutputStream_NullOutputStream() {
-        assertDoesNotThrow(() -> closeOutputStream(null));
+    void testCloseInputStreamSystemIn_ShouldNotThrow() {
+        InputStream systemIn = System.in;
+        assertDoesNotThrow(() -> closeInputStream(systemIn));
     }
 
     @Test
