@@ -76,6 +76,7 @@ public class IORedirectionHandler {
                     throw new ShellException(ERR_MULTIPLE_STREAMS);
                 }
                 inputStream = IOUtils.openInputStream(file);
+
             } else if (arg.equals(String.valueOf(CHAR_REDIR_OUTPUT))) {
                 IOUtils.closeOutputStream(outputStream);
                 if (!outputStream.equals(origOutputStream)) { // Already have a stream
@@ -83,6 +84,7 @@ public class IORedirectionHandler {
                 }
                 outputStream = IOUtils.openOutputStream(file);
             }
+            break;
         }
     }
     public List<String> getNoRedirArgsList() {
@@ -98,6 +100,6 @@ public class IORedirectionHandler {
     }
 
     private boolean isRedirOperator(String str) {
-        return str.equals(String.valueOf(CHAR_REDIR_INPUT));
+        return str.equals(String.valueOf(CHAR_REDIR_INPUT)) || str.equals(String.valueOf(CHAR_REDIR_OUTPUT));
     }
 }
