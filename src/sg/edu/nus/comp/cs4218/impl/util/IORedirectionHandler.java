@@ -49,42 +49,41 @@ public class IORedirectionHandler {
             // leave the other args untouched
             if (!isRedirOperator(arg)) {
                 noRedirArgsList.add(arg);
-                continue;
-            }
+            } else {
+                // if current arg is < or >, fast-forward to the next arg to extract the specified file
+                String file = argsIterator.next();
 
-            // if current arg is < or >, fast-forward to the next arg to extract the specified file
-            String file = argsIterator.next();
-
-            // if the next arg is also a redirection operator, only consider the last one
-            while (argsIterator.hasNext() && isRedirOperator(argsIterator.next())) {
-                // do nothing, just keep iterating until the last redirection operator
-            }
-            argsIterator.previous(); // move the iterator back one step
-
-            // handle quoting + globing + command substitution in file arg
-            List<String> fileSegment = argumentResolver.resolveOneArgument(file);
-            if (fileSegment.size() > 1) {
-                // ambiguous redirect if file resolves to more than one parsed arg
-                throw new ShellException(ERR_SYNTAX);
-            }
-            file = fileSegment.get(0);
-
-            // replace existing inputStream / outputStream
-            if (arg.equals(String.valueOf(CHAR_REDIR_INPUT))) {
-                IOUtils.closeInputStream(inputStream);
-                if (!inputStream.equals(origInputStream)) { // Already have a stream
-                    throw new ShellException(ERR_MULTIPLE_STREAMS);
+                // if the next arg is also a redirection operator, only consider the last one
+                while (argsIterator.hasNext() && isRedirOperator(argsIterator.next())) {
+                    // do nothing, just keep iterating until the last redirection operator
                 }
-                inputStream = IOUtils.openInputStream(file);
+                argsIterator.previous(); // move the iterator back one step
 
-            } else if (arg.equals(String.valueOf(CHAR_REDIR_OUTPUT))) {
-                IOUtils.closeOutputStream(outputStream);
-                if (!outputStream.equals(origOutputStream)) { // Already have a stream
-                    throw new ShellException(ERR_MULTIPLE_STREAMS);
+                // handle quoting + globing + command substitution in file arg
+                List<String> fileSegment = argumentResolver.resolveOneArgument(file);
+                if (fileSegment.size() > 1) {
+                    // ambiguous redirect if file resolves to more than one parsed arg
+                    throw new ShellException(ERR_SYNTAX);
                 }
-                outputStream = IOUtils.openOutputStream(file);
+                file = fileSegment.get(0);
+
+                // replace existing inputStream / outputStream
+                if (arg.equals(String.valueOf(CHAR_REDIR_INPUT))) {
+                    IOUtils.closeInputStream(inputStream);
+                    if (!inputStream.equals(origInputStream)) { // Already have a stream
+                        throw new ShellException(ERR_MULTIPLE_STREAMS);
+                    }
+                    inputStream = IOUtils.openInputStream(file);
+
+                } else if (arg.equals(String.valueOf(CHAR_REDIR_OUTPUT))) {
+                    IOUtils.closeOutputStream(outputStream);
+                    if (!outputStream.equals(origOutputStream)) { // Already have a stream
+                        throw new ShellException(ERR_MULTIPLE_STREAMS);
+                    }
+                    outputStream = IOUtils.openOutputStream(file);
+                }
+                break;
             }
-            break;
         }
     }
     public List<String> getNoRedirArgsList() {
