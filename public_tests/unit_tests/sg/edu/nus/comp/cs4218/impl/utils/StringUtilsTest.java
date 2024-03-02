@@ -11,13 +11,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class StringUtilsTest {
 
-    private final static String OSNAMESTR = "os.name";
+    private final static String OSNAME = "os.name";
     private final Properties props = System.getProperties();
     private String osName;
 
     @BeforeEach
     void storeOSName() {
-        osName = System.getProperty(OSNAMESTR);
+        osName = System.getProperty(OSNAME);
     }
 
     @Test
@@ -41,6 +41,20 @@ class StringUtilsTest {
     }
 
     @Test
+    void testTokenize_NormalString_ReturnsTokens() {
+        String input = "hello to this world";
+        String[] expectedTokens = {"hello", "to", "this", "world"};
+        assertArrayEquals(expectedTokens, StringUtils.tokenize(input));
+    }
+
+    @Test
+    void testTokenize_EmptyString_ReturnsEmptyArray() {
+        String input = "";
+        String[] expectedTokens = new String[0];
+        assertArrayEquals(expectedTokens, StringUtils.tokenize(input));
+    }
+
+    @Test
     void testFileSeparator_OnWindows_ReturnsBackslash() {
         // Simulating Windows OS
         System.setProperty("os.name", "Windows");
@@ -58,20 +72,6 @@ class StringUtilsTest {
         // Simulating Unix-like OS
         System.setProperty("os.name", "Linux");
         assertEquals("/", StringUtils.fileSeparator());
-    }
-
-    @Test
-    void testTokenize_NormalString_ReturnsTokens() {
-        String input = "this is a test";
-        String[] expectedTokens = {"this", "is", "a", "test"};
-        assertArrayEquals(expectedTokens, StringUtils.tokenize(input));
-    }
-
-    @Test
-    void testTokenize_EmptyString_ReturnsEmptyArray() {
-        String input = "";
-        String[] expectedTokens = new String[0];
-        assertArrayEquals(expectedTokens, StringUtils.tokenize(input));
     }
 
     @Test
