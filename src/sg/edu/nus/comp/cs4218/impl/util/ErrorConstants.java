@@ -13,6 +13,7 @@ public class ErrorConstants {
     public static final String ERR_NO_ISTREAM = "InputStream not provided";
     public static final String ERR_NO_INPUT = "No InputStream and no filenames";
     public static final String ERR_NO_FILE_ARGS = "No files provided";
+    public static final String ERR_READING_STREAM = "Could not read streams";
 
     // Arguments related
     public static final String ERR_MISSING_ARG = "Missing Argument";

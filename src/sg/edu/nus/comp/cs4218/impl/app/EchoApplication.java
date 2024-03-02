@@ -1,7 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
 import sg.edu.nus.comp.cs4218.app.EchoInterface;
-import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.EchoException;
 
 import java.io.IOException;
@@ -10,6 +9,7 @@ import java.io.OutputStream;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_WHITESPACE;
 
 /**
  * The echo command writes its arguments separated by spaces and terminates by a newline on the
@@ -22,7 +22,7 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 public class EchoApplication implements EchoInterface {
 
     @Override
-    public String constructResult(String[] args) throws AbstractApplicationException {
+    public String constructResult(String[] args) throws EchoException {
         if (args == null) {
             throw new EchoException(ERR_NULL_ARGS);
         }
@@ -31,7 +31,8 @@ public class EchoApplication implements EchoInterface {
         if (args.length == 0) {
             result = STRING_NEWLINE;
         } else {
-            result = String.join(" ", args);
+            result = String.join(STRING_WHITESPACE, args);
+            result = result + STRING_NEWLINE;
         }
 
         return result;
@@ -46,7 +47,7 @@ public class EchoApplication implements EchoInterface {
      *               space character.
      * @throws EchoException If an I/O exception occurs.
      */
-    public void run(String[] args, InputStream stdin, OutputStream stdout) throws AbstractApplicationException {
+    public void run(String[] args, InputStream stdin, OutputStream stdout) throws EchoException {
         if (stdout == null) {
             throw new EchoException(ERR_NO_OSTREAM);
         }

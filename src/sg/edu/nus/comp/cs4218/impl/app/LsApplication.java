@@ -147,8 +147,13 @@ public class LsApplication implements LsInterface {
                 // However the user might have written a command like `ls invalid1 valid1 -R`, what
                 // do we do then?
                 if (!isRecursive) {
-                    result.append(e.getMessage());
-                    result.append('\n');
+                    if (path.toFile().exists()) {
+                        result.append(getRelativeToCwd(path).toString());
+                        result.append(StringUtils.STRING_NEWLINE).append(StringUtils.STRING_NEWLINE);
+                    } else {
+                        result.append(e.getMessage());
+                        result.append('\n');
+                    }
                 }
             }
         }
