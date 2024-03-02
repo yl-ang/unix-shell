@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class ExitApplication implements ExitInterface {
+    private Runnable exitAction = () -> System.exit(0);
 
     /**
      * Runs the exit application.
@@ -26,10 +27,15 @@ public class ExitApplication implements ExitInterface {
     /**
      * Terminate shell.
      *
-     * @throws Exception
+     * @throws ExitException
      */
     @Override
     public void terminateExecution() throws AbstractApplicationException {
-        System.exit(0);
+        exitAction.run();
+    }
+
+    // Setter for exit action, used for testing
+    public void setExitAction(Runnable exitAction) {
+        this.exitAction = exitAction;
     }
 }
