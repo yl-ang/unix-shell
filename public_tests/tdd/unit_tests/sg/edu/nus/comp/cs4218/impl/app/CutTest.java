@@ -29,7 +29,7 @@ public class CutTest {
     private static final String EMPTY_TEST_FILENAME = "cutEmptyTestFile.txt";
 
     @BeforeAll
-    static void setUp() throws IOException {
+    static void setup() throws IOException {
         inputStdin = System.in;
 
         Path path = Paths.get(TEST_FILENAME);
