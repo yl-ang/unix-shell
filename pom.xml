@@ -46,6 +46,12 @@
                     <exclude>**/*.java</exclude>
                 </excludes>
             </testResource>
+            <testResource>
+                <directory>tdd</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </testResource>
         </testResources>
         <plugins>
             <plugin>
@@ -57,6 +63,9 @@
                         <include>**/*Test.java</include>
                         <include>**/*IT.java</include>
                     </includes>
+                    <excludes>
+                        <exclude>**/tdd/**/*Test.java</exclude> <!-- Exclude all tests in the tdd folder -->
+                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
