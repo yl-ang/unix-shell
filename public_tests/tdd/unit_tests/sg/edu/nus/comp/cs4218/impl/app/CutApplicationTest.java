@@ -155,12 +155,12 @@ public class CutApplicationTest {
         // then
         Files.writeString(path, jsonContent);
 
-        cutApplication.cutFromFiles(true, false, ranges, fileNames);
+        String output = cutApplication.cutFromFiles(true, false, ranges, fileNames);
         assertEquals("{\n" +
                 "  \"na\n" +
                 "  \"ag\n" +
                 "  \"ci\n" +
-                "}\n", output.toString());
+                "}\n", output);
 
         // remove file
         Files.deleteIfExists(path);
@@ -187,13 +187,13 @@ public class CutApplicationTest {
         // then
         Files.writeString(path, xmlContent);
 
-        cutApplication.cutFromFiles(true, false, ranges, fileNames);
+        String output = cutApplication.cutFromFiles(true, false, ranges, fileNames);
         assertEquals("<?xml\n" +
                 "<user\n" +
                 "    <\n" +
                 "    <\n" +
                 "    <\n" +
-                "</use", output.toString());
+                "</use", output);
 
         // remove file
         Files.deleteIfExists(path);
@@ -204,8 +204,8 @@ public class CutApplicationTest {
         List<int[]> ranges = List.of(new int[]{3, 7});
         String[] fileNames = {EMPTY_TEST_FILENAME};
 
-        cutApplication.cutFromFiles(true, false, ranges, fileNames);
-        assertEquals("", output.toString());
+        String output = cutApplication.cutFromFiles(true, false, ranges, fileNames);
+        assertEquals("", output);
     }
 
 
@@ -214,8 +214,8 @@ public class CutApplicationTest {
         List<int[]> ranges = List.of(new int[]{3, 7});
         String[] fileNames = {TEST_FILENAME};
 
-        cutApplication.cutFromFiles(true, false, ranges, fileNames);
-        assertEquals("34567\n34567\n", output.toString());
+        String output = cutApplication.cutFromFiles(true, false, ranges, fileNames);
+        assertEquals("34567\n34567\n", output);
     }
 
     @Test
@@ -223,8 +223,8 @@ public class CutApplicationTest {
         List<int[]> ranges = List.of(new int[]{3, 3});
         String[] fileNames = {TEST_FILENAME};
 
-        cutApplication.cutFromFiles(false, true, ranges, fileNames);
-        assertEquals("3\n3\n", output.toString());
+        String output = cutApplication.cutFromFiles(false, true, ranges, fileNames);
+        assertEquals("3\n3\n", output);
     }
 
     @Test
@@ -232,8 +232,8 @@ public class CutApplicationTest {
         List<int[]> ranges = List.of(new int[]{3, 7});
         String[] fileNames = {TEST_FILENAME, TEST_FILENAME};
 
-        cutApplication.cutFromFiles(false, true, ranges, fileNames);
-        assertEquals("34567\n34567\n34567\n34567\n", output.toString());
+        String output = cutApplication.cutFromFiles(false, true, ranges, fileNames);
+        assertEquals("34567\n34567\n34567\n34567\n", output);
     }
 
     @Test
@@ -241,8 +241,8 @@ public class CutApplicationTest {
         List<int[]> ranges = List.of(new int[]{5, 7}, new int[]{1, 3});
         String[] fileNames = {TEST_FILENAME};
 
-        cutApplication.cutFromFiles(false, true, ranges, fileNames);
-        assertEquals("123567\n123567\n", output.toString());
+        String output = cutApplication.cutFromFiles(false, true, ranges, fileNames);
+        assertEquals("123567\n123567\n", output);
     }
 
 
@@ -268,24 +268,24 @@ public class CutApplicationTest {
     void cutFromStdin_isBytePo_cutFromStdin() throws AbstractApplicationException {
         List<int[]> ranges = List.of(new int[]{3, 7});
 
-        cutApplication.cutFromStdin(false, true, ranges, inputTestFile);
-        assertEquals("34567\n34567\n", output.toString());
+        String output = cutApplication.cutFromStdin(false, true, ranges, inputTestFile);
+        assertEquals("34567\n34567\n", output);
     }
 
     @Test
     void cutFromStdin_isBytePoSameStartAndEndIndexInRange_cutFromStdin() throws AbstractApplicationException {
         List<int[]> ranges = List.of(new int[]{3, 3});
 
-        cutApplication.cutFromStdin(false, true, ranges, inputTestFile);
-        assertEquals("3\n3\n", output.toString());
+        String output = cutApplication.cutFromStdin(false, true, ranges, inputTestFile);
+        assertEquals("3\n3\n", output);
     }
 
     @Test
     void cutFromStdin_isCharPoAndListOfRangeGiven_outputCutInSequenceOfIndex() throws AbstractApplicationException {
         List<int[]> ranges = List.of(new int[]{5, 7}, new int[]{1, 3});
 
-        cutApplication.cutFromStdin(true, false, ranges, inputTestFile);
-        assertEquals("123567\n123567\n", output.toString());
+        String output = cutApplication.cutFromStdin(true, false, ranges, inputTestFile);
+        assertEquals("123567\n123567\n", output);
     }
 
 
