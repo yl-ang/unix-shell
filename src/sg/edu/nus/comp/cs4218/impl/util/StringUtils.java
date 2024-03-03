@@ -21,6 +21,7 @@ public final class StringUtils {
     public static final char CHAR_REDIR_OUTPUT = '>';
     public static final char CHAR_PIPE = '|';
     public static final char CHAR_SEMICOLON = ';';
+    public static final char CHAR_COLON = ':';
     public static final char CHAR_ASTERISK = '*';
     public static final char CHAR_FLAG_PREFIX = '-';
 

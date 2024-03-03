@@ -28,6 +28,12 @@
             <version>5.3.1</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>5.3.1</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -36,6 +42,12 @@
         <testResources>
             <testResource>
                 <directory>resources</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </testResource>
+            <testResource>
+                <directory>tdd</directory>
                 <excludes>
                     <exclude>**/*.java</exclude>
                 </excludes>
@@ -51,6 +63,9 @@
                         <include>**/*Test.java</include>
                         <include>**/*IT.java</include>
                     </includes>
+                    <excludes>
+                        <exclude>**/tdd/**/*Test.java</exclude> <!-- Exclude all tests in the tdd folder -->
+                    </excludes>
                 </configuration>
             </plugin>
             <plugin>

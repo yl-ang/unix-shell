@@ -1,4 +1,4 @@
-package unit_tests.sg.edu.nus.comp.cs4218.impl.utils;
+package unit_tests.sg.edu.nus.comp.cs4218.impl.util;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

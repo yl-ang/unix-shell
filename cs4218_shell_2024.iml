@@ -4,6 +4,8 @@
     <content url="file://$MODULE_DIR$" dumb="true">
       <sourceFolder url="file://$MODULE_DIR$/public_tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/public_tests/tdd/unit_tests/sg/edu/nus/comp/cs4218/impl/app" />
+      <excludeFolder url="file://$MODULE_DIR$/public_tests/tdd/unit_tests/sg/edu/nus/comp/cs4218/impl" />
     </content>
   </component>
   <component name="CheckStyle-IDEA-Module">
