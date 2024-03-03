@@ -24,42 +24,47 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 public class TeeApplicationTest {
 
     private TeeInterface teeApplication;
-    private InputStream inputTestFile;
+    private InputStream inputStdin;
     private OutputStream output;
 
-    private static final String TEST_OUTPUT_FILENAME = "teeTestFile.txt";
+    private static final String TEST_OUTPUT_FILENAME = "teeOutputTestFile.txt";
 
     private static final String TEST_FILENAME = "cutTestFile.txt";
-    private static final String EMPTY_TEST_FILENAME = "cutEmptyTestFile.txt";
-    private Path testFilePath;
+    private static Path testFilePath;
 
     @BeforeAll
     static void setUp() throws IOException {
+        // add contents into test file
         Path path = Paths.get(TEST_FILENAME);
         String content = """
-                123456789
+                test tee
                 123456789
                 """;
         Files.writeString(path, content);
+
+        // create output file
+        testFilePath = Paths.get(TEST_OUTPUT_FILENAME);
+        Files.createFile(testFilePath);
     }
 
     @BeforeEach
-    void init() throws IOException {
+    void init() throws IOException, ShellException {
         teeApplication = mock(TeeInterface.class);
 
-        testFilePath = Paths.get(TEST_OUTPUT_FILENAME);
-        Files.createFile(testFilePath);
+        inputStdin = IOUtils.openInputStream(TEST_FILENAME);
 
         output = new ByteArrayOutputStream();
     }
 
     @AfterEach
-    void done() throws IOException {
-        Files.deleteIfExists(testFilePath);
+    void done() throws IOException, ShellException {
+        IOUtils.closeInputStream(inputStdin);
     }
 
     @AfterAll
     static void teardown() throws IOException {
+        Files.deleteIfExists(testFilePath);
+
         Path path = Paths.get(TEST_FILENAME);
         Files.deleteIfExists(path);
     }
@@ -68,7 +73,7 @@ public class TeeApplicationTest {
     void teeFromStdin_nullFileNameGiven_exception() {
         String[] fileNames = {null};
 
-        TeeException exception = assertThrows(TeeException.class, () -> teeApplication.teeFromStdin(false, inputTestFile, fileNames);
+        TeeException exception = assertThrows(TeeException.class, () -> teeApplication.teeFromStdin(false, inputStdin, fileNames);
         assertEquals(new TeeException(ERR_NULL_ARGS).getMessage(), exception.getMessage());
     }
 
@@ -76,7 +81,7 @@ public class TeeApplicationTest {
     void teeFromStdin_fileNotFound_exception() {
         String[] fileNames = {"randomfilename.txt"};
 
-        TeeException exception = assertThrows(TeeException.class, () -> teeApplication.teeFromStdin(false, inputTestFile, fileNames);
+        TeeException exception = assertThrows(TeeException.class, () -> teeApplication.teeFromStdin(false, inputStdin, fileNames);
         assertEquals(new TeeException(ERR_FILE_NOT_FOUND).getMessage(), exception.getMessage());
     }
 
@@ -84,76 +89,71 @@ public class TeeApplicationTest {
     void teeFromStdin_fileNameIsDirectory_exception() {
         String[] fileNames = {"src"};
 
-        TeeException exception = assertThrows(TeeException.class, () -> teeApplication.teeFromStdin(true, inputTestFile, fileNames));
+        TeeException exception = assertThrows(TeeException.class, () -> teeApplication.teeFromStdin(false, inputStdin, fileNames));
         assertEquals(new TeeException(ERR_IS_DIR).getMessage(), exception.getMessage());
     }
 
     @Test
     void teeFromStdin_fileNoWritePermission_exception() throws IOException {
-        // create file without read permissions
-        Set<PosixFilePermission> noReadPermission = PosixFilePermissions.fromString("--x--x--x");
-        FileAttribute<?> permissions = PosixFilePermissions.asFileAttribute(noReadPermission);
-        String fileName = "fileWithNoReadPermissions.txt";
+        // create file without write permissions
+        Set<PosixFilePermission> noWritePermission = PosixFilePermissions.fromString("--x--x--x");
+        FileAttribute<?> permissions = PosixFilePermissions.asFileAttribute(noWritePermission);
+        String fileName = "fileWithNoWritePermissions.txt";
         Path filePath = Paths.get(fileName);
         Files.createFile(filePath, permissions);
 
         // input args
-        List<int[]> ranges = List.of(new int[]{3, 7});
         String[] fileNames = {fileName};
 
         // then
-        TeeException exception = assertThrows(TeeException.class, () -> teeApplication.teeFromStdin(true, inputTestFile, fileNames));
-        assertEquals(new TeeException(ERR_NO_PERM).getMessage(), exception.getMessage());
+        TeeException exception = assertThrows(TeeException.class, () -> teeApplication.teeFromStdin(false, inputStdin, fileNames));
+        assertEquals(new TeeException(ERR_NO_PERM_WRITE_FILE).getMessage(), exception.getMessage());
 
         // remove file
         Files.deleteIfExists(filePath);
     }
 
 
-    @Test
-    void teeFromStdin_fileIsEmpty_noOutput() throws AbstractApplicationException {
-        List<int[]> ranges = List.of(new int[]{3, 7});
-        String[] fileNames = {EMPTY_TEST_OUTPUT_FILENAME};
-
-        teeApplication.teeFromStdin(true, inputTestFile, fileNames);
-        assertEquals("", output.toString());
-    }
 
     @Test
-    void teeFromStdin_isCharPoAndFileNameGiven_cutFromFile() throws AbstractApplicationException {
-        List<int[]> ranges = List.of(new int[]{3, 7});
+    void teeFromStdin_stdinIsNull_exception() {
         String[] fileNames = {TEST_OUTPUT_FILENAME};
 
-        teeApplication.teeFromStdin(true, inputTestFile, fileNames);
-        assertEquals("34567\n34567\n", output.toString());
+        TeeException exception = assertThrows(TeeException.class, () -> teeApplication.teeFromStdin(false, null, fileNames);
+        assertEquals(new TeeException(ERR_NULL_ARGS).getMessage(), exception.getMessage());
     }
 
+
     @Test
-    void teeFromStdin_isBytePoSameStartAndEndIndexInRange_cutFromFile() throws AbstractApplicationException {
-        List<int[]> ranges = List.of(new int[]{3, 3});
+    void teeFromStdin_isAppendFalse_fileWithContentGetsOverridden() throws AbstractApplicationException, IOException {
+        Path path = Paths.get(TEST_OUTPUT_FILENAME);
+        String content = """
+                123456789
+                123456789
+                """;
+        Files.writeString(path, content);
+
         String[] fileNames = {TEST_OUTPUT_FILENAME};
 
-        teeApplication.teeFromStdin(false, inputTestFile, fileNames);
-        assertEquals("3\n3\n", output.toString());
+        teeApplication.teeFromStdin(false, inputStdin, fileNames);
+        assertEquals("test tee\n123456789\n", output.toString());
     }
 
     @Test
-    void teeFromStdin_isBytePoAndFileNamesGiven_cutFromAllFiles() throws AbstractApplicationException {
-        List<int[]> ranges = List.of(new int[]{3, 7});
-        String[] fileNames = {TEST_OUTPUT_FILENAME, TEST_OUTPUT_FILENAME};
+    void teeFromStdin_isAppendFTrue_fileWithContentGetsAppended() throws AbstractApplicationException, IOException {
+        Path path = Paths.get(TEST_OUTPUT_FILENAME);
+        String content = """
+                123456789
+                123456789
+                """;
+        Files.writeString(path, content);
 
-        teeApplication.teeFromStdin(false, inputTestFile, fileNames);
-        assertEquals("34567\n34567\n34567\n34567\n", output.toString());
-    }
-
-    @Test
-    void teeFromStdin_listOfRangeGiven_outputCutInSequenceOfIndex() throws AbstractApplicationException {
-        List<int[]> ranges = List.of(new int[]{5, 7}, new int[]{1, 3});
         String[] fileNames = {TEST_OUTPUT_FILENAME};
 
-        teeApplication.teeFromStdin(false, inputTestFile, fileNames);
-        assertEquals("123567\n123567\n", output.toString());
+        teeApplication.teeFromStdin(false, inputStdin, fileNames);
+        assertEquals("123456789\n123456789\ntest tee\n123456789\n", output.toString());
     }
+
 
 
     @Test

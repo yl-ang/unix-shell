@@ -29,6 +29,9 @@ public class ErrorConstants {
     public static final String ERR_IS_DIR = "This is a directory";
     public static final String ERR_IS_NOT_DIR = "Not a directory";
     public static final String ERR_NO_PERM = "Permission denied";
+    public static final String ERR_NO_PERM_WRITE_FILE = "No write permission to file";
+    public static final String ERR_NO_PERM_READ_FILE = "No read permission to file";
+
 
     // `date` related
     public static final String ERR_INVALID_FORMAT_PREFIX = "Invalid format. Date format must start with '+'";
@@ -63,5 +66,4 @@ public class ErrorConstants {
 
 
     // `tee` related
-    public static final String ERR_WRITING_FILE = "Could not write to file";
 }
