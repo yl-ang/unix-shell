@@ -133,4 +133,65 @@ public class SequenceCommandTest {
             verify(mockCommandFour).evaluate(any(InputStream.class), any(OutputStream.class));
         });
     }
+
+    @Test
+    void getCommands_GivenNonEmptyList_ShouldReturnAllCommandsList() {
+        //GIVEN / WHEN
+        listOfCommands.addAll(Arrays.asList(mockCommandOne, mockCommandTwo, mockCommandThree,
+                mockCommandFour, mockCommandFive));
+        sequenceCommand = new SequenceCommand(listOfCommands);
+        List<Command> outputResult = sequenceCommand.getCommands();
+
+        //THEN
+        assertEquals(outputResult, listOfCommands);
+    }
+
+    @Test
+    void evaluate_GivenExitException_ShouldThrowExitException() throws ShellException, AbstractApplicationException, FileNotFoundException {
+        //GIVEN / WHEN
+        doThrow(ExitException.class).when(mockCommandOne).evaluate(any(InputStream.class), any(OutputStream.class));
+        listOfCommands.add(mockCommandOne);
+        sequenceCommand = new SequenceCommand(listOfCommands);
+
+        //THEN
+        assertThrows(ExitException.class, () -> sequenceCommand.evaluate(System.in, System.out));
+    }
+
+    @Test
+    void getCommands_GivenEmptyList_ShouldReturnEmptyList() {
+        //GIVEN / WHEN
+        sequenceCommand = new SequenceCommand(listOfCommands);
+        List<Command> outputResult = sequenceCommand.getCommands();
+
+        //THEN
+        assertTrue(outputResult.isEmpty());
+    }
+
+    @Test
+    void evaluate_GivenNullStdOut_ShouldThrowShellException() {
+        //GIVEN
+        listOfCommands.add(mockCommandOne);
+        sequenceCommand = new SequenceCommand(listOfCommands);
+
+        //WHEN
+        Throwable thrown = assertThrows(ShellException.class, () -> sequenceCommand.evaluate(System.in, null));
+        ShellException exceptionMsg = new ShellException(ErrorConstants.ERR_NO_OSTREAM);
+
+        //THEN
+        assertEquals(exceptionMsg.getMessage(), thrown.getMessage());
+    }
+
+    @Test
+    void evaluate_GivenNullStdIn_ShouldThrowShellException() {
+        //GIVEN
+        listOfCommands.add(mockCommandOne);
+        sequenceCommand = new SequenceCommand(listOfCommands);
+
+        //WHEN
+        Throwable thrown = assertThrows(ShellException.class, () -> sequenceCommand.evaluate(null, System.out));
+        ShellException exceptionMsg = new ShellException(ErrorConstants.ERR_NO_ISTREAM);
+
+        //THEN
+        assertEquals(exceptionMsg.getMessage(), thrown.getMessage());
+    }
 }
