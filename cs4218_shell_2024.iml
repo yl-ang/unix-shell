@@ -7,7 +7,6 @@
       <excludeFolder url="file://$MODULE_DIR$/public_tests/tdd" />
       <excludeFolder url="file://$MODULE_DIR$/public_tests/tdd/unit_tests/sg/edu/nus/comp/cs4218/impl/app" />
       <excludeFolder url="file://$MODULE_DIR$/public_tests/tdd/unit_tests/sg/edu/nus/comp/cs4218/impl" />
->>>>>>> 5212a16e2773641244a2c0175e3bff732ed43301
     </content>
   </component>
   <component name="CheckStyle-IDEA-Module">
