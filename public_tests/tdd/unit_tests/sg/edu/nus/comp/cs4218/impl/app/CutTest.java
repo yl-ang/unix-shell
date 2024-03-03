@@ -154,7 +154,7 @@ public class CutTest {
         assertEquals(new CutException(ERR_RANGE_EMPTY).getMessage(), exception.getMessage());
     }
 
-
+ 
     @Test
     void cutFromStdin_isBytePo_cutFromStdin() throws AbstractApplicationException {
         List<int[]> ranges = List.of(new int[]{3, 7});
