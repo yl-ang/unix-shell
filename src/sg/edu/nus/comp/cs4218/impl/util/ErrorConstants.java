@@ -61,4 +61,11 @@ public class ErrorConstants {
     public static final String ERR_GENERAL = "Exception Caught";
     public static final String ERR_IO_EXCEPTION = "IOException";
 
+
+    // Cut related
+    public static final String ERR_BOTH_CHAR_AND_BYTE_FLAGS_PRESENT = "Choose only either -c or -b";
+    public static final String ERR_ZERO_POSITION_ARG = "Values may not include zero";
+    public static final String ERR_ISCHARPO_AND_ISBYTEPO_FALSE = "One of isCharPo or isBytePo should be true";
+    public static final String ERR_RANGE_EMPTY = "Range to cut is not provided";
+
 }
