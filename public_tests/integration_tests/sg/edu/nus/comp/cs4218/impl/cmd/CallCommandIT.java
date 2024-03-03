@@ -37,6 +37,7 @@ public class CallCommandIT {
     private static final String FOLDER_NAME_NON = "nonfolder";
     private static final String FILE_NAME_1 = "file1.txt";
     private static final String FILE_NAME_2 = "file2.txt";
+    private static final String FILE_NAME_NONE = "nonfile.txt";
 
     @BeforeEach
     void setup() {
@@ -165,5 +166,53 @@ public class CallCommandIT {
         Exception exception = assertThrows(ShellException.class, () -> callCommand.evaluate(systemInputStream, outputStream));
         String expected = String.format("shell: No such file or directory : %s%s%s", TEST_DIRECTORY, STR_FILE_SEP, FOLDER_NAME_2);
         assertEquals(expected, exception.getMessage());
+    }
+
+    // COMMAND SUBSTITUTION POSITIVE TEST CASE
+    @Test
+    public void callCommandIT_EchoWithSubstitutionEcho_ShouldReturnCorrectOutput() throws FileNotFoundException, AbstractApplicationException, ShellException {
+        List<String> args = List.of(APP_ECHO, "hello", "`echo world`");
+        callCommand = new CallCommand(args, applicationRunner, argumentResolver);
+        callCommand.evaluate(systemInputStream, outputStream);
+        String expected = "hello world" + STRING_NEWLINE;
+        String actual = outputStream.toString();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void callCommandIT_EchoWithSubstitutionSort_ShouldReturnCorrectOutput() throws FileNotFoundException, AbstractApplicationException, ShellException {
+        List<String> args = List.of("echo", "fruits: ", String.format("`sort -r %s`", FILE_NAME_2));
+        callCommand = new CallCommand(args, applicationRunner, argumentResolver);
+        callCommand.evaluate(systemInputStream, outputStream);
+        String expected = "fruits:  orange kiwi grape banana apple" + STRING_NEWLINE;
+        assertEquals(expected, outputStream.toString());
+    }
+
+    @Test
+    public void callCommandIT_WcWithSubstitutionEcho_ShouldReturnCorrectOutput() throws FileNotFoundException, AbstractApplicationException, ShellException {
+        List<String> args = List.of("wc", String.format("`echo -w -l -c %s`", FILE_NAME_1));
+        callCommand = new CallCommand(args, applicationRunner, argumentResolver);
+        callCommand.evaluate(systemInputStream, outputStream);
+        String expected = "\t0\t2\t11 " + FILE_NAME_1 + STRING_NEWLINE;
+        assertEquals(expected, outputStream.toString());
+    }
+
+    // COMMAND SUBSTITUTION NEGATIVE TEST CASE
+    @Test
+    public void callCommandIT_WcWithSubstitutionEcho_ShouldReturnNegativeOutput() throws FileNotFoundException, AbstractApplicationException, ShellException {
+        List<String> args = List.of("wc", String.format("`echo -w -l -c %s`", FILE_NAME_NONE));
+        callCommand = new CallCommand(args, applicationRunner, argumentResolver);
+        callCommand.evaluate(systemInputStream, outputStream);
+        String expected = "wc: No such file or directory" + STRING_NEWLINE;
+        assertEquals(expected, outputStream.toString());
+    }
+
+    @Test
+    public void callCommandIT_CdWithSubstitutionEcho_ShouldReturnNegativeOutput() throws FileNotFoundException, AbstractApplicationException, ShellException {
+        List<String> args = List.of("cd", String.format("`echo %s`", FOLDER_NAME_NON));
+        callCommand = new CallCommand(args, applicationRunner, argumentResolver);
+        Exception exception = assertThrows(CdException.class, () -> callCommand.evaluate(systemInputStream, outputStream));
+        String expected = "No such file or directory";
+        assertEquals(new CdException(expected).getMessage(), exception.getMessage());
     }
 }
