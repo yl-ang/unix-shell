@@ -61,4 +61,7 @@ public class ErrorConstants {
     public static final String ERR_GENERAL = "Exception Caught";
     public static final String ERR_IO_EXCEPTION = "IOException";
 
+
+    // `tee` related
+    public static final String ERR_WRITING_FILE = "Could not write to file";
 }
