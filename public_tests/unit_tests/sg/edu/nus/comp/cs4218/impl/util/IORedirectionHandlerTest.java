@@ -1,5 +1,6 @@
 package unit_tests.sg.edu.nus.comp.cs4218.impl.util;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -64,6 +65,11 @@ public class IORedirectionHandlerTest {
             // Delete the file
             Files.delete(path);
         }
+    }
+
+    @AfterAll
+    static void teardown() {
+        Environment.currentDirectory = ROOT_DIRECTORY;
     }
 
     @Test
