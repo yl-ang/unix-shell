@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.exception.GrepException;
 import sg.edu.nus.comp.cs4218.impl.app.GrepApplication;
 
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,10 +20,8 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_REGEX;
 public class GrepApplicationTest {
     private GrepApplication grepApplication;
     private Path path;
+    private final InputStream inputStream = new ByteArrayInputStream(COMBINED_INPUT.getBytes());
     private static final String TEST_FILE = "file.txt";
-    private static final String TEST_FILE2 = "file2.txt";
-    private static final String NE_FILE = "nonExistent.txt";
-    private static final String TEST_FOLDER = "testFolder";
     private static final String INVALID_PATTERN = "[[]]";
     private static final String VALID_PATTERN = "hello";
     private static final String HELLO_UPPERCASE = "Hello world";
@@ -28,10 +29,15 @@ public class GrepApplicationTest {
     private static final String HELLO_INSENSITIVE = "heLlO WorLD";
     private static final String[] LINES1 = {HELLO_UPPERCASE, HELLO_LOWERCASE, HELLO_INSENSITIVE};
     private static final String[] LINES2 = {"hello", HELLO_LOWERCASE, "5"};
+    private static final String COMBINED_INPUT = HELLO_LOWERCASE + STRING_NEWLINE +
+            HELLO_UPPERCASE + STRING_NEWLINE +
+            HELLO_INSENSITIVE + STRING_NEWLINE;
+    private OutputStream stdout;
 
     @BeforeEach
     public void setUp() throws Exception {
         grepApplication = new GrepApplication();
+        stdout = new ByteArrayOutputStream();
         path = Paths.get(TEST_FILE);
         if (!Files.exists(path)) {
             Files.createFile(path);
@@ -65,6 +71,42 @@ public class GrepApplicationTest {
     }
 
     @Test
+    public void grepFromStdIn_NoOptionsValidInputUppercase_ShouldReturnEmpty() throws Exception {
+        InputStream inputStream = new ByteArrayInputStream(HELLO_UPPERCASE.getBytes());
+        assertDoesNotThrow(() -> {
+            String results = grepApplication.grepFromStdin(VALID_PATTERN, false, false, false, inputStream);
+            assertEquals("", results);
+        });
+    }
+
+    @Test
+    public void grepFromStdIn_NoOptionsValidInputLowercase_ShouldReturnEmpty() throws Exception {
+        InputStream inputStream = new ByteArrayInputStream(HELLO_LOWERCASE.getBytes());
+        assertDoesNotThrow(() -> {
+            String results = grepApplication.grepFromStdin(VALID_PATTERN, false, false, false, inputStream);
+            assertEquals(HELLO_LOWERCASE + STRING_NEWLINE, results);
+        });
+    }
+
+    @Test
+    public void grepFromStdIn_CaseInsensitiveValidInputUppercase_ShouldReturnEmpty() throws Exception {
+        InputStream inputStream = new ByteArrayInputStream(HELLO_UPPERCASE.getBytes());
+        assertDoesNotThrow(() -> {
+            String results = grepApplication.grepFromStdin(VALID_PATTERN, true, false, false, inputStream);
+            assertEquals(HELLO_UPPERCASE + STRING_NEWLINE, results);
+        });
+    }
+
+    @Test
+    public void grepFromStdIn_CaseInsensitiveCountLines_ShouldReturnEmpty() throws Exception {
+        InputStream inputStream = new ByteArrayInputStream(HELLO_UPPERCASE.getBytes());
+        assertDoesNotThrow(() -> {
+            String results = grepApplication.grepFromStdin(VALID_PATTERN, true, true, false, inputStream);
+            assertEquals("1" + STRING_NEWLINE, results);
+        });
+    }
+
+    @Test
     public void grepFromFiles_NullPattern_ShouldThrowGrepException() {
         GrepException grepException = assertThrows(GrepException.class, () -> {
             grepApplication.grepFromFiles(null, false, false, false, TEST_FILE);
@@ -74,13 +116,68 @@ public class GrepApplicationTest {
     }
 
     @Test
-    public void grepFromStdIn_NoFlagsValidInputUppercase_ShouldReturnEmpty() throws Exception {
-        InputStream inputStream = new ByteArrayInputStream(HELLO_UPPERCASE.getBytes());
-        assertDoesNotThrow(() -> {
-            String results = grepApplication.grepFromStdin(VALID_PATTERN, false, false, false, inputStream);
-            assertEquals("", results);
-        });
+    void grepFromFiles_NonExistentFile_shouldThrowGrepException() throws GrepException {
+        try {
+            String actualOutput = grepApplication.grepFromFiles(VALID_PATTERN, false, false, false, "nonExistent.txt");
+            String errorMsg = String.format("%s: No such file or directory" + STRING_NEWLINE, "nonExistent.txt");
+            assertEquals(errorMsg, actualOutput);
+        } catch (Exception e) {
+            throw new GrepException(ERR_FILE_NOT_FOUND);
+        }
+    }
 
+    @Test
+    public void grepFromFiles_IsPrefixLowercase_ShouldReturnLinesResults() throws Exception {
+        BufferedWriter writer = Files.newBufferedWriter(path);
+        writer.write(HELLO_LOWERCASE);
+        writer.close();
 
+        String results  = grepApplication.grepFromFiles(VALID_PATTERN, false, false, true, TEST_FILE);
+
+        assertEquals(TEST_FILE + ": " + HELLO_LOWERCASE + STRING_NEWLINE, results);
+    }
+
+    @Test
+    public void grepFromFiles_IsPrefixLowercaseCaseInsensitive_ShouldReturnLinesResults() throws Exception {
+        BufferedWriter writer = Files.newBufferedWriter(path);
+        writer.write(HELLO_LOWERCASE);
+        writer.close();
+
+        String results  = grepApplication.grepFromFiles(VALID_PATTERN, true, false, true, TEST_FILE);
+
+        assertEquals(TEST_FILE + ": " + HELLO_LOWERCASE + STRING_NEWLINE, results);
+    }
+
+    @Test
+    public void grepFromFiles_CaseInsensitive_ShouldReturnLinesResults() throws Exception {
+        BufferedWriter writer = Files.newBufferedWriter(path);
+        writer.write(HELLO_UPPERCASE);
+        writer.close();
+
+        String results  = grepApplication.grepFromFiles(VALID_PATTERN, true, false, true, TEST_FILE);
+
+        assertEquals(TEST_FILE + ": " + HELLO_UPPERCASE + STRING_NEWLINE, results);
+    }
+
+    @Test
+    public void grepFromFiles_CountLinesUppercase_ShouldReturnZero() throws Exception {
+        BufferedWriter writer = Files.newBufferedWriter(path);
+        writer.write(HELLO_UPPERCASE);
+        writer.close();
+
+        String results  = grepApplication.grepFromFiles(VALID_PATTERN, false, true, false, TEST_FILE);
+
+        assertEquals(0 + STRING_NEWLINE, results);
+    }
+
+    @Test
+    void run_nullStdin_shouldThrowGrepException() {
+        assertThrows(GrepException.class, () -> grepApplication.run(new String[]{"hello world"}, null, System.out));
+    }
+
+    @Test
+    void run_validGrepFromFiles_shouldReturnGrepOutput() throws Exception {
+        grepApplication.run(new String[]{"hello world", String.valueOf(path)}, inputStream, stdout);
+        assertEquals(HELLO_LOWERCASE + STRING_NEWLINE, stdout.toString());
     }
 }

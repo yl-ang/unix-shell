@@ -32,7 +32,6 @@ public class GrepApplication implements GrepInterface {
     private static final int COUNT_INDEX = 1;
     private static final int PREFIX_FN_IDX = 2;
 
-
     @Override
     public String grepFromFiles(String pattern, Boolean isCaseInsensitive, Boolean isCountLines, Boolean isPrefixFileName, String... fileNames) throws AbstractApplicationException {
         // TODO: To implement -H flag print file name with output lines
