@@ -103,7 +103,7 @@ public class IORedirectionHandler {
                 if (arg.equals(String.valueOf(CHAR_REDIR_INPUT))) {
                     if (!Files.exists(path)) {
                         String errorMessage = String.format("%s %s %s", ERR_FILE_NOT_FOUND, CHAR_COLON, filePath);
-                        throw new FileNotFoundException(errorMessage);
+                        throw new ShellException(errorMessage);
                     }
                     IOUtils.closeInputStream(inputStream);
                     if (!inputStream.equals(origInputStream)) { // Already have a stream
