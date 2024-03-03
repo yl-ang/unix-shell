@@ -61,4 +61,9 @@ public class ErrorConstants {
     public static final String ERR_GENERAL = "Exception Caught";
     public static final String ERR_IO_EXCEPTION = "IOException";
 
+
+    // Cut related
+    public static final String ERR_MISSING_ARG = "Missing Argument";
+    public static final String ERR_NO_ARGS = "Insufficient arguments";
+
 }
