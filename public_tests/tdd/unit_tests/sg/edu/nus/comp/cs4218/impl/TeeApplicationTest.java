@@ -77,7 +77,7 @@ public class TeeApplicationTest {
         String[] fileNames = {"randomfilename.txt"};
 
         TeeException exception = assertThrows(TeeException.class, () -> teeApplication.teeFromStdin(false, inputTestFile, fileNames);
-        assertEquals(new TeeException(ERR_NULL_ARGS).getMessage(), exception.getMessage());
+        assertEquals(new TeeException(ERR_FILE_NOT_FOUND).getMessage(), exception.getMessage());
     }
 
     @Test
@@ -89,7 +89,7 @@ public class TeeApplicationTest {
     }
 
     @Test
-    void teeFromStdin_fileNoReadPermission_exception() throws IOException {
+    void teeFromStdin_fileNoWritePermission_exception() throws IOException {
         // create file without read permissions
         Set<PosixFilePermission> noReadPermission = PosixFilePermissions.fromString("--x--x--x");
         FileAttribute<?> permissions = PosixFilePermissions.asFileAttribute(noReadPermission);
