@@ -63,7 +63,7 @@ public class ErrorConstants {
 
 
     // Cut related
-    public static final String ERR_MISSING_ARG = "Missing Argument";
-    public static final String ERR_NO_ARGS = "Insufficient arguments";
+    public static final String ERR_BOTH_CHAR_AND_BYTE_FLAGS = "Choose only either -c or -b";
+    public static final String ERR_ZERO_POSITION_ARG = "Values may not include zero";
 
 }

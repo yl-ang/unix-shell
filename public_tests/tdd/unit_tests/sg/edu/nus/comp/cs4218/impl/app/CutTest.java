@@ -16,8 +16,7 @@ import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_STREAMS;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_TOO_MANY_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
 
 public class CutTest {
@@ -81,7 +80,15 @@ public class CutTest {
     void run_bothCharAndByteFlagGiven_tooManyArgsException() throws CutException {
         String[] args = {"-c", "-b"};
         CutException exception = assertThrows(CutException.class, () -> cutApplication.run(args, inputStdin, output));
-        assertEquals(new CutException(ERR_TOO_MANY_ARGS).getMessage(), exception.getMessage());
+        assertEquals(new CutException(ERR_BOTH_CHAR_AND_BYTE_FLAGS).getMessage(), exception.getMessage());
+    }
+
+
+    @Test
+    void run_zeroGivenAsPositionArg_exception() throws CutException {
+        String[] args = {"-c", "-b", "0", testFileName};
+        CutException exception = assertThrows(CutException.class, () -> cutApplication.run(args, inputStdin, output));
+        assertEquals(new CutException(ERR_ZERO_POSITION_ARG).getMessage(), exception.getMessage());
     }
 
     @Test
@@ -113,11 +120,6 @@ public class CutTest {
         assertEquals("12345\n12345\n", output.toString());
     }
 
-    @Test
-    void run_zeroGivenAsPositionArg_exception() throws CutException {
-        String[] args = {"-c", "-b"};
-        CutException exception = assertThrows(CutException.class, () -> cutApplication.run(args, inputStdin, output));
-        assertEquals(new CutException(ERR_TOO_MANY_ARGS).getMessage(), exception.getMessage());
-    }
+
 
 }
