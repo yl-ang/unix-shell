@@ -28,6 +28,18 @@ public class CutTest {
     private static final String TEST_FILENAME = "cutTestFile.txt";
     private static final String EMPTY_TEST_FILENAME = "cutEmptyTestFile.txt";
 
+    @BeforeAll
+    static void setUp() throws IOException {
+        inputStdin = System.in;
+
+        Path path = Paths.get(TEST_FILENAME);
+        String content = """
+                123456789
+                123456789
+                """;
+        Files.writeString(path, content);
+    }
+
     @BeforeEach
     void init() throws ShellException {
         cutApplication = mock(CutInterface.class);
@@ -42,18 +54,6 @@ public class CutTest {
     void done() throws ShellException {
         IOUtils.closeInputStream(inputTestFile);
         IOUtils.closeInputStream(inputEmptyTestFile);
-    }
-
-    @BeforeAll
-    static void setUp() throws IOException {
-        inputStdin = System.in;
-
-        Path path = Paths.get(TEST_FILENAME);
-        String content = """
-                123456789
-                123456789
-                """;
-        Files.writeString(path, content);
     }
 
     @AfterAll
@@ -154,7 +154,7 @@ public class CutTest {
         assertEquals(new CutException(ERR_RANGE_EMPTY).getMessage(), exception.getMessage());
     }
 
- 
+
     @Test
     void cutFromStdin_isBytePo_cutFromStdin() throws AbstractApplicationException {
         List<int[]> ranges = List.of(new int[]{3, 7});
