@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 
-public class CutTest {
+public class CutApplicationTest {
 
     private CutInterface cutApplication;
     private static InputStream inputStdin;
