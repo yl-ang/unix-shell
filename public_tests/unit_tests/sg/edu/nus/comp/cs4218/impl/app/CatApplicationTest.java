@@ -196,7 +196,7 @@ class CatApplicationTest {
     }
 
     @Test
-    void run_CatFileAndStdin_NullInputStream_ShouldThrowCatException() throws CatException {
+    void run_CatFileAndStdinNullInputStream_ShouldThrowCatException() throws CatException {
         // GIVEN
         CatApplication catApplication = new CatApplication();
         Boolean isLineNumber = true;
@@ -208,7 +208,7 @@ class CatApplicationTest {
     }
 
     @Test
-    void run_CatFileAndStdin_NoFileArguments_ShouldThrowCatException() throws CatException {
+    void run_CatFileAndStdinNoFileArguments_ShouldThrowCatException() throws CatException {
         // GIVEN
         CatApplication catApplication = new CatApplication();
         Boolean isLineNumber = true;
@@ -220,7 +220,7 @@ class CatApplicationTest {
     }
 
     @Test
-    void run_CatFiles_ExceptionDuringLineNumbering_ShouldThrowCatException() throws CatException {
+    void run_CatFilesExceptionDuringLineNumbering_ShouldThrowCatException() throws CatException {
         // GIVEN
         Boolean isLineNumber = true;
         String[] fileNames = {"file1.txt"};
@@ -239,7 +239,7 @@ class CatApplicationTest {
     }
 
     @Test
-    void run_CatFiles_ExceptionDuringFileReading_ShouldThrowCatException() throws CatException {
+    void run_CatFilesExceptionDuringFileReading_ShouldThrowCatException() throws CatException {
         // GIVEN
         Boolean isLineNumber = true;
         String[] fileNames = {"nonexistent.txt"};
@@ -250,7 +250,7 @@ class CatApplicationTest {
     }
 
     @Test
-    void run_CatStdin_NullArgs_ShouldThrowCatException() throws CatException {
+    void run_CatStdinNullArgs_ShouldThrowCatException() throws CatException {
         // GIVEN
         CatApplication catApplication = new CatApplication();
         Boolean isLineNumber = true;
@@ -261,7 +261,7 @@ class CatApplicationTest {
     }
 
     @Test
-    void run_CatStdin_NullInputStream_ShouldThrowCatException() throws CatException {
+    void run_CatStdinNullInputStream_ShouldThrowCatException() throws CatException {
         // GIVEN
         CatApplication catApplication = new CatApplication();
         Boolean isLineNumber = true;
@@ -272,7 +272,7 @@ class CatApplicationTest {
     }
 
     @Test
-    void run_catFiles_AddLineNumbers_ShouldNumberLines() throws Exception {
+    void run_catFilesAddLineNumbers_ShouldNumberLines() throws Exception {
         // GIVEN
         String[] args = {FILE1_PATH, FILE2_PATH};
         Boolean isLineNumber = true;
