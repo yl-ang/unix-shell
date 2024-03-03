@@ -25,17 +25,17 @@ public class TeeApplicationTest {
 
     private TeeInterface teeApplication;
     private InputStream inputStdin;
-    private OutputStream output;
+    private OutputStream outputStream;
 
-    private static final String TEST_OUTPUT_FILENAME = "teeOutputTestFile.txt";
+    private static final String OUTPUT_FILENAME = "teeOutputTestFile.txt";
 
-    private static final String TEST_FILENAME = "cutTestFile.txt";
-    private static Path testFilePath;
+    private static final String INPUT_FILENAME = "cutTestFile.txt";
+    private static Path outputFilePath;
 
     @BeforeAll
     static void setUp() throws IOException {
         // add contents into test file
-        Path path = Paths.get(TEST_FILENAME);
+        Path path = Paths.get(INPUT_FILENAME);
         String content = """
                 test tee
                 123456789
@@ -43,29 +43,30 @@ public class TeeApplicationTest {
         Files.writeString(path, content);
 
         // create output file
-        testFilePath = Paths.get(TEST_OUTPUT_FILENAME);
-        Files.createFile(testFilePath);
+        outputFilePath = Paths.get(OUTPUT_FILENAME);
+        Files.createFile(outputFilePath);
     }
 
     @BeforeEach
     void init() throws IOException, ShellException {
         teeApplication = mock(TeeInterface.class);
 
-        inputStdin = IOUtils.openInputStream(TEST_FILENAME);
+        inputStdin = IOUtils.openInputStream(INPUT_FILENAME);
 
-        output = new ByteArrayOutputStream();
+        Files.createFile(outputFilePath);
+
+        outputStream = new ByteArrayOutputStream();
     }
 
     @AfterEach
     void done() throws IOException, ShellException {
         IOUtils.closeInputStream(inputStdin);
+        Files.deleteIfExists(outputFilePath);
     }
 
     @AfterAll
     static void teardown() throws IOException {
-        Files.deleteIfExists(testFilePath);
-
-        Path path = Paths.get(TEST_FILENAME);
+        Path path = Paths.get(INPUT_FILENAME);
         Files.deleteIfExists(path);
     }
 
@@ -75,14 +76,6 @@ public class TeeApplicationTest {
 
         TeeException exception = assertThrows(TeeException.class, () -> teeApplication.teeFromStdin(false, inputStdin, fileNames);
         assertEquals(new TeeException(ERR_NULL_ARGS).getMessage(), exception.getMessage());
-    }
-
-    @Test
-    void teeFromStdin_fileNotFound_exception() {
-        String[] fileNames = {"randomfilename.txt"};
-
-        TeeException exception = assertThrows(TeeException.class, () -> teeApplication.teeFromStdin(false, inputStdin, fileNames);
-        assertEquals(new TeeException(ERR_FILE_NOT_FOUND).getMessage(), exception.getMessage());
     }
 
     @Test
@@ -117,7 +110,7 @@ public class TeeApplicationTest {
 
     @Test
     void teeFromStdin_stdinIsNull_exception() {
-        String[] fileNames = {TEST_OUTPUT_FILENAME};
+        String[] fileNames = {OUTPUT_FILENAME};
 
         TeeException exception = assertThrows(TeeException.class, () -> teeApplication.teeFromStdin(false, null, fileNames);
         assertEquals(new TeeException(ERR_NULL_ARGS).getMessage(), exception.getMessage());
@@ -125,53 +118,87 @@ public class TeeApplicationTest {
 
 
     @Test
-    void teeFromStdin_isAppendFalse_fileWithContentGetsOverridden() throws AbstractApplicationException, IOException {
-        Path path = Paths.get(TEST_OUTPUT_FILENAME);
+    void teeFromStdin_isAppendFalse_inputIsReturnedAndFileWithContentGetsOverridden() throws AbstractApplicationException, IOException {
+            Path path = Paths.get(OUTPUT_FILENAME);
         String content = """
                 123456789
                 123456789
                 """;
         Files.writeString(path, content);
 
-        String[] fileNames = {TEST_OUTPUT_FILENAME};
+        String[] fileNames = {OUTPUT_FILENAME};
 
-        teeApplication.teeFromStdin(false, inputStdin, fileNames);
-        assertEquals("test tee\n123456789\n", output.toString());
+        String output = teeApplication.teeFromStdin(false, inputStdin, fileNames);
+
+        // check output
+        assertEquals("test tee\n123456789\n", output);
+
+        // check file changed
+        String result = new String(Files.readAllBytes(outputFilePath));
+        assertEquals("test tee\n123456789\n", result);
     }
 
     @Test
-    void teeFromStdin_isAppendFTrue_fileWithContentGetsAppended() throws AbstractApplicationException, IOException {
-        Path path = Paths.get(TEST_OUTPUT_FILENAME);
+    void teeFromStdin_isAppendTrue_inputIsReturnedAndFileWithContentGetsAppended() throws AbstractApplicationException, IOException {
+        Path path = Paths.get(OUTPUT_FILENAME);
         String content = """
                 123456789
                 123456789
                 """;
         Files.writeString(path, content);
 
-        String[] fileNames = {TEST_OUTPUT_FILENAME};
+        String[] fileNames = {OUTPUT_FILENAME};
 
-        teeApplication.teeFromStdin(false, inputStdin, fileNames);
-        assertEquals("123456789\n123456789\ntest tee\n123456789\n", output.toString());
+        String output = teeApplication.teeFromStdin(true, inputStdin, fileNames);
+
+        // check output
+        assertEquals("test tee\n123456789\n", output);
+
+        // check file changed
+        String result = new String(Files.readAllBytes(outputFilePath));
+        assertEquals("123456789\n123456789\ntest tee\n123456789\n", result);
     }
-
-
 
     @Test
-    void run_bothCharAndByteFlagGiven_tooManyArgsException() throws TeeException {
-        String[] args = {"-c", "-b"};
+    void teeFromStdin_multipleFileNames_allFilesUpdated() throws AbstractApplicationException, IOException {
+        String secondFile = "secondFile.txt";
+        String[] fileNames = {OUTPUT_FILENAME, secondFile};
 
-        TeeException exception = assertThrows(TeeException.class, () -> teeApplication.run(args, inputStdin, output));
-        assertEquals(new TeeException(ERR_BOTH_CHAR_AND_BYTE_FLAGS_PRESENT).getMessage(), exception.getMessage());
+        String output = teeApplication.teeFromStdin(false, inputStdin, fileNames);
+
+        // check output
+        assertEquals("test tee\n123456789\n", output);
+
+        // check file changed
+        String result = new String(Files.readAllBytes(outputFilePath));
+        assertEquals("test tee\n123456789\n", result);
+
+        Path path = Paths.get(secondFile);
+        String result2 = new String(Files.readAllBytes(path));
+        assertEquals("test tee\n123456789\n", result2);
     }
-
 
     @Test
-    void run_zeroGivenAsPositionArg_exception() {
-        String[] args = {"-c", "-b", "0", TEST_OUTPUT_FILENAME};
+    void teeFromStdin_noFilesGiven_noOutput() throws AbstractApplicationException, IOException {
+        String[] fileNames = {};
 
-        TeeException exception = assertThrows(TeeException.class, () -> teeApplication.run(args, inputStdin, output));
-        assertEquals(new TeeException(ERR_ZERO_POSITION_ARG).getMessage(), exception.getMessage());
+        String output = teeApplication.teeFromStdin(false, inputStdin, fileNames);
+
+        assertEquals("", output);
     }
 
+    @Test
+    void run_isAppendFalse_inputIsShownOnStdoutAndFileWithContentGetsAppended() throws IOException, AbstractApplicationException {
+        String[] args = {OUTPUT_FILENAME};
+
+        teeApplication.run(args, inputStdin, outputStream); // lines words bytes
+
+        // check output
+        assertEquals("test tee\n123456789\n", outputStream.toString());
+
+        // check file changed
+        String result = new String(Files.readAllBytes(outputFilePath));
+        assertEquals("test tee\n123456789\n", result);
+    }
 
 }
