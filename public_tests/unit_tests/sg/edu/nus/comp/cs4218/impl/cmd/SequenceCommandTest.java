@@ -167,6 +167,7 @@ public class SequenceCommandTest {
         assertTrue(outputResult.isEmpty());
     }
 
+    //Test written uncovered a bug, which has been fixed
     @Test
     void evaluate_GivenNullStdOut_ShouldThrowShellException() {
         //GIVEN
@@ -181,6 +182,7 @@ public class SequenceCommandTest {
         assertEquals(exceptionMsg.getMessage(), thrown.getMessage());
     }
 
+    //Test written uncovered a bug, which has been fixed
     @Test
     void evaluate_GivenNullStdIn_ShouldThrowShellException() {
         //GIVEN
