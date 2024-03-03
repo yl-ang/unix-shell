@@ -47,8 +47,16 @@ public class IORedirectionHandler {
 
         // extract redirection operators (with their corresponding files) from argsList
         ListIterator<String> argsIterator = argsList.listIterator();
+        boolean hasInputRedir = false;
+        boolean hasOutputRedir = false;
         while (argsIterator.hasNext()) {
             String arg = argsIterator.next();
+
+            if (arg.equals(String.valueOf(CHAR_REDIR_INPUT))) {
+                hasInputRedir = true;
+            } else if (arg.equals(String.valueOf(CHAR_REDIR_OUTPUT))) {
+                hasOutputRedir = true;
+            }
 
             // leave the other args untouched
             if (!isRedirOperator(arg)) {
@@ -56,15 +64,30 @@ public class IORedirectionHandler {
             } else {
                 // fast forward to last item
                 while (argsIterator.hasNext()) {
-                    argsIterator.next();
+                    String temp = argsIterator.next();
+                    if (hasInputRedir && temp.equals(String.valueOf(CHAR_REDIR_OUTPUT))) {
+                        throw new ShellException(ERR_SYNTAX);
+                    } else if (hasOutputRedir && temp.equals(String.valueOf(CHAR_REDIR_INPUT))) {
+                        throw new ShellException(ERR_SYNTAX);
+                    }
                 }
-                // move the iterator back one step
-                argsIterator.previous();
-                argsIterator.previous();
-                if (!isRedirOperator(argsIterator.next())) {
+
+                while (argsIterator.hasPrevious()) {
+                    String item = argsIterator.previous();
+                    if (isRedirOperator(item)) {
+                        break;
+                    }
+                }
+
+                if (!argsIterator.hasNext()) {
                     throw new ShellException(ERR_SYNTAX);
                 }
+
                 String file = argsIterator.next();
+
+                while (argsIterator.hasNext()) {
+                    file = argsIterator.next();
+                }
 
                 // handle quoting + globing + command substitution in file arg
                 List<String> fileSegment = argumentResolver.resolveOneArgument(file);
@@ -74,8 +97,14 @@ public class IORedirectionHandler {
                 }
                 file = fileSegment.get(0);
 
+                String filePath = Environment.currentDirectory + CHAR_FILE_SEP + file;
+                Path path = Paths.get(filePath);
                 // replace existing inputStream / outputStream
                 if (arg.equals(String.valueOf(CHAR_REDIR_INPUT))) {
+                    if (!Files.exists(path)) {
+                        String errorMessage = String.format("%s %s %s", ERR_FILE_NOT_FOUND, CHAR_COLON, filePath);
+                        throw new FileNotFoundException(errorMessage);
+                    }
                     IOUtils.closeInputStream(inputStream);
                     if (!inputStream.equals(origInputStream)) { // Already have a stream
                         throw new ShellException(ERR_MULTIPLE_STREAMS);
@@ -87,8 +116,7 @@ public class IORedirectionHandler {
                     if (!outputStream.equals(origOutputStream)) { // Already have a stream
                         throw new ShellException(ERR_MULTIPLE_STREAMS);
                     }
-                    String filePath = Environment.currentDirectory + CHAR_FILE_SEP + file;
-                    createFileIfNotExists(filePath);
+                    createFileIfNotExists(path);
                     outputStream = IOUtils.openOutputStream(file);
                 }
                 break;
@@ -111,8 +139,7 @@ public class IORedirectionHandler {
         return str.equals(String.valueOf(CHAR_REDIR_INPUT)) || str.equals(String.valueOf(CHAR_REDIR_OUTPUT));
     }
 
-    private void createFileIfNotExists(String filePath) throws FileNotFoundException {
-        Path path = Paths.get(filePath);
+    private void createFileIfNotExists(Path path) throws FileNotFoundException {
         try {
             // Check if the file exists
             if (!Files.exists(path)) {
