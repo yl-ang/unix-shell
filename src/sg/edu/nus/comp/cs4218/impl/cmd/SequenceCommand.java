@@ -13,6 +13,8 @@ import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.List;
 
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ISTREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 /**
@@ -32,6 +34,13 @@ public class SequenceCommand implements Command {
             throws AbstractApplicationException, ShellException, FileNotFoundException {
         ExitException exitException = null;
         List<String> outputLines = new LinkedList<>();
+
+        if (stdout == null) {
+            throw new ShellException(ERR_NO_OSTREAM);
+        }
+        if (stdin == null) {
+            throw new ShellException(ERR_NO_ISTREAM);
+        }
 
         for (Command command : commands) {
             try {
