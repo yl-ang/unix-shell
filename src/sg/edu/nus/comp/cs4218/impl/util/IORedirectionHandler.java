@@ -88,18 +88,7 @@ public class IORedirectionHandler {
                         throw new ShellException(ERR_MULTIPLE_STREAMS);
                     }
                     String filePath = Environment.currentDirectory + CHAR_FILE_SEP + file;
-                    Path path = Paths.get(filePath);
-                    try {
-                        // Check if the file exists
-                        if (!Files.exists(path)) {
-                            // If the file doesn't exist, create it
-                            Files.createFile(path);
-                        }
-                    } catch (IOException e) {
-                        // Handle potential IO exceptions
-                        String errorMessage = String.format("%s %s %s", ERR_FILE_NOT_FOUND, CHAR_COLON, e.getMessage());
-                        throw new FileNotFoundException(errorMessage);
-                    }
+                    createFileIfNotExists(filePath);
                     outputStream = IOUtils.openOutputStream(file);
                 }
                 break;
@@ -120,5 +109,20 @@ public class IORedirectionHandler {
 
     private boolean isRedirOperator(String str) {
         return str.equals(String.valueOf(CHAR_REDIR_INPUT)) || str.equals(String.valueOf(CHAR_REDIR_OUTPUT));
+    }
+
+    private void createFileIfNotExists(String filePath) throws FileNotFoundException {
+        Path path = Paths.get(filePath);
+        try {
+            // Check if the file exists
+            if (!Files.exists(path)) {
+                // If the file doesn't exist, create it
+                Files.createFile(path);
+            }
+        } catch (IOException e) {
+            // Handle potential IO exceptions
+            String errorMessage = String.format("%s %s %s", ERR_FILE_NOT_FOUND, CHAR_COLON, e.getMessage());
+            throw new FileNotFoundException(errorMessage);
+        }
     }
 }
