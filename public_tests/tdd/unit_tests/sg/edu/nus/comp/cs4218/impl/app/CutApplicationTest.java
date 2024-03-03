@@ -16,6 +16,7 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.List;
 import java.util.Set;
+import java.util.spi.AbstractResourceBundleProvider;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -134,6 +135,69 @@ public class CutApplicationTest {
         Files.deleteIfExists(filePath);
     }
 
+    @Test
+    void cutFromFiles_jsonFile_cutFromJsonFile() throws IOException, AbstractApplicationException {
+        // create json file
+        String jsonFileName = "cutTestFile.json";
+        Path path = Paths.get(jsonFileName);
+        String jsonContent = """
+                {
+                  "name": "John Doe",
+                  "age": 30,
+                  "city": "New York"
+                }
+                """;
+
+        // input args
+        List<int[]> ranges = List.of(new int[]{1, 5});
+        String[] fileNames = {jsonFileName};
+
+        // then
+        Files.writeString(path, jsonContent);
+
+        cutApplication.cutFromFiles(true, false, ranges, fileNames);
+        assertEquals("{\n" +
+                "  \"na\n" +
+                "  \"ag\n" +
+                "  \"ci\n" +
+                "}\n", output.toString());
+
+        // remove file
+        Files.deleteIfExists(path);
+    }
+
+    @Test
+    void cutFromFiles_xmlFile_cutFromXMLFile() throws IOException, AbstractApplicationException {
+        // create json file
+        String xmlFileName = "cutTestFile.xml";
+        Path path = Paths.get(xmlFileName);
+        String xmlContent = """
+                <?xml version="1.0"?>
+                <user>
+                  <name>John Doe</name>
+                  <age>30</age>
+                  <city>New York</city>
+                </user>
+                """;
+
+        // input args
+        List<int[]> ranges = List.of(new int[]{1, 5});
+        String[] fileNames = {xmlFileName};
+
+        // then
+        Files.writeString(path, xmlContent);
+
+        cutApplication.cutFromFiles(true, false, ranges, fileNames);
+        assertEquals("<?xml\n" +
+                "<user\n" +
+                "    <\n" +
+                "    <\n" +
+                "    <\n" +
+                "</use", output.toString());
+
+        // remove file
+        Files.deleteIfExists(path);
+    }
 
     @Test
     void cutFromFiles_fileIsEmpty_noOutput() throws AbstractApplicationException {
@@ -143,6 +207,7 @@ public class CutApplicationTest {
         cutApplication.cutFromFiles(true, false, ranges, fileNames);
         assertEquals("", output.toString());
     }
+
 
     @Test
     void cutFromFiles_isCharPoAndFileNameGiven_cutFromFile() throws AbstractApplicationException {
