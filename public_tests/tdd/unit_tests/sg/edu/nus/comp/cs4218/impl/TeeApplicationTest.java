@@ -1,4 +1,4 @@
-package tdd.unit_tests.sg.edu.nus.comp.cs4218.impl.app;
+package tdd.unit_tests.sg.edu.nus.comp.cs4218.impl;
 
 import org.junit.jupiter.api.*;
 import sg.edu.nus.comp.cs4218.app.TeeInterface;
@@ -14,7 +14,6 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
-import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,7 +27,6 @@ public class TeeApplicationTest {
     private OutputStream outputStream;
 
     private static final String OUTPUT_FILENAME = "teeOutputTestFile.txt";
-
     private static final String INPUT_FILENAME = "cutTestFile.txt";
     private static Path outputFilePath;
 
@@ -74,7 +72,7 @@ public class TeeApplicationTest {
     void teeFromStdin_nullFileNameGiven_exception() {
         String[] fileNames = {null};
 
-        TeeException exception = assertThrows(TeeException.class, () -> teeApplication.teeFromStdin(false, inputStdin, fileNames);
+        TeeException exception = assertThrows(TeeException.class, () -> teeApplication.teeFromStdin(false, inputStdin, fileNames));
         assertEquals(new TeeException(ERR_NULL_ARGS).getMessage(), exception.getMessage());
     }
 
@@ -106,20 +104,26 @@ public class TeeApplicationTest {
         Files.deleteIfExists(filePath);
     }
 
-
-
     @Test
     void teeFromStdin_stdinIsNull_exception() {
         String[] fileNames = {OUTPUT_FILENAME};
 
-        TeeException exception = assertThrows(TeeException.class, () -> teeApplication.teeFromStdin(false, null, fileNames);
+        TeeException exception = assertThrows(TeeException.class, () -> teeApplication.teeFromStdin(false, null, fileNames));
+        assertEquals(new TeeException(ERR_NULL_ARGS).getMessage(), exception.getMessage());
+    }
+
+    @Test
+    void teeFromStdin_isAppendIsNull_exception() {
+        String[] fileNames = {OUTPUT_FILENAME};
+
+        TeeException exception = assertThrows(TeeException.class, () -> teeApplication.teeFromStdin(null, inputStdin, fileNames));
         assertEquals(new TeeException(ERR_NULL_ARGS).getMessage(), exception.getMessage());
     }
 
 
     @Test
     void teeFromStdin_isAppendFalse_inputIsReturnedAndFileWithContentGetsOverridden() throws AbstractApplicationException, IOException {
-            Path path = Paths.get(OUTPUT_FILENAME);
+        Path path = Paths.get(OUTPUT_FILENAME);
         String content = """
                 123456789
                 123456789
@@ -188,17 +192,24 @@ public class TeeApplicationTest {
     }
 
     @Test
-    void run_isAppendFalse_inputIsShownOnStdoutAndFileWithContentGetsAppended() throws IOException, AbstractApplicationException {
-        String[] args = {OUTPUT_FILENAME};
+    void run_isAppendTrue_inputIsShownOnStdoutAndFileWithContentGetsAppended() throws IOException, AbstractApplicationException {
+        Path path = Paths.get(OUTPUT_FILENAME);
+        String content = """
+                123456789
+                123456789
+                """;
+        Files.writeString(path, content);
 
-        teeApplication.run(args, inputStdin, outputStream); // lines words bytes
+        String[] args = {"-a", OUTPUT_FILENAME};
+
+        teeApplication.run(args, inputStdin, outputStream);
 
         // check output
         assertEquals("test tee\n123456789\n", outputStream.toString());
 
         // check file changed
         String result = new String(Files.readAllBytes(outputFilePath));
-        assertEquals("test tee\n123456789\n", result);
+        assertEquals("123456789\n123456789\ntest tee\n123456789\n", result);
     }
 
 }
