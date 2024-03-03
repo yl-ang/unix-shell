@@ -11,7 +11,11 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -29,7 +33,7 @@ public class CutTest {
     private static final String EMPTY_TEST_FILENAME = "cutEmptyTestFile.txt";
 
     @BeforeAll
-    static void setup() throws IOException {
+    static void setUp() throws IOException {
         inputStdin = System.in;
 
         Path path = Paths.get(TEST_FILENAME);
@@ -90,6 +94,46 @@ public class CutTest {
         CutException exception = assertThrows(CutException.class, () -> cutApplication.cutFromFiles(true, false, ranges, fileNames));
         assertEquals(new CutException(ERR_RANGE_EMPTY).getMessage(), exception.getMessage());
     }
+
+    @Test
+    void cutFromFiles_fileNotFound_exception() {
+        List<int[]> ranges = List.of(new int[]{3, 7});
+        String[] fileNames = {"randomfilename.txt"};
+
+        CutException exception = assertThrows(CutException.class, () -> cutApplication.cutFromFiles(true, false, ranges, fileNames));
+        assertEquals(new CutException(ERR_FILE_NOT_FOUND).getMessage(), exception.getMessage());
+    }
+
+    @Test
+    void cutFromFiles_fileNameIsDirectory_exception() {
+        List<int[]> ranges = List.of(new int[]{3, 7});
+        String[] fileNames = {"src"};
+
+        CutException exception = assertThrows(CutException.class, () -> cutApplication.cutFromFiles(true, false, ranges, fileNames));
+        assertEquals(new CutException(ERR_IS_DIR).getMessage(), exception.getMessage());
+    }
+
+    @Test
+    void cutFromFiles_fileNoReadPermission_exception() throws IOException {
+        // create file without read permissions
+        Set<PosixFilePermission> noReadPermission = PosixFilePermissions.fromString("--x--x--x");
+        FileAttribute<?> permissions = PosixFilePermissions.asFileAttribute(noReadPermission);
+        String fileName = "fileWithNoReadPermissions.txt";
+        Path filePath = Paths.get(fileName);
+        Files.createFile(filePath, permissions);
+
+        // input args
+        List<int[]> ranges = List.of(new int[]{3, 7});
+        String[] fileNames = {fileName};
+
+        // then
+        CutException exception = assertThrows(CutException.class, () -> cutApplication.cutFromFiles(true, false, ranges, fileNames));
+        assertEquals(new CutException(ERR_NO_PERM).getMessage(), exception.getMessage());
+
+        // remove file
+        Files.deleteIfExists(filePath);
+    }
+
 
     @Test
     void cutFromFiles_fileIsEmpty_noOutput() throws AbstractApplicationException {
