@@ -20,7 +20,7 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 public class CutTest {
 
     private CutInterface cutApplication;
-    private InputStream inputStdin;
+    private static InputStream inputStdin;
     private InputStream inputTestFile;
     private InputStream inputEmptyTestFile;
     private OutputStream output;
@@ -32,9 +32,9 @@ public class CutTest {
     void init() throws ShellException {
         cutApplication = mock(CutInterface.class);
 
-        inputStdin = System.in;
         inputTestFile = IOUtils.openInputStream(TEST_FILENAME);
         inputEmptyTestFile = IOUtils.openInputStream(EMPTY_TEST_FILENAME);
+
         output = new ByteArrayOutputStream();
     }
 
@@ -46,6 +46,8 @@ public class CutTest {
 
     @BeforeAll
     static void setUp() throws IOException {
+        inputStdin = System.in;
+
         Path path = Paths.get(TEST_FILENAME);
         String content = """
                 123456789
@@ -58,10 +60,13 @@ public class CutTest {
     static void teardown() throws IOException {
         Path path = Paths.get(TEST_FILENAME);
         Files.deleteIfExists(path);
+
+        path = Paths.get(EMPTY_TEST_FILENAME);
+        Files.deleteIfExists(path);
     }
 
     @Test
-    void cutFromFiles_bothCharFlagAndByteFlagIsFalse_exception() {
+    void cutFromFiles_bothIsCharPoAndIsBytePoIsFalse_exception() {
         List<int[]> ranges = List.of(new int[]{3, 7});
         String[] fileNames = {TEST_FILENAME};
 
@@ -90,37 +95,50 @@ public class CutTest {
     void cutFromFiles_fileIsEmpty_noOutput() throws AbstractApplicationException {
         List<int[]> ranges = List.of(new int[]{3, 7});
         String[] fileNames = {EMPTY_TEST_FILENAME};
+
         cutApplication.cutFromFiles(true, false, ranges, fileNames);
         assertEquals("", output.toString());
     }
 
     @Test
-    void cutFromFiles_charFlagAndFileNameGiven_cutFromFile() throws AbstractApplicationException {
+    void cutFromFiles_isCharPoAndFileNameGiven_cutFromFile() throws AbstractApplicationException {
         List<int[]> ranges = List.of(new int[]{3, 7});
         String[] fileNames = {TEST_FILENAME};
+
         cutApplication.cutFromFiles(true, false, ranges, fileNames);
-        assertEquals("34567\n", output.toString());
+        assertEquals("34567\n34567\n", output.toString());
     }
 
     @Test
-    void cutFromFiles_byteFlagAndfileNamesGiven_cutFromAllFiles() throws AbstractApplicationException {
+    void cutFromFiles_isBytePoSameStartAndEndIndexInRange_cutFromFile() throws AbstractApplicationException {
+        List<int[]> ranges = List.of(new int[]{3, 3});
+        String[] fileNames = {TEST_FILENAME};
+
+        cutApplication.cutFromFiles(false, true, ranges, fileNames);
+        assertEquals("3\n3\n", output.toString());
+    }
+
+    @Test
+    void cutFromFiles_isBytePoAndFileNamesGiven_cutFromAllFiles() throws AbstractApplicationException {
         List<int[]> ranges = List.of(new int[]{3, 7});
         String[] fileNames = {TEST_FILENAME, TEST_FILENAME};
+
         cutApplication.cutFromFiles(false, true, ranges, fileNames);
-        assertEquals("34567\n34567\n", output.toString());
+        assertEquals("34567\n34567\n34567\n34567\n", output.toString());
     }
 
     @Test
     void cutFromFiles_listOfRangeGiven_outputCutInSequenceOfIndex() throws AbstractApplicationException {
         List<int[]> ranges = List.of(new int[]{5, 7}, new int[]{1, 3});
         String[] fileNames = {TEST_FILENAME};
+
         cutApplication.cutFromFiles(false, true, ranges, fileNames);
-        assertEquals("34567\n", output.toString());
+        assertEquals("123567\n123567\n", output.toString());
     }
 
 
     @Test
-    void cutFromStdin_bothCharFlagAndByteFlagIsFalse_exception() {
+    void cutFromStdin_bothIsCharPoAndIsBytePoIsFalse_exception() {
         List<int[]> ranges = List.of(new int[]{3, 7});
 
         CutException exception = assertThrows(CutException.class, () -> cutApplication.cutFromStdin(false, false, ranges, inputTestFile));
@@ -138,33 +156,43 @@ public class CutTest {
 
 
     @Test
-    void cutFromStdin_byteFlag_cutFromStdin() throws AbstractApplicationException {
+    void cutFromStdin_isBytePo_cutFromStdin() throws AbstractApplicationException {
         List<int[]> ranges = List.of(new int[]{3, 7});
 
         cutApplication.cutFromStdin(false, true, ranges, inputTestFile);
-        assertEquals("34567\n", output.toString());
+        assertEquals("34567\n34567\n", output.toString());
     }
 
     @Test
-    void cutFromStdin_listOfRangeGiven_outputCutInSequenceOfIndex() throws AbstractApplicationException {
-        List<int[]> ranges = List.of(new int[]{5, 7}, new int[]{1, 3});
-        String[] fileNames = {TEST_FILENAME};
+    void cutFromStdin_isBytePoSameStartAndEndIndexInRange_cutFromStdin() throws AbstractApplicationException {
+        List<int[]> ranges = List.of(new int[]{3, 3});
+
         cutApplication.cutFromStdin(false, true, ranges, inputTestFile);
-        assertEquals("34567\n", output.toString());
+        assertEquals("3\n3\n", output.toString());
+    }
+
+    @Test
+    void cutFromStdin_isCharPoAndListOfRangeGiven_outputCutInSequenceOfIndex() throws AbstractApplicationException {
+        List<int[]> ranges = List.of(new int[]{5, 7}, new int[]{1, 3});
+
+        cutApplication.cutFromStdin(true, false, ranges, inputTestFile);
+        assertEquals("123567\n123567\n", output.toString());
     }
 
 
     @Test
     void run_bothCharAndByteFlagGiven_tooManyArgsException() throws CutException {
         String[] args = {"-c", "-b"};
+
         CutException exception = assertThrows(CutException.class, () -> cutApplication.run(args, inputStdin, output));
         assertEquals(new CutException(ERR_BOTH_CHAR_AND_BYTE_FLAGS_PRESENT).getMessage(), exception.getMessage());
     }
 
 
     @Test
-    void run_zeroGivenAsPositionArg_exception() throws CutException {
+    void run_zeroGivenAsPositionArg_exception() {
         String[] args = {"-c", "-b", "0", TEST_FILENAME};
+
         CutException exception = assertThrows(CutException.class, () -> cutApplication.run(args, inputStdin, output));
         assertEquals(new CutException(ERR_ZERO_POSITION_ARG).getMessage(), exception.getMessage());
     }
@@ -172,30 +200,76 @@ public class CutTest {
     @Test
     void run_charFlagGivenWithOneFilename_cutByCharFromFile() throws AbstractApplicationException {
         String[] args = {"-c", "1-5", TEST_FILENAME};
+
         cutApplication.run(args, inputStdin, output);
-        assertEquals("12345\n", output.toString());
+        assertEquals("12345\n12345\n", output.toString());
     }
 
 
     @Test
     void run_charFlagGivenWithFilenames_cutByCharFromFiles() throws AbstractApplicationException {
         String[] args = {"-c", "1-5", TEST_FILENAME, TEST_FILENAME};
+
         cutApplication.run(args, inputStdin, output);
-        assertEquals("12345\n12345\n", output.toString());
+        assertEquals("12345\n12345\n12345\n12345\n", output.toString());
     }
 
     @Test
     void run_charFlagNoFilenames_cutByCharFromStdin() throws AbstractApplicationException {
         String[] args = {"-c", "1-5"};
-        cutApplication.run(args, inputStdin, output);
-        assertEquals("12345\n", output.toString());
+
+        cutApplication.run(args, inputTestFile, output);
+        assertEquals("12345\n12345\n", output.toString());
     }
 
     @Test
     void run_byteFlagWithFilenamesAndDash_cutByByteFromFilesAndStdin() throws AbstractApplicationException {
         String[] args = {"-b", "1-5", TEST_FILENAME, "-"};
-        cutApplication.run(args, inputStdin, output);
+
+        cutApplication.run(args, inputTestFile, output);
+        assertEquals("12345\n12345\n12345\n12345\n", output.toString());
+    }
+
+    @Test
+    void run_byteFlagWithTwoDash_cutByByteFromStdinOnlyOnce() throws AbstractApplicationException {
+        String[] args = {"-b", "1-5", "-", "-"};
+
+        cutApplication.run(args, inputTestFile, output);
         assertEquals("12345\n12345\n", output.toString());
+    }
+
+
+    @Test
+    void run_rangeEndIndexLongerThanFileContent_cutUntilEndOfContent() throws AbstractApplicationException {
+        String[] args = {"-b", "1-100", TEST_FILENAME};
+
+        cutApplication.run(args, inputTestFile, output);
+        assertEquals("123456789\n123456789\n", output.toString());
+    }
+
+
+    @Test
+    void run_rangeNoStartIndex_cutFromStartOfFileUntilEndIndex() throws AbstractApplicationException {
+        String[] args = {"-b", "-5", TEST_FILENAME};
+
+        cutApplication.run(args, inputTestFile, output);
+        assertEquals("12345\n12345\n", output.toString());
+    }
+
+    @Test
+    void run_commaSeparatedNumber_cutAllInvidiualNumbers() throws AbstractApplicationException {
+        String[] args = {"-b", "1,3,5", TEST_FILENAME};
+
+        cutApplication.run(args, inputTestFile, output);
+        assertEquals("135\n135\n", output.toString());
+    }
+
+    @Test
+    void run_twoRanges_cutAllInvidiualNumbers() throws AbstractApplicationException {
+        String[] args = {"-b", "1-5", "7-9", TEST_FILENAME};
+
+        cutApplication.run(args, inputTestFile, output);
+        assertEquals("12345789\n12345789\n", output.toString());
     }
 
 
