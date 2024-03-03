@@ -63,9 +63,6 @@
                         <include>**/*Test.java</include>
                         <include>**/*IT.java</include>
                     </includes>
-                    <excludes>
-                        <exclude>**/tdd/**/*Test.java</exclude>
-                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
