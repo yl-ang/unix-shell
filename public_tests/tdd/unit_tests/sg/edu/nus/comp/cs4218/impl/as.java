@@ -66,25 +66,28 @@ public class TeeApplicationTest {
 
     @Test
     void teeFromStdin_nullFileNameGiven_exception() {
-        String[] fileNames = {null};
+        List<int[]> ranges = List.of(new int[]{3, 7});
 
-        TeeException exception = assertThrows(TeeException.class, () -> teeApplication.teeFromStdin(false, inputTestFile, fileNames);
+        TeeException exception = assertThrows(TeeException.class, () -> teeApplication.teeFromStdin(true, false, ranges, null));
         assertEquals(new TeeException(ERR_NULL_ARGS).getMessage(), exception.getMessage());
     }
 
+
     @Test
     void teeFromStdin_fileNotFound_exception() {
+        List<int[]> ranges = List.of(new int[]{3, 7});
         String[] fileNames = {"randomfilename.txt"};
 
-        TeeException exception = assertThrows(TeeException.class, () -> teeApplication.teeFromStdin(false, inputTestFile, fileNames);
-        assertEquals(new TeeException(ERR_NULL_ARGS).getMessage(), exception.getMessage());
+        TeeException exception = assertThrows(TeeException.class, () -> teeApplication.teeFromStdin(true, false, ranges, fileNames));
+        assertEquals(new TeeException(ERR_FILE_NOT_FOUND).getMessage(), exception.getMessage());
     }
 
     @Test
     void teeFromStdin_fileNameIsDirectory_exception() {
+        List<int[]> ranges = List.of(new int[]{3, 7});
         String[] fileNames = {"src"};
 
-        TeeException exception = assertThrows(TeeException.class, () -> teeApplication.teeFromStdin(true, inputTestFile, fileNames));
+        TeeException exception = assertThrows(TeeException.class, () -> teeApplication.teeFromStdin(true, false, ranges, fileNames));
         assertEquals(new TeeException(ERR_IS_DIR).getMessage(), exception.getMessage());
     }
 
@@ -102,7 +105,7 @@ public class TeeApplicationTest {
         String[] fileNames = {fileName};
 
         // then
-        TeeException exception = assertThrows(TeeException.class, () -> teeApplication.teeFromStdin(true, inputTestFile, fileNames));
+        TeeException exception = assertThrows(TeeException.class, () -> teeApplication.teeFromStdin(true, false, ranges, fileNames));
         assertEquals(new TeeException(ERR_NO_PERM).getMessage(), exception.getMessage());
 
         // remove file
@@ -115,7 +118,7 @@ public class TeeApplicationTest {
         List<int[]> ranges = List.of(new int[]{3, 7});
         String[] fileNames = {EMPTY_TEST_OUTPUT_FILENAME};
 
-        teeApplication.teeFromStdin(true, inputTestFile, fileNames);
+        teeApplication.teeFromStdin(true, false, ranges, fileNames);
         assertEquals("", output.toString());
     }
 
@@ -124,7 +127,7 @@ public class TeeApplicationTest {
         List<int[]> ranges = List.of(new int[]{3, 7});
         String[] fileNames = {TEST_OUTPUT_FILENAME};
 
-        teeApplication.teeFromStdin(true, inputTestFile, fileNames);
+        teeApplication.teeFromStdin(true, false, ranges, fileNames);
         assertEquals("34567\n34567\n", output.toString());
     }
 
@@ -133,7 +136,7 @@ public class TeeApplicationTest {
         List<int[]> ranges = List.of(new int[]{3, 3});
         String[] fileNames = {TEST_OUTPUT_FILENAME};
 
-        teeApplication.teeFromStdin(false, inputTestFile, fileNames);
+        teeApplication.teeFromStdin(false, true, ranges, fileNames);
         assertEquals("3\n3\n", output.toString());
     }
 
@@ -142,7 +145,7 @@ public class TeeApplicationTest {
         List<int[]> ranges = List.of(new int[]{3, 7});
         String[] fileNames = {TEST_OUTPUT_FILENAME, TEST_OUTPUT_FILENAME};
 
-        teeApplication.teeFromStdin(false, inputTestFile, fileNames);
+        teeApplication.teeFromStdin(false, true, ranges, fileNames);
         assertEquals("34567\n34567\n34567\n34567\n", output.toString());
     }
 
@@ -151,7 +154,7 @@ public class TeeApplicationTest {
         List<int[]> ranges = List.of(new int[]{5, 7}, new int[]{1, 3});
         String[] fileNames = {TEST_OUTPUT_FILENAME};
 
-        teeApplication.teeFromStdin(false, inputTestFile, fileNames);
+        teeApplication.teeFromStdin(false, true, ranges, fileNames);
         assertEquals("123567\n123567\n", output.toString());
     }
 

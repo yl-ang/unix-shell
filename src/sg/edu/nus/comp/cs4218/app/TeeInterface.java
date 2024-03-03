@@ -18,3 +18,6 @@ public interface TeeInterface extends Application {
      */
     String teeFromStdin(Boolean isAppend, InputStream stdin, String... fileName) throws AbstractApplicationException;
 }
+
+
+
