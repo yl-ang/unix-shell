@@ -75,6 +75,7 @@ public class IORedirectionHandler {
                 while (argsIterator.hasPrevious()) {
                     String item = argsIterator.previous();
                     if (isRedirOperator(item)) {
+                        argsIterator.next();
                         break;
                     }
                 }
@@ -85,9 +86,13 @@ public class IORedirectionHandler {
 
                 String file = argsIterator.next();
 
-                while (argsIterator.hasNext()) {
-                    file = argsIterator.next();
+                if (argsIterator.hasNext()) {
+                    while (argsIterator.hasNext()) {
+                        noRedirArgsList.add(argsIterator.next());
+                    }
+                    break;
                 }
+
 
                 // handle quoting + globing + command substitution in file arg
                 List<String> fileSegment = argumentResolver.resolveOneArgument(file);
