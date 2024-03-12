@@ -38,29 +38,39 @@ public class CutApplicationTest {
     static void setUp() throws IOException {
         inputStdin = System.in;
 
-        Path path = Paths.get(TEST_FILENAME);
-        String content = """
-                123456789
-                123456789
-                """;
-        Files.writeString(path, content);
+        try {
+//            Path path = Paths.get(TEST_FILENAME);
+
+            FileWriter myWriter = new FileWriter(TEST_FILENAME);
+            myWriter.write("123456789\n");
+            myWriter.write("123456789\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+//        myWriter.write("Second line");
+//        myWriter.close();
+//        String content = """
+//                123456789
+//                123456789
+//                """;
+//        Files.writeString(path, content);
     }
 
-    @BeforeEach
-    void init() throws ShellException {
-        cutApplication = new CutApplication();
-
-        inputTestFile = IOUtils.openInputStream(TEST_FILENAME);
-        inputEmptyTestFile = IOUtils.openInputStream(EMPTY_TEST_FILENAME);
-
-        output = new ByteArrayOutputStream();
-    }
-
-    @AfterEach
-    void done() throws ShellException {
-        IOUtils.closeInputStream(inputTestFile);
-        IOUtils.closeInputStream(inputEmptyTestFile);
-    }
+//    @BeforeEach
+//    void init() throws ShellException {
+//        cutApplication = new CutApplication();
+//
+//        inputTestFile = IOUtils.openInputStream(TEST_FILENAME);
+//        inputEmptyTestFile = IOUtils.openInputStream(EMPTY_TEST_FILENAME);
+//
+//        output = new ByteArrayOutputStream();
+//    }
+//
+//    @AfterEach
+//    void done() throws ShellException {
+//        IOUtils.closeInputStream(inputTestFile);
+//        IOUtils.closeInputStream(inputEmptyTestFile);
+//    }
 
     @AfterAll
     static void teardown() throws IOException {
@@ -84,7 +94,7 @@ public class CutApplicationTest {
     void cutFromFiles_nullFileNameGiven_exception() {
         List<int[]> ranges = List.of(new int[]{3, 7});
         String fileName = null;
-        
+
         CutException exception = assertThrows(CutException.class, () -> cutApplication.cutFromFiles(true, false, ranges, fileName));
         assertEquals(new CutException(ERR_NULL_ARGS).getMessage(), exception.getMessage());
     }

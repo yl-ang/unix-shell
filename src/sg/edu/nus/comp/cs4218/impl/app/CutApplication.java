@@ -51,11 +51,11 @@ public class CutApplication implements CutInterface {
         try {
             List<int[]> ranges = cutArgsParser.getRanges();
             if (cutArgsParser.getFileNames().isEmpty()) {
-                result = cutFromStdin(cutArgsParser.isByteCut(), cutArgsParser.isCharCut(), ranges, stdin);
+                result = cutFromStdin(cutArgsParser.isCharCut(), cutArgsParser.isByteCut(), ranges, stdin);
             } else if (Arrays.asList(cutArgsParser.getFileNames().toArray(new String[0])).contains("-")) {
-                result = cutFromFilesAndStdin(cutArgsParser.isByteCut(), cutArgsParser.isCharCut(), ranges, stdin, cutArgsParser.getFileNames().toArray(new String[0]));
+                result = cutFromFilesAndStdin(cutArgsParser.isCharCut(), cutArgsParser.isByteCut(), ranges, stdin, cutArgsParser.getFileNames().toArray(new String[0]));
             } else {
-                result = cutFromFiles(cutArgsParser.isByteCut(), cutArgsParser.isCharCut(), ranges, cutArgsParser.getFileNames().toArray(new String[0]));
+                result = cutFromFiles(cutArgsParser.isCharCut(), cutArgsParser.isByteCut(), ranges, cutArgsParser.getFileNames().toArray(new String[0]));
             }
         } catch (Exception e) {
             // Will never happen
@@ -110,7 +110,7 @@ public class CutApplication implements CutInterface {
 
             result.add(cutResult);
         }
-        return String.join(STRING_NEWLINE, result);
+        return String.join("", result);
     }
 
     /**
@@ -214,18 +214,18 @@ public class CutApplication implements CutInterface {
                         continue;
                     }
                     int start = range[0] - 1;
-                    int end = Math.max(range[1], line.length());
+                    int end = Math.min(range[1], line.length());
 
                     if (isCharPo) {
                         processedLine = line.substring(start, end);
-                    } else {
+                    } else if (isBytePo) {
                         String lineAsBytes = new String(line.getBytes(StandardCharsets.UTF_8));
                         processedLine = lineAsBytes.substring(start, end);
                     }
+                    result.append(processedLine);
                 }
-
-                result.append(processedLine);
                 result.append(STRING_NEWLINE);
+
             }
         } catch (IOException e) {
             throw new CutException(e.getMessage());
