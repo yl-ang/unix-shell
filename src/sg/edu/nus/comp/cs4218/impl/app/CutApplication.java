@@ -12,10 +12,8 @@ import sg.edu.nus.comp.cs4218.impl.parser.CutArgsParser;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -51,6 +49,7 @@ public class CutApplication implements CutInterface {
         }
         String result;
         try {
+            List<int[]> ranges = cutArgsParser.getRanges();
             if (cutArgsParser.getFileNames().isEmpty()) {
                 result = cutFromStdin(cutArgsParser.isByteCut(), cutArgsParser.isCharCut(), ranges, stdin);
             } else if (Arrays.asList(cutArgsParser.getFileNames().toArray(new String[0])).contains("-")) {
@@ -81,7 +80,7 @@ public class CutApplication implements CutInterface {
      * @return
      * @throws Exception
      */
-    String cutFromFiles(Boolean isCharPo, Boolean isBytePo, List<int[]> ranges, String... fileName) throws CutException {
+    public String cutFromFiles(Boolean isCharPo, Boolean isBytePo, List<int[]> ranges, String... fileName) throws CutException {
         if (fileName == null) {
             throw new CutException(ERR_GENERAL);
         }
@@ -101,16 +100,11 @@ public class CutApplication implements CutInterface {
                 continue;
             }
 
-            InputStream input = null;
-            try {
-                input = IOUtils.openInputStream(file);
-            } catch (ShellException e) {
-                throw new CutException(e.getMessage());
-            }
-            String cutResult = cutFromInputStream(isCharPo, isBytePo, ranges, input);
-            try {
-                IOUtils.closeInputStream(input);
-            } catch (ShellException e) {
+            String cutResult;
+            Path path = Paths.get(file);
+            try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+                cutResult = cutFromInputStream(isCharPo, isBytePo, ranges, reader);
+            } catch (IOException e) {
                 throw new CutException(e.getMessage());
             }
 
@@ -130,7 +124,7 @@ public class CutApplication implements CutInterface {
      * @return
      * @throws Exception
      */
-    String cutFromFilesAndStdin(Boolean isCharPo, Boolean isBytePo, List<int[]> ranges, InputStream stdin, String... fileName) throws CutException {
+    public String cutFromFilesAndStdin(Boolean isCharPo, Boolean isBytePo, List<int[]> ranges, InputStream stdin, String... fileName) throws CutException {
         if (fileName == null) {
             throw new CutException(ERR_GENERAL);
         }
@@ -139,7 +133,7 @@ public class CutApplication implements CutInterface {
 
         for (String file : fileName) {
             if (file.equals("-")) {
-                cutResult = cutFromInputStream(isCharPo, isBytePo, ranges, stdin);
+                cutResult = cutFromStdin(isCharPo, isBytePo, ranges, stdin);
             } else {
                 File node = IOUtils.resolveFilePath(file).toFile();
                 if (!node.exists()) {
@@ -155,16 +149,10 @@ public class CutApplication implements CutInterface {
                     continue;
                 }
 
-                InputStream input = null;
-                try {
-                    input = IOUtils.openInputStream(file);
-                } catch (ShellException e) {
-                    throw new CutException(e.getMessage());
-                }
-                cutResult = cutFromInputStream(isCharPo, isBytePo, ranges, input);
-                try {
-                    IOUtils.closeInputStream(input);
-                } catch (ShellException e) {
+                Path path = Paths.get(file);
+                try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+                    cutResult = cutFromInputStream(isCharPo, isBytePo, ranges, reader);
+                } catch (IOException e) {
                     throw new CutException(e.getMessage());
                 }
             }
@@ -188,11 +176,16 @@ public class CutApplication implements CutInterface {
      * @return
      * @throws Exception
      */
-    String cutFromStdin(Boolean isCharPo, Boolean isBytePo, List<int[]> ranges, InputStream stdin) throws CutException {
+    public String cutFromStdin(Boolean isCharPo, Boolean isBytePo, List<int[]> ranges, InputStream stdin) throws CutException {
         if (stdin == null) {
             throw new CutException(ERR_NULL_STREAMS);
         }
-        String cutResult = cutFromInputStream(isCharPo, isBytePo, ranges, stdin);
+        String cutResult;
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(stdin))) {
+            cutResult = cutFromInputStream(isCharPo, isBytePo, ranges, reader);
+        } catch (IOException e) {
+            throw new CutException(e.getMessage());
+        }
         return cutResult;
     }
 
@@ -204,12 +197,40 @@ public class CutApplication implements CutInterface {
      * @param isBytePo Boolean option to cut by byte position
      * @param ranges   List of 2-element arrays containing the start and end indices for cut.
      *                 For instance, cutting on the first column would be represented using a [1,1] array.
-     * @param stream   InputStream
+     * @param reader   BufferedReader
      * @return
      * @throws Exception
      */
-    String cutFromInputStream(Boolean isCharPo, Boolean isBytePo, List<int[]> ranges, InputStream stream) throws CutException {
+    public String cutFromInputStream(Boolean isCharPo, Boolean isBytePo, List<int[]> ranges, BufferedReader reader) throws CutException {
+        StringBuilder result = new StringBuilder();
 
+        String line;
+        try {
+            while ((line = reader.readLine()) != null) {
+                String processedLine = "";
+
+                for (int[] range : ranges) {
+                    if (range.length != 2) {
+                        continue;
+                    }
+                    int start = range[0] - 1;
+                    int end = Math.max(range[1], line.length());
+
+                    if (isCharPo) {
+                        processedLine = line.substring(start, end);
+                    } else {
+                        String lineAsBytes = new String(line.getBytes(StandardCharsets.UTF_8));
+                        processedLine = lineAsBytes.substring(start, end);
+                    }
+                }
+
+                result.append(processedLine);
+                result.append(STRING_NEWLINE);
+            }
+        } catch (IOException e) {
+            throw new CutException(e.getMessage());
+        }
+        return result.toString();
     }
 
 }

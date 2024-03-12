@@ -23,12 +23,12 @@ public class CutArgsParser extends ArgsParser {
 
         for (String arg : nonFlagArgs) {
             if (arg.contains("-") || arg.matches("\\d+")) {
-                ranges.add(parseRanges(arg));
+                parseRanges(arg);
             }
         }
     }
 
-    private int[] parseRanges(String arg) {
+    private void parseRanges(String arg) {
         String[] splitRanges = arg.split(",");
         for (String range : splitRanges) {
             if (range.contains("-")) {
@@ -41,7 +41,6 @@ public class CutArgsParser extends ArgsParser {
                 ranges.add(new int[]{num, num});
             }
         }
-
     }
 
     public Boolean isByteCut() {

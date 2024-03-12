@@ -22,6 +22,7 @@ public class ApplicationRunner {
     public final static String APP_CAT = "cat";
     public final static String APP_MKDIR = "mkdir";
     public final static String APP_SORT = "sort";
+    public final static String APP_CUT = "cut";
 
     /**
      * Run the application as specified by the application command keyword and arguments.
@@ -67,6 +68,9 @@ public class ApplicationRunner {
                 break;
             case APP_SORT:
                 application = new SortApplication();
+                break;
+            case APP_CUT:
+                application = new CutApplication();
                 break;
             default:
                 throw new ShellException(app + ": " + ERR_INVALID_APP);
