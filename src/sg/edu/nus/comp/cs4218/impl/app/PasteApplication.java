@@ -115,6 +115,16 @@ public class PasteApplication implements PasteInterface  {
         return mergeLines(allLines, isSerial);
     }
 
+    // TODO(yl-ang): Fix the incorrect - and fileName parallelism bug (Still buggy)
+
+    //    $ paste – A.txt - < B.txt > AB.txt
+    //    Would consume one line at a time from each file and merge them together. Hence, the next (first) line from
+    //    stdin (content of B.txt), next (first) line from A.txt, and next (second) line from
+    //    stdin (content of B.txt) are read and merged into one line. Next, the next (third) line from
+    //    stdin (content of B.txt), next (second) line from A.txt, and next (fourth) line from stdin (content
+    //    of B.txt) are read and merged into one line. At the next step, if B.txt has only four lines, EOF
+    //    is observed at stdin, and only the lines of A.txt are used in the merge.
+
     @Override
     public String mergeFileAndStdin(Boolean isSerial, InputStream stdin, String... fileNames)
             throws AbstractApplicationException {
@@ -128,15 +138,18 @@ public class PasteApplication implements PasteInterface  {
         }
 
         List<List<String>> allLines = new ArrayList<>();
+        boolean stdinProcessed = false; // Flag to track if stdin has been processed
+
         for (String fileName : fileNames) {
-            if (fileName.equals(STRING_FLAG_PREFIX)) {
+            if (fileName.equals(STRING_FLAG_PREFIX) && !stdinProcessed) {
                 try {
                     List<String> stdinLines = IOUtils.getLinesFromInputStream(stdin);
                     allLines.add(stdinLines);
+                    stdinProcessed = true;
                 } catch (IOException e) {
                     throw new PasteException(ERR_READING_FILE);
                 }
-            } else {
+            } else if (!fileName.equals(STRING_FLAG_PREFIX)) {
                 try (InputStream inputStream = IOUtils.openInputStream(fileName)) {
                     List<String> lines = IOUtils.getLinesFromInputStream(inputStream);
                     allLines.add(lines);
