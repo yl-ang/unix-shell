@@ -4,14 +4,19 @@ import sg.edu.nus.comp.cs4218.app.PasteInterface;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
 import sg.edu.nus.comp.cs4218.exception.PasteException;
+import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.parser.PasteArgsParser;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_TAB;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_FLAG_PREFIX;
 
 public class PasteApplication implements PasteInterface  {
@@ -66,16 +71,124 @@ public class PasteApplication implements PasteInterface  {
 
     @Override
     public String mergeStdin(Boolean isSerial, InputStream stdin) throws AbstractApplicationException {
-        return null;
+
+        if (stdin == null) {
+            throw new PasteException(ERR_NO_ISTREAM);
+        }
+        try {
+            List<String> stdinLines = IOUtils.getLinesFromInputStream(stdin);
+            StringBuilder mergedLines = new StringBuilder();
+
+            if (isSerial) {
+                appendLines(mergedLines, stdinLines);
+            } else {
+                for (String line : stdinLines) {
+                    mergedLines.append(line).append(CHAR_TAB);
+                }
+                if (!stdinLines.isEmpty()) {
+                    mergedLines.deleteCharAt(mergedLines.length() - 1);
+                }
+            }
+            return mergedLines.toString();
+        } catch (IOException e) {
+            throw new PasteException(ERR_READING_FILE);
+        }
     }
 
     @Override
-    public String mergeFile(Boolean isSerial, String... fileName) throws AbstractApplicationException {
-        return null;
+    public String mergeFile(Boolean isSerial, String... fileNames) throws AbstractApplicationException {
+
+        if (fileNames == null || fileNames.length == 0) {
+            throw new PasteException(ERR_NO_FILE_ARGS);
+        }
+
+        List<List<String>> allLines = new ArrayList<>();
+
+        for (String fileName : fileNames) {
+            try (InputStream inputStream = IOUtils.openInputStream(fileName)) {
+                List<String> lines = IOUtils.getLinesFromInputStream(inputStream);
+                allLines.add(lines);
+            } catch (IOException | ShellException e) {
+                throw new PasteException(e.getMessage());
+            }
+        }
+        return mergeLines(allLines, isSerial);
     }
 
     @Override
-    public String mergeFileAndStdin(Boolean isSerial, InputStream stdin, String... fileName) throws Exception {
-        return null;
+    public String mergeFileAndStdin(Boolean isSerial, InputStream stdin, String... fileNames)
+            throws AbstractApplicationException {
+
+        if (stdin == null) {
+            throw new PasteException(ERR_NO_ISTREAM);
+        }
+
+        if (fileNames == null || fileNames.length == 0) {
+            throw new PasteException(ERR_NO_FILE_ARGS);
+        }
+
+        List<List<String>> allLines = new ArrayList<>();
+        for (String fileName : fileNames) {
+            if (fileName.equals(STRING_FLAG_PREFIX)) {
+                try {
+                    List<String> stdinLines = IOUtils.getLinesFromInputStream(stdin);
+                    allLines.add(stdinLines);
+                } catch (IOException e) {
+                    throw new PasteException(ERR_READING_FILE);
+                }
+            } else {
+                try (InputStream inputStream = IOUtils.openInputStream(fileName)) {
+                    List<String> lines = IOUtils.getLinesFromInputStream(inputStream);
+                    allLines.add(lines);
+                } catch (IOException | ShellException e) {
+                    throw new PasteException(e.getMessage());
+                }
+            }
+        }
+        return mergeLines(allLines, isSerial);
     }
+
+    private String mergeLines(List<List<String>> allLines, boolean isSerial) {
+        StringBuilder mergedLines = new StringBuilder();
+
+        if (isSerial) {
+            mergeSerially(mergedLines, allLines);
+        } else {
+            mergeInParallel(mergedLines, allLines);
+        }
+        return mergedLines.toString();
+    }
+
+    private void mergeSerially(StringBuilder mergedLines, List<List<String>> allLines) {
+        for (List<String> lines : allLines) {
+            appendLines(mergedLines, lines);
+            if (!lines.isEmpty()) {
+                mergedLines.deleteCharAt(mergedLines.length() - 1);
+            }
+            mergedLines.append("\n");
+        }
+    }
+
+    private void mergeInParallel(StringBuilder mergedLines, List<List<String>> allLines) {
+        int maxLines = allLines.stream().mapToInt(List::size).max().orElse(0);
+
+        for (int i = 0; i < maxLines; i++) {
+            for (List<String> lines : allLines) {
+                if (i < lines.size()) {
+                    mergedLines.append(lines.get(i));
+                    mergedLines.append(CHAR_TAB);
+                }
+            }
+            mergedLines.deleteCharAt(mergedLines.length() - 1);
+            mergedLines.append("\n");
+        }
+    }
+
+    private void appendLines(StringBuilder mergedLines, List<String> lines) {
+        for (String line : lines) {
+            mergedLines.append(line);
+            mergedLines.append(CHAR_TAB);
+        }
+    }
+
 }
