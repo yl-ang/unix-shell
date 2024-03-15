@@ -68,6 +68,9 @@ public class ApplicationRunner {
             case APP_SORT:
                 application = new SortApplication();
                 break;
+            case APP_PASTE:
+                application = new PasteApplication();
+                break;
             default:
                 throw new ShellException(app + ": " + ERR_INVALID_APP);
         }
