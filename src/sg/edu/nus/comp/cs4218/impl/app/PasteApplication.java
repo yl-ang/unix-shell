@@ -23,6 +23,14 @@ public class PasteApplication implements PasteInterface  {
     public static final String ERR_READING_FILE = "Could not read file";
     public static final String ERR_WRITE_STREAM = "Could not write to output stream";
 
+    /**
+     * Executes the paste command with the provided arguments, input stream, and output stream.
+     *
+     * @param args   Array of arguments provided to the paste command.
+     * @param stdin  InputStream from which to read input, can be null.
+     * @param stdout OutputStream to which the result of the paste command is written.
+     * @throws AbstractApplicationException If an error occurs during the execution of the paste command.
+     */
     @Override
     public void run(String[] args, InputStream stdin, OutputStream stdout) throws AbstractApplicationException {
         if (args == null) {
@@ -69,6 +77,14 @@ public class PasteApplication implements PasteInterface  {
         }
     }
 
+    /**
+     * Merges the lines from the provided input stream according to the specified mode.
+     *
+     * @param isSerial Flag indicating whether to merge the lines serially or in parallel.
+     * @param stdin    InputStream containing the lines to be merged.
+     * @return String representing the merged lines.
+     * @throws AbstractApplicationException If an error occurs during the merging process.
+     */
     @Override
     public String mergeStdin(Boolean isSerial, InputStream stdin) throws AbstractApplicationException {
 
@@ -95,6 +111,14 @@ public class PasteApplication implements PasteInterface  {
         }
     }
 
+    /**
+     * Merges the lines from the specified files according to the specified mode.
+     *
+     * @param isSerial   Flag indicating whether to merge the lines serially or in parallel.
+     * @param fileNames Array of file names from which to read lines to be merged.
+     * @return String representing the merged lines.
+     * @throws AbstractApplicationException If an error occurs during the merging process.
+     */
     @Override
     public String mergeFile(Boolean isSerial, String... fileNames) throws AbstractApplicationException {
 
