@@ -2,18 +2,22 @@ package sg.edu.nus.comp.cs4218.impl.app;
 
 import sg.edu.nus.comp.cs4218.app.PasteInterface;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.exception.CatException;
 import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
 import sg.edu.nus.comp.cs4218.exception.PasteException;
-import sg.edu.nus.comp.cs4218.impl.parser.CatArgsParser;
 import sg.edu.nus.comp.cs4218.impl.parser.PasteArgsParser;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_FLAG_PREFIX;
 
 public class PasteApplication implements PasteInterface  {
+    public static final String ERR_READING_FILE = "Could not read file";
+    public static final String ERR_WRITE_STREAM = "Could not write to output stream";
+
     @Override
     public void run(String[] args, InputStream stdin, OutputStream stdout) throws AbstractApplicationException {
         if (args == null) {
@@ -39,8 +43,25 @@ public class PasteApplication implements PasteInterface  {
             throw new PasteException(ERR_NO_INPUT);
         }
 
-        // TODO(yl-ang): The application logic, controller
+        String mergedStr = "";
+        try {
+            if (fileNames.length > 0 && List.of(fileNames).contains(STRING_FLAG_PREFIX)) {
+                mergedStr = mergeFileAndStdin(parser.isSerial(), stdin, fileNames);
+            } else if (fileNames.length > 0) {
+                mergedStr = mergeFile(parser.isSerial(), fileNames);
+            } else {
+                mergedStr = mergeStdin(parser.isSerial(), stdin);
+            }
+        } catch (Exception e) {
+            throw new PasteException(e.toString());
+        }
 
+        try {
+            stdout.write(mergedStr.getBytes());
+            stdout.write(StringUtils.STRING_NEWLINE.getBytes());
+        } catch (Exception e) {
+            throw new PasteException(ERR_WRITE_STREAM);
+        }
     }
 
     @Override
