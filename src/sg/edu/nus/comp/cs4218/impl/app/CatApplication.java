@@ -18,11 +18,8 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.*;
 
 public class CatApplication implements CatInterface {
-    public static final String ERR_IS_DIR = "This is a directory";
     public static final String ERR_READING_FILE = "Could not read file";
     public static final String ERR_WRITE_STREAM = "Could not write to output stream";
-    public static final String ERR_NULL_STREAMS = "Null Pointer Exception";
-    public static final String ERR_GENERAL = "Exception Caught";
     private int lineNumber;
 
     public CatApplication() {
