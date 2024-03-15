@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
@@ -139,16 +140,15 @@ public class PasteApplication implements PasteInterface  {
         return mergeLines(allLines, isSerial);
     }
 
-    // TODO(yl-ang): Fix the incorrect - and fileName parallelism bug (Still buggy)
-
-    //    $ paste – A.txt - < B.txt > AB.txt
-    //    Would consume one line at a time from each file and merge them together. Hence, the next (first) line from
-    //    stdin (content of B.txt), next (first) line from A.txt, and next (second) line from
-    //    stdin (content of B.txt) are read and merged into one line. Next, the next (third) line from
-    //    stdin (content of B.txt), next (second) line from A.txt, and next (fourth) line from stdin (content
-    //    of B.txt) are read and merged into one line. At the next step, if B.txt has only four lines, EOF
-    //    is observed at stdin, and only the lines of A.txt are used in the merge.
-
+    /**
+     * Merges the lines from the provided input stream and files according to the specified mode.
+     *
+     * @param isSerial   Flag indicating whether to merge the lines serially or in parallel.
+     * @param stdin      InputStream containing the lines to be merged.
+     * @param fileNames  Array of file names from which to read lines to be merged.
+     * @return String representing the merged lines.
+     * @throws AbstractApplicationException If an error occurs during the merging process.
+     */
     @Override
     public String mergeFileAndStdin(Boolean isSerial, InputStream stdin, String... fileNames)
             throws AbstractApplicationException {
@@ -161,30 +161,27 @@ public class PasteApplication implements PasteInterface  {
             throw new PasteException(ERR_NO_FILE_ARGS);
         }
 
-        List<List<String>> allLines = new ArrayList<>();
-        boolean stdinProcessed = false; // Flag to track if stdin has been processed
-
-        for (String fileName : fileNames) {
-            if (fileName.equals(STRING_FLAG_PREFIX) && !stdinProcessed) {
-                try {
-                    List<String> stdinLines = IOUtils.getLinesFromInputStream(stdin);
-                    allLines.add(stdinLines);
-                    stdinProcessed = true;
-                } catch (IOException e) {
-                    throw new PasteException(ERR_READING_FILE);
-                }
-            } else if (!fileName.equals(STRING_FLAG_PREFIX)) {
-                try (InputStream inputStream = IOUtils.openInputStream(fileName)) {
-                    List<String> lines = IOUtils.getLinesFromInputStream(inputStream);
-                    allLines.add(lines);
-                } catch (IOException | ShellException e) {
-                    throw new PasteException(e.getMessage());
-                }
-            }
+        List<String> stdinLines;
+        try {
+            stdinLines = IOUtils.getLinesFromInputStream(stdin);
+        } catch (IOException e) {
+            throw new PasteException(ERR_READING_STREAM);
         }
+
+        int totalFlags = countOccurrences(fileNames, STRING_FLAG_PREFIX);
+
+        List<List<String>> allLines = processInput(stdinLines, fileNames, totalFlags, isSerial);
+
         return mergeLines(allLines, isSerial);
     }
 
+    /**
+     * Merges the lines from the provided list of lines according to the specified mode.
+     *
+     * @param allLines  List of lists of lines to be merged.
+     * @param isSerial  Flag indicating whether to merge the lines serially or in parallel.
+     * @return String representing the merged lines.
+     */
     private String mergeLines(List<List<String>> allLines, boolean isSerial) {
         StringBuilder mergedLines = new StringBuilder();
 
@@ -196,6 +193,12 @@ public class PasteApplication implements PasteInterface  {
         return mergedLines.toString();
     }
 
+    /**
+     * Merges the lines serially from the provided list of lines.
+     *
+     * @param mergedLines StringBuilder to which the merged lines are appended.
+     * @param allLines    List of lists of lines to be merged.
+     */
     private void mergeSerially(StringBuilder mergedLines, List<List<String>> allLines) {
         for (List<String> lines : allLines) {
             appendLines(mergedLines, lines);
@@ -206,14 +209,21 @@ public class PasteApplication implements PasteInterface  {
         }
     }
 
+    /**
+     * Merges the lines in parallel from the provided list of lines.
+     *
+     * @param mergedLines StringBuilder to which the merged lines are appended.
+     * @param allLines    List of lists of lines to be merged.
+     */
     private void mergeInParallel(StringBuilder mergedLines, List<List<String>> allLines) {
         int maxLines = allLines.stream().mapToInt(List::size).max().orElse(0);
 
         for (int i = 0; i < maxLines; i++) {
             for (List<String> lines : allLines) {
                 if (i < lines.size()) {
-                    mergedLines.append(lines.get(i));
-                    mergedLines.append(CHAR_TAB);
+                    mergedLines.append(lines.get(i)).append(CHAR_TAB);
+                } else {
+                    mergedLines.append(" ").append(CHAR_TAB);
                 }
             }
             mergedLines.deleteCharAt(mergedLines.length() - 1);
@@ -221,6 +231,12 @@ public class PasteApplication implements PasteInterface  {
         }
     }
 
+    /**
+     * Appends lines from the provided list of lines to the StringBuilder.
+     *
+     * @param mergedLines StringBuilder to which the lines are appended.
+     * @param lines       List of lines to be appended.
+     */
     private void appendLines(StringBuilder mergedLines, List<String> lines) {
         for (String line : lines) {
             mergedLines.append(line);
@@ -228,4 +244,65 @@ public class PasteApplication implements PasteInterface  {
         }
     }
 
+    /**
+     * Processes the input from the provided stdin lines and file names.
+     *
+     * @param stdinLines  List of lines from the stdin.
+     * @param fileNames   Array of file names from which to read lines.
+     * @param totalFlags  Total number of flags in the file names array.
+     * @param isSerial    Flag indicating whether to process the input serially or not.
+     * @return List of lists of lines representing the processed input.
+     * @throws PasteException If an error occurs during the processing of input.
+     */
+    private List<List<String>> processInput(List<String> stdinLines, String[] fileNames,
+                                            int totalFlags, Boolean isSerial) throws PasteException {
+        boolean hasProcessedSerialStdin = false;
+        int currFlagCount = 0;
+        List<List<String>> allLines = new ArrayList<>();
+
+        for (String fileName : fileNames) {
+            if (fileName == null) {
+                continue;
+            }
+            // Handle stdin input
+            if (fileName.equals(STRING_FLAG_PREFIX)) {
+                List<String> tempStdinLines = new ArrayList<>();
+
+                // Determine whether to process stdin serially or not
+                if (isSerial && !hasProcessedSerialStdin) {
+                    allLines.add(stdinLines);
+                    hasProcessedSerialStdin = true;
+                } else {
+                    // Add lines from stdin based on total flags count
+                    for (int i = currFlagCount; i < stdinLines.size(); i += totalFlags) {
+                        tempStdinLines.add(stdinLines.get(i));
+                    }
+                    currFlagCount++;
+                    allLines.add(tempStdinLines);
+                }
+            } else {
+                // Handle file input
+                try (InputStream inputStream = IOUtils.openInputStream(fileName)) {
+                    List<String> lines = IOUtils.getLinesFromInputStream(inputStream);
+                    allLines.add(lines);
+                } catch (IOException | ShellException e) {
+                    throw new PasteException(e.getMessage());
+                }
+            }
+        }
+        return allLines;
+    }
+
+    /**
+     * Counts the occurrences of the target string in the provided array.
+     *
+     * @param arr    Array of strings to search for occurrences.
+     * @param target Target string to count occurrences of.
+     * @return Number of occurrences of the target string.
+     */
+    private int countOccurrences(String[] arr, String target) {
+        return (int) Arrays.stream(arr)
+                .filter(fileName -> fileName != null && fileName.equals(target))
+                .count();
+    }
 }
