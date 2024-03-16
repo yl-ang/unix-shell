@@ -11,7 +11,7 @@ public class TeeArgsParser extends ArgsParser {
         legalFlags.add(FLAG_IS_APPEND);
     }
 
-    public Boolean isByteCount() {
+    public Boolean isAppend() {
         return flags.contains(FLAG_IS_APPEND);
     }
 
