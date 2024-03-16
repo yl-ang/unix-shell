@@ -6,7 +6,6 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/public_tests/tdd" />
       <excludeFolder url="file://$MODULE_DIR$/public_tests/tdd/unit_tests/sg/edu/nus/comp/cs4218/impl/app" />
-      <excludeFolder url="file://$MODULE_DIR$/.idea/copilot/chatSessions" />
     </content>
   </component>
   <component name="CheckStyle-IDEA-Module">
