@@ -240,7 +240,7 @@ public class CutApplication implements CutInterface {
                         continue;
                     }
 
-                    int start = range[0] - 1;
+                    int start = Math.max(range[0] - 1, 0);
                     if (start > line.length()) {
                         continue;
                     }

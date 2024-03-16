@@ -33,7 +33,7 @@ public class CutApplicationTest {
     private static final String EMPTY_TEST_FILENAME = "cutEmptyTestFile.txt";
 
     @BeforeAll
-    static void setUp() throws IOException {
+    static void setUp() {
         inputStdin = System.in;
 
         try {
@@ -47,12 +47,6 @@ public class CutApplicationTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        myWriter.write("Second line");
-//        String content = """
-//                123456789
-//                123456789
-//                """;
-//        Files.writeString(path, content);
     }
 
     @BeforeEach
@@ -368,7 +362,7 @@ public class CutApplicationTest {
     }
 
     @Test
-    void run_commaSeparatedNumber_cutAllInvidiualNumbers() throws AbstractApplicationException {
+    void run_commaSeparatedNumber_cutAllIndividualNumbers() throws AbstractApplicationException {
         String[] args = {"-b", "1,3,5", TEST_FILENAME};
 
         cutApplication.run(args, inputTestFile, output);
@@ -376,7 +370,7 @@ public class CutApplicationTest {
     }
 
     @Test
-    void run_twoRanges_cutAllInvidiualNumbers() throws AbstractApplicationException {
+    void run_twoRanges_cutAllIndividualNumbers() throws AbstractApplicationException {
         String[] args = {"-b", "1-5", "7-9", TEST_FILENAME};
 
         cutApplication.run(args, inputTestFile, output);
