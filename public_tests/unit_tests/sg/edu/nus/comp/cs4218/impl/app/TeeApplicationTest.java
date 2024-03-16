@@ -5,6 +5,7 @@ import sg.edu.nus.comp.cs4218.app.TeeInterface;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.TeeException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
+import sg.edu.nus.comp.cs4218.impl.app.TeeApplication;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 import java.io.*;
@@ -42,12 +43,11 @@ public class TeeApplicationTest {
 
         // create output file
         outputFilePath = Paths.get(OUTPUT_FILENAME);
-        Files.createFile(outputFilePath);
     }
 
     @BeforeEach
     void init() throws IOException, ShellException {
-        teeApplication = mock(TeeInterface.class);
+        teeApplication = new TeeApplication();
 
         inputStdin = IOUtils.openInputStream(INPUT_FILENAME);
 
@@ -69,25 +69,29 @@ public class TeeApplicationTest {
     }
 
     @Test
-    void teeFromStdin_nullFileNameGiven_exception() {
+    void teeFromStdin_nullFileNameGiven_exception() throws AbstractApplicationException {
         String[] fileNames = {null};
 
-        TeeException exception = assertThrows(TeeException.class, () -> teeApplication.teeFromStdin(false, inputStdin, fileNames));
-        assertEquals(new TeeException(ERR_NULL_ARGS).getMessage(), exception.getMessage());
+        String output = teeApplication.teeFromStdin(false, inputStdin, fileNames);
+        assertEquals("tee: " + ERR_NULL_ARGS + "\n" +
+                "test tee\n" +
+                "123456789\n", output);
     }
 
     @Test
-    void teeFromStdin_fileNameIsDirectory_exception() {
+    void teeFromStdin_fileNameIsDirectory_exception() throws AbstractApplicationException {
         String[] fileNames = {"src"};
 
-        TeeException exception = assertThrows(TeeException.class, () -> teeApplication.teeFromStdin(false, inputStdin, fileNames));
-        assertEquals(new TeeException(ERR_IS_DIR).getMessage(), exception.getMessage());
+        String output = teeApplication.teeFromStdin(false, inputStdin, fileNames);
+        assertEquals("tee: " + ERR_IS_DIR + "\n" +
+                "test tee\n" +
+                "123456789\n", output);
     }
 
     @Test
-    void teeFromStdin_fileNoWritePermission_exception() throws IOException {
+    void teeFromStdin_fileNoWritePermission_exception() throws IOException, AbstractApplicationException {
         // create file without write permissions
-        Set<PosixFilePermission> noWritePermission = PosixFilePermissions.fromString("--x--x--x");
+        Set<PosixFilePermission> noWritePermission = PosixFilePermissions.fromString("r-xr-xr-x");
         FileAttribute<?> permissions = PosixFilePermissions.asFileAttribute(noWritePermission);
         String fileName = "fileWithNoWritePermissions.txt";
         Path filePath = Paths.get(fileName);
@@ -97,8 +101,8 @@ public class TeeApplicationTest {
         String[] fileNames = {fileName};
 
         // then
-        TeeException exception = assertThrows(TeeException.class, () -> teeApplication.teeFromStdin(false, inputStdin, fileNames));
-        assertEquals(new TeeException(ERR_NO_PERM_WRITE_FILE).getMessage(), exception.getMessage());
+        String output = teeApplication.teeFromStdin(false, inputStdin, fileNames);
+        assertEquals("tee: " + ERR_NO_PERM_WRITE_FILE + "\n" + "test tee\n" + "123456789\n", output);
 
         // remove file
         Files.deleteIfExists(filePath);
@@ -109,7 +113,7 @@ public class TeeApplicationTest {
         String[] fileNames = {OUTPUT_FILENAME};
 
         TeeException exception = assertThrows(TeeException.class, () -> teeApplication.teeFromStdin(false, null, fileNames));
-        assertEquals(new TeeException(ERR_NULL_ARGS).getMessage(), exception.getMessage());
+        assertEquals(new TeeException(ERR_NULL_STREAMS).getMessage(), exception.getMessage());
     }
 
     @Test
@@ -180,6 +184,8 @@ public class TeeApplicationTest {
         Path path = Paths.get(secondFile);
         String result2 = new String(Files.readAllBytes(path));
         assertEquals("test tee\n123456789\n", result2);
+
+        Files.deleteIfExists(path);
     }
 
     @Test
@@ -188,7 +194,7 @@ public class TeeApplicationTest {
 
         String output = teeApplication.teeFromStdin(false, inputStdin, fileNames);
 
-        assertEquals("", output);
+        assertEquals("test tee\n123456789\n", output);
     }
 
     @Test
@@ -210,6 +216,14 @@ public class TeeApplicationTest {
         // check file changed
         String result = new String(Files.readAllBytes(outputFilePath));
         assertEquals("123456789\n123456789\ntest tee\n123456789\n", result);
+    }
+
+    @Test
+    void run_stdoutIsNull_exception() {
+        String[] args = {"-a", OUTPUT_FILENAME};
+
+        TeeException exception = assertThrows(TeeException.class, () -> teeApplication.run(args, inputStdin, null));
+        assertEquals(new TeeException(ERR_NULL_STREAMS).getMessage(), exception.getMessage());
     }
 
 }

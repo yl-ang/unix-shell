@@ -6,6 +6,7 @@ import sg.edu.nus.comp.cs4218.impl.parser.TeeArgsParser;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -70,9 +71,7 @@ public class TeeApplication implements TeeInterface {
         if (stdin == null) {
             throw new TeeException(ERR_NULL_STREAMS);
         }
-        if (fileName == null) {
-            throw new TeeException(ERR_NULL_ARGS);
-        }
+
         if (isAppend == null) {
             throw new TeeException(ERR_NULL_ARGS);
         }
@@ -82,36 +81,42 @@ public class TeeApplication implements TeeInterface {
         List<String> result = new ArrayList<>();
 
         for (String file : fileName) {
+            if (file == null) {
+                result.add("tee: " + ERR_NULL_ARGS + STRING_NEWLINE);
+                inValidFiles.add(file);
+                continue;
+            }
             File node = IOUtils.resolveFilePath(file).toFile();
             if (!node.exists()) {
                 continue;
             }
             if (node.isDirectory()) {
-                result.add("tee: " + ERR_IS_DIR);
+                result.add("tee: " + ERR_IS_DIR + STRING_NEWLINE);
                 inValidFiles.add(file);
                 continue;
             }
             if (!node.canWrite()) {
-                result.add("tee: " + ERR_NO_PERM);
+                result.add("tee: " + ERR_NO_PERM_WRITE_FILE + STRING_NEWLINE);
                 inValidFiles.add(file);
                 continue;
             }
 
         }
         fileName = Arrays.stream(fileName).filter(s -> !inValidFiles.contains(s)).toArray(String[]::new);
-        StringBuilder inputContent = new StringBuilder();
+        ByteArrayOutputStream inputBytes = new ByteArrayOutputStream();
 
-        // Read everything from stdin and store it in inputContent
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(stdin))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                inputContent.append(line).append(System.lineSeparator());
+        // Read everything from stdin and store it in inputBytes
+        try {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = stdin.read(buffer)) != -1) {
+                inputBytes.write(buffer, 0, bytesRead);
             }
         } catch (IOException e) {
             throw new TeeException(e.getMessage());
         }
 
-        String input = inputContent.toString(); // Convert StringBuilder to String
+        byte[] input = inputBytes.toByteArray(); // Convert ByteArrayOutputStream to byte array
 
         // Loop through the files, create if not exist, then write or append input
         for (String file : fileName) {
@@ -125,18 +130,17 @@ public class TeeApplication implements TeeInterface {
                     }
                 }
 
-                try (FileOutputStream fileOutputStream = new FileOutputStream(node, isAppend);
-                     OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream);
-                     BufferedWriter writer = new BufferedWriter(outputStreamWriter)) {
-                    writer.write(input);
+                try (FileOutputStream fileOutputStream = new FileOutputStream(node, isAppend)) {
+                    fileOutputStream.write(input);
                 }
             } catch (IOException e) {
                 throw new TeeException(ERR_WRITE_STREAM);
             }
         }
 
-        // Return input as output
-        return input;
+        // Convert the byte array to a String for return
+        String inputAsString = new String(input, StandardCharsets.UTF_8);
+        return String.join("", result) + inputAsString;
 
     }
 }
