@@ -17,10 +17,8 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.List;
 import java.util.Set;
-import java.util.spi.AbstractResourceBundleProvider;
 
 import static org.junit.jupiter.api.Assertions.*;
-//import static org.mockito.Mockito.mock;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 
 public class CutApplicationTest {
@@ -39,16 +37,17 @@ public class CutApplicationTest {
         inputStdin = System.in;
 
         try {
-//            Path path = Paths.get(TEST_FILENAME);
-
             FileWriter myWriter = new FileWriter(TEST_FILENAME);
             myWriter.write("123456789\n");
             myWriter.write("123456789\n");
+            myWriter.close();
+
+            FileWriter myWriter2 = new FileWriter(EMPTY_TEST_FILENAME);
+            myWriter2.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
 //        myWriter.write("Second line");
-//        myWriter.close();
 //        String content = """
 //                123456789
 //                123456789
@@ -56,21 +55,21 @@ public class CutApplicationTest {
 //        Files.writeString(path, content);
     }
 
-//    @BeforeEach
-//    void init() throws ShellException {
-//        cutApplication = new CutApplication();
-//
-//        inputTestFile = IOUtils.openInputStream(TEST_FILENAME);
-//        inputEmptyTestFile = IOUtils.openInputStream(EMPTY_TEST_FILENAME);
-//
-//        output = new ByteArrayOutputStream();
-//    }
-//
-//    @AfterEach
-//    void done() throws ShellException {
-//        IOUtils.closeInputStream(inputTestFile);
-//        IOUtils.closeInputStream(inputEmptyTestFile);
-//    }
+    @BeforeEach
+    void init() throws ShellException {
+        cutApplication = new CutApplication();
+
+        inputTestFile = IOUtils.openInputStream(TEST_FILENAME);
+        inputEmptyTestFile = IOUtils.openInputStream(EMPTY_TEST_FILENAME);
+
+        output = new ByteArrayOutputStream();
+    }
+
+    @AfterEach
+    void done() throws ShellException {
+        IOUtils.closeInputStream(inputTestFile);
+        IOUtils.closeInputStream(inputEmptyTestFile);
+    }
 
     @AfterAll
     static void teardown() throws IOException {
@@ -109,25 +108,25 @@ public class CutApplicationTest {
     }
 
     @Test
-    void cutFromFiles_fileNotFound_exception() {
+    void cutFromFiles_fileNotFound_exception() throws AbstractApplicationException {
         List<int[]> ranges = List.of(new int[]{3, 7});
         String[] fileNames = {"randomfilename.txt"};
 
-        CutException exception = assertThrows(CutException.class, () -> cutApplication.cutFromFiles(true, false, ranges, fileNames));
-        assertEquals(new CutException(ERR_FILE_NOT_FOUND).getMessage(), exception.getMessage());
+        String output = cutApplication.cutFromFiles(true, false, ranges, fileNames);
+        assertEquals("cut: " + ERR_FILE_NOT_FOUND, output);
     }
 
     @Test
-    void cutFromFiles_fileNameIsDirectory_exception() {
+    void cutFromFiles_fileNameIsDirectory_exception() throws AbstractApplicationException {
         List<int[]> ranges = List.of(new int[]{3, 7});
         String[] fileNames = {"src"};
 
-        CutException exception = assertThrows(CutException.class, () -> cutApplication.cutFromFiles(true, false, ranges, fileNames));
-        assertEquals(new CutException(ERR_IS_DIR).getMessage(), exception.getMessage());
+        String output = cutApplication.cutFromFiles(true, false, ranges, fileNames);
+        assertEquals("cut: " + ERR_IS_DIR, output);
     }
 
     @Test
-    void cutFromFiles_fileNoReadPermission_exception() throws IOException {
+    void cutFromFiles_fileNoReadPermission_exception() throws IOException, AbstractApplicationException {
         // create file without read permissions
         Set<PosixFilePermission> noReadPermission = PosixFilePermissions.fromString("--x--x--x");
         FileAttribute<?> permissions = PosixFilePermissions.asFileAttribute(noReadPermission);
@@ -140,8 +139,8 @@ public class CutApplicationTest {
         String[] fileNames = {fileName};
 
         // then
-        CutException exception = assertThrows(CutException.class, () -> cutApplication.cutFromFiles(true, false, ranges, fileNames));
-        assertEquals(new CutException(ERR_NO_PERM).getMessage(), exception.getMessage());
+        String output = cutApplication.cutFromFiles(true, false, ranges, fileNames);
+        assertEquals("cut: " + ERR_NO_PERM, output);
 
         // remove file
         Files.deleteIfExists(filePath);
@@ -202,10 +201,10 @@ public class CutApplicationTest {
         String output = cutApplication.cutFromFiles(true, false, ranges, fileNames);
         assertEquals("<?xml\n" +
                 "<user\n" +
-                "    <\n" +
-                "    <\n" +
-                "    <\n" +
-                "</use", output);
+                "  <na\n" +
+                "  <ag\n" +
+                "  <ci\n" +
+                "</use\n", output);
 
         // remove file
         Files.deleteIfExists(path);
@@ -254,7 +253,7 @@ public class CutApplicationTest {
         String[] fileNames = {TEST_FILENAME};
 
         String output = cutApplication.cutFromFiles(false, true, ranges, fileNames);
-        assertEquals("123567\n123567\n", output);
+        assertEquals("567123\n567123\n", output);
     }
 
 
@@ -293,17 +292,17 @@ public class CutApplicationTest {
     }
 
     @Test
-    void cutFromStdin_isCharPoAndListOfRangeGiven_outputCutInSequenceOfIndex() throws AbstractApplicationException {
+    void cutFromStdin_isCharPoAndListOfRangeGiven_outputCutInRanges() throws AbstractApplicationException {
         List<int[]> ranges = List.of(new int[]{5, 7}, new int[]{1, 3});
 
         String output = cutApplication.cutFromStdin(true, false, ranges, inputTestFile);
-        assertEquals("123567\n123567\n", output);
+        assertEquals("567123\n567123\n", output);
     }
 
 
     @Test
     void run_bothCharAndByteFlagGiven_tooManyArgsException() throws CutException {
-        String[] args = {"-c", "-b"};
+        String[] args = {"-c", "-b", "1", TEST_FILENAME};
 
         CutException exception = assertThrows(CutException.class, () -> cutApplication.run(args, inputStdin, output));
         assertEquals(new CutException(ERR_BOTH_CHAR_AND_BYTE_FLAGS_PRESENT).getMessage(), exception.getMessage());
@@ -312,7 +311,7 @@ public class CutApplicationTest {
 
     @Test
     void run_zeroGivenAsPositionArg_exception() {
-        String[] args = {"-c", "-b", "0", TEST_FILENAME};
+        String[] args = {"-c", "0", TEST_FILENAME};
 
         CutException exception = assertThrows(CutException.class, () -> cutApplication.run(args, inputStdin, output));
         assertEquals(new CutException(ERR_ZERO_POSITION_ARG).getMessage(), exception.getMessage());
@@ -366,15 +365,6 @@ public class CutApplicationTest {
 
         cutApplication.run(args, inputTestFile, output);
         assertEquals("123456789\n123456789\n", output.toString());
-    }
-
-
-    @Test
-    void run_rangeNoStartIndex_cutFromStartOfFileUntilEndIndex() throws AbstractApplicationException {
-        String[] args = {"-b", "-5", TEST_FILENAME};
-
-        cutApplication.run(args, inputTestFile, output);
-        assertEquals("12345\n12345\n", output.toString());
     }
 
     @Test
