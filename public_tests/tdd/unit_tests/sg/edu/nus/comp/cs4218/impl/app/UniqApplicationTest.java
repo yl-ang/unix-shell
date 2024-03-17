@@ -1,4 +1,4 @@
-package tdd.unit_tests.sg.edu.nus.comp.cs4218.impl;
+package tdd.unit_tests.sg.edu.nus.comp.cs4218.impl.app;
 
 import org.junit.jupiter.api.*;
 import sg.edu.nus.comp.cs4218.app.UniqInterface;

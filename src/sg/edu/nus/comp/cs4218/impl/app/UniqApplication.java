@@ -81,11 +81,11 @@ public class UniqApplication implements UniqInterface {
     /**
      * Filters adjacent matching lines from INPUT_FILE or standard input and writes to an OUTPUT_FILE or to standard output.
      *
-     * @param isCount        Boolean option to prefix lines by the number of occurrences of adjacent duplicate lines
-     * @param isOnlyDuplicates     Boolean option to print only duplicate lines, one for each group
+     * @param isCount          Boolean option to prefix lines by the number of occurrences of adjacent duplicate lines
+     * @param isOnlyDuplicates Boolean option to print only duplicate lines, one for each group
      * @param isAllDuplicates  Boolean option to print all duplicate lines (takes precedence if isRepeated is set to true)
-     * @param inputFileName  of path to input file
-     * @param outputFileName of path to output file (if any)
+     * @param inputFileName    of path to input file
+     * @param outputFileName   of path to output file (if any)
      * @throws AbstractApplicationException
      */
     @Override
@@ -101,7 +101,7 @@ public class UniqApplication implements UniqInterface {
             List<String> linesFromInput = IOUtils.getLinesFromInputStream(stdin);
             fileLines.addAll(linesFromInput);
 
-            return uniqInputString(isCount, isOnlyDuplicates, isAllDuplicates, fileLines, outputFileName);
+            return uniqInputString(isCount, isOnlyDuplicates, isAllDuplicates, fileLines);
         }
         File inputFile = IOUtils.resolveFilePath(inputFileName).toFile();
         if (!inputFile.exists()) {
@@ -118,11 +118,10 @@ public class UniqApplication implements UniqInterface {
             InputStream input = IOUtils.openInputStream(inputFileName);
             fileLines = IOUtils.getLinesFromInputStream(input);
             IOUtils.closeInputStream(input);
-        }
-        catch (ShellException e) {
+        } catch (ShellException e) {
             throw new UniqException(ERR_NULL_STREAMS);
         }
-        return uniqInputString(isCount, isOnlyDuplicates, isAllDuplicates, fileLines, outputFileName);
+        return uniqInputString(isCount, isOnlyDuplicates, isAllDuplicates, fileLines);
     }
 
     /**
@@ -143,47 +142,79 @@ public class UniqApplication implements UniqInterface {
         } catch (IOException e) {
             throw new UniqException(ERR_IO_EXCEPTION);
         }
-        return uniqInputString(isCount, isRepeated, isAllRepeated, stdinLines, outputFileName);
+        return uniqInputString(isCount, isRepeated, isAllRepeated, stdinLines);
     }
 
-    public String uniqInputString(Boolean isCount, Boolean isRepeated, Boolean isAllRepeated, List<String> input, String outputFileName) {
-        StringBuilder output = new StringBuilder();
-        String prevString = null;
-        int count = 0;
 
+    // Main method to process the input and generate the output string.
+    public String uniqInputString(Boolean isCount, Boolean isRepeated, Boolean isAllRepeated, List<String> input) {
+        List<String> lines = new ArrayList<>();
+        List<Integer> count = new ArrayList<>();
+        countOccurrences(input, lines, count);
+
+        String output = generateOutput(isCount, isRepeated, isAllRepeated, lines, count);
+        return output;
+    }
+
+    // Method to count occurrences of each string in the input.
+    private void countOccurrences(List<String> input, List<String> lines, List<Integer> count) {
+        int counter = 0;
+        String currString = "";
         for (String s : input) {
-            if (prevString == null || !prevString.equals(s)) {
-                if (prevString != null) {
-                    appendOutput(output, prevString, count, isCount, isRepeated, isAllRepeated);
-                }
-                prevString = s;
-                count = 1;
+            if (currString.isEmpty()) {
+                currString = s;
+                counter = 1;
+                continue;
+            }
+
+            if (currString.equals(s)) {
+                counter++;
             } else {
-                count++;
+                lines.add(currString);
+                count.add(counter);
+                currString = s;
+                counter = 1;
             }
         }
+        lines.add(currString); // Add the last string
+        count.add(counter); // Add the last count
+    }
 
-        // Append the last set of lines
-        if (prevString != null) {
-            appendOutput(output, prevString, count, isCount, isRepeated, isAllRepeated);
+    // Method to generate the output string based on the given flags.
+    private String generateOutput(Boolean isCount, Boolean isRepeated, Boolean isAllRepeated, List<String> lines, List<Integer> count) {
+        StringBuilder output = new StringBuilder();
+        for (int i = 0; i < lines.size(); i++) {
+            if (isAllRepeated) {
+                if (count.get(i) > 1) {
+                    appendLines(output, isCount, lines.get(i), count.get(i));
+                }
+            } else if (isRepeated) {
+                if (count.get(i) > 1) {
+                    appendLine(output, isCount, lines.get(i), count.get(i));
+                }
+            } else {
+                appendLine(output, isCount, lines.get(i), count.get(i));
+            }
         }
-
         return output.toString();
     }
 
-    private void appendOutput(StringBuilder output, String line, int count, boolean isCount, boolean isRepeated, boolean isAllRepeated) {
-        if (isAllRepeated || (isRepeated && count > 1)) {
-            if (isCount) {
-                for (int i = 0; i < count; i++) {
-                    output.append(count).append(" ").append(line).append(STRING_NEWLINE);
-                }
-            } else {
-                output.append(line.repeat(count)).append(STRING_NEWLINE);
-            }
-        } else if (isCount) {
-            output.append(count).append(" ").append(line).append(STRING_NEWLINE);
-        } else {
-            output.append(line).append(STRING_NEWLINE);
+    // Helper method to append lines to the output, used for repeated and all repeated scenarios.
+    private void appendLines(StringBuilder output, Boolean isCount, String line, int count) {
+        for (int j = 0; j < count; j++) {
+            appendLine(output, isCount, line, count);
         }
     }
+
+    // Helper method to append a single line to the output.
+    private void appendLine(StringBuilder output, Boolean isCount, String line, int count) {
+        if (isCount) {
+            output.append(count).append(" ");
+        }
+        output.append(line).append("\n");
+    }
+
+
 }
+
+
