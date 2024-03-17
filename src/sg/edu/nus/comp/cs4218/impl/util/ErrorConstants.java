@@ -31,7 +31,8 @@ public class ErrorConstants {
     public static final String ERR_NO_PERM = "Permission denied";
     public static final String ERR_NO_PERM_WRITE_FILE = "No write permission to file";
     public static final String ERR_NO_PERM_READ_FILE = "No read permission to file";
-
+    public static final String ERR_DELETING_FILE = "Could not delete file";
+    public static final String ERR_DELETING_DIR = "Could not delete directory";
 
     // `date` related
     public static final String ERR_INVALID_FORMAT_PREFIX = "Invalid format. Date format must start with '+'";
@@ -71,4 +72,5 @@ public class ErrorConstants {
     public static final String ERR_ZERO_POSITION_ARG = "Values may not include zero";
     public static final String ERR_ISCHARPO_AND_ISBYTEPO_FALSE = "One of isCharPo or isBytePo should be true";
     public static final String ERR_RANGE_EMPTY = "Range to cut is not provided";
+
 }
