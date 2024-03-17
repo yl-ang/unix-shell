@@ -27,7 +27,7 @@ public class UniqArgsParser extends ArgsParser {
         return nonFlagArgs.get(1);
     }
 
-    public boolean isOccurrences() {
+    public boolean isCount() {
         return flags.contains(FLAG_COUNT);
     }
 
