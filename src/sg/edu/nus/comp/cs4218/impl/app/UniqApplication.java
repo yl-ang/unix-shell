@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class UniqApplication implements UniqInterface {
     private OutputStream outputStream;
@@ -82,14 +81,14 @@ public class UniqApplication implements UniqInterface {
      * Filters adjacent matching lines from INPUT_FILE or standard input and writes to an OUTPUT_FILE or to standard output.
      *
      * @param isCount          Boolean option to prefix lines by the number of occurrences of adjacent duplicate lines
-     * @param isOnlyDuplicates Boolean option to print only duplicate lines, one for each group
-     * @param isAllDuplicates  Boolean option to print all duplicate lines (takes precedence if isRepeated is set to true)
+     * @param isRepeated Boolean option to print only duplicate lines, one for each group
+     * @param isAllRepeated Boolean option to print all duplicate lines (takes precedence if isRepeated is set to true)
      * @param inputFileName    of path to input file
      * @param outputFileName   of path to output file (if any)
      * @throws AbstractApplicationException
      */
     @Override
-    public String uniqFromFile(Boolean isCount, Boolean isOnlyDuplicates, Boolean isAllDuplicates, String inputFileName, String outputFileName) throws AbstractApplicationException, IOException {
+    public String uniqFromFile(Boolean isCount, Boolean isRepeated, Boolean isAllRepeated, String inputFileName, String outputFileName) throws AbstractApplicationException, IOException {
 
         if (inputFileName == null) {
             throw new UniqException(ERR_NO_INPUT);
@@ -101,7 +100,7 @@ public class UniqApplication implements UniqInterface {
             List<String> linesFromInput = IOUtils.getLinesFromInputStream(stdin);
             fileLines.addAll(linesFromInput);
 
-            return uniqInputString(isCount, isOnlyDuplicates, isAllDuplicates, fileLines);
+            return uniqInputString(isCount, isRepeated, isAllRepeated, fileLines);
         }
         File inputFile = IOUtils.resolveFilePath(inputFileName).toFile();
         if (!inputFile.exists()) {
@@ -121,7 +120,7 @@ public class UniqApplication implements UniqInterface {
         } catch (ShellException e) {
             throw new UniqException(ERR_NULL_STREAMS);
         }
-        return uniqInputString(isCount, isOnlyDuplicates, isAllDuplicates, fileLines);
+        return uniqInputString(isCount, isRepeated, isAllRepeated, fileLines);
     }
 
     /**
