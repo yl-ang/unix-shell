@@ -115,13 +115,12 @@ public class UniqApplication implements UniqInterface {
         }
 
         try {
-            InputStream fileInputStream = IOUtils.openInputStream(inputFileName);
-            fileLines = IOUtils.getLinesFromInputStream(fileInputStream);
-            IOUtils.closeInputStream(fileInputStream);
-        } catch (IOException e) {
-            throw new UniqException(ERR_IO_EXCEPTION);
-        } catch (ShellException e) {
-            throw new UniqException(inputFileName + ": " + ERR_FILE_NOT_FOUND);
+            InputStream input = IOUtils.openInputStream(inputFileName);
+            fileLines = IOUtils.getLinesFromInputStream(input);
+            IOUtils.closeInputStream(input);
+        }
+        catch (ShellException e) {
+            throw new UniqException(ERR_NULL_STREAMS);
         }
         return uniqInputString(isCount, isOnlyDuplicates, isAllDuplicates, fileLines, outputFileName);
     }
@@ -138,7 +137,13 @@ public class UniqApplication implements UniqInterface {
      */
     @Override
     public String uniqFromStdin(Boolean isCount, Boolean isRepeated, Boolean isAllRepeated, InputStream stdin, String outputFileName) throws AbstractApplicationException {
-        return null;
+        List<String> stdinLines;
+        try {
+            stdinLines = IOUtils.getLinesFromInputStream(stdin);
+        } catch (IOException e) {
+            throw new UniqException(ERR_IO_EXCEPTION);
+        }
+        return uniqInputString(isCount, isRepeated, isAllRepeated, stdinLines, outputFileName);
     }
 
     public String uniqInputString(Boolean isCount, Boolean isRepeated, Boolean isAllRepeated, List<String> input, String outputFileName) {
