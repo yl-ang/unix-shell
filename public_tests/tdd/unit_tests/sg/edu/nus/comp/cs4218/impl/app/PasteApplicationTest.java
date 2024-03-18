@@ -192,7 +192,7 @@ public class PasteApplicationTest {
     }
 
     @Test
-    void run_mergeStdin_Success() throws AbstractApplicationException {
+    void run_mergeFileAndStdin_Success() throws AbstractApplicationException {
         // GIVEN
         String[] args = {"fileA.txt", "-"};
         String inputB = "1\n2\n3\n4\n";
@@ -239,5 +239,31 @@ public class PasteApplicationTest {
 
         //VERIFY
         verify(pasteApplication, times(1)).mergeFile(anyBoolean(),  anyString(), anyString());
+    }
+
+    @Test
+    void run_mergeStdin_Success() throws AbstractApplicationException {
+        // GIVEN
+        String[] args = {};
+        String input = "A\nB\nC\nD\n";
+        InputStream inputStream = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        // Mock PasteArgsParser
+        when(pasteArgsParser.getFileNames()).thenReturn(List.of("-"));
+
+        // Mock PasteApplication methods
+        doReturn("A\nB\nC\nD").when(pasteApplication)
+                .mergeStdin(eq(false), any(InputStream.class));
+
+        // WHEN
+        pasteApplication.run(args, inputStream, outputStream);
+
+        // THEN
+        String expectedOutput = "A\nB\nC\nD\n";
+        assertEquals(expectedOutput, outputStream.toString());
+
+        //VERIFY
+        verify(pasteApplication, times(1)).mergeStdin(anyBoolean(), any(InputStream.class));
     }
 }
