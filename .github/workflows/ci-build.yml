@@ -3,7 +3,7 @@ on: [pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -13,7 +13,6 @@ jobs:
         with:
           distribution: 'oracle'
           java-version: '17'
-          cache: maven
 
       - name: Run Build
         run: mvn clean package
