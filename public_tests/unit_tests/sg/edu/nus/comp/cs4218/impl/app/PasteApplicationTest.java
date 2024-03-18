@@ -193,7 +193,7 @@ public class PasteApplicationTest {
         pasteApplication.run(args, inputStreamB, outputStream);
 
         // THEN
-        String expectedOutput = "A\t1\nB\t2\nC\t3\nD\t4\r\n";
+        String expectedOutput = "A\t1\nB\t2\nC\t3\nD\t4\n";
         assertEquals(expectedOutput, outputStream.toString());
 
         //VERIFY
@@ -217,7 +217,7 @@ public class PasteApplicationTest {
         pasteApplication.run(args, null, outputStream);
 
         // THEN
-        String expectedOutput = "A\t1\nB\t2\nC\t3\nD\t4\r\n";
+        String expectedOutput = "A\t1\nB\t2\nC\t3\nD\t4\n";
         assertEquals(expectedOutput, outputStream.toString());
 
         //VERIFY
@@ -243,7 +243,7 @@ public class PasteApplicationTest {
         pasteApplication.run(args, inputStream, outputStream);
 
         // THEN
-        String expectedOutput = "A\nB\nC\nD\r\n";
+        String expectedOutput = "A\nB\nC\nD\n";
         assertEquals(expectedOutput, outputStream.toString());
 
         //VERIFY
