@@ -17,8 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_TAB;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_FLAG_PREFIX;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.*;
 
 public class PasteApplication implements PasteInterface  {
     public static final String ERR_READING_FILE = "Could not read file";
@@ -98,17 +97,18 @@ public class PasteApplication implements PasteInterface  {
 
             if (isSerial) {
                 appendLines(mergedLines, stdinLines);
+                if (!mergedLines.isEmpty()) {
+                    mergedLines.deleteCharAt(mergedLines.length() - 1);
+                }
             } else {
                 for (String line : stdinLines) {
-                    mergedLines.append(line).append(CHAR_TAB);
-                }
-                if (!stdinLines.isEmpty()) {
-                    mergedLines.deleteCharAt(mergedLines.length() - 1);
+                    mergedLines.append(line);
+                    mergedLines.append(STRING_NEWLINE);
                 }
             }
             return mergedLines.toString();
         } catch (IOException e) {
-            throw new PasteException(ERR_READING_FILE);
+            throw new PasteException(ERR_READING_STREAM);
         }
     }
 
