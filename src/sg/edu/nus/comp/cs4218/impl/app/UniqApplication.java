@@ -25,16 +25,12 @@ public class UniqApplication implements UniqInterface {
 
     @Override
     public void run(String[] args, InputStream stdin, OutputStream stdout) throws UniqException {
-
-        if (stdin == null || stdout == null) {
+        if (stdout == null || stdin == null) {
             throw new UniqException(ERR_NULL_STREAMS);
         }
-
         this.stdin = stdin;
-        // Parse arguments
+
         UniqArgsParser parser = new UniqArgsParser();
-        String inputFileName = parser.getInputFile();
-        String outputFileName = parser.getOutputFile();
         String output;
         outputStream = stdout;
         try {
@@ -43,19 +39,17 @@ public class UniqApplication implements UniqInterface {
             throw new UniqException(e.getMessage());
         }
 
-        // Perform uniq operation
+        String outputFile= parser.getOutputFile();
+        String inputFile = parser.getInputFile();
+
         try {
-            if (inputFileName == null) {
-                output = uniqFromStdin(parser.isCount(), parser.isOnlyDuplicates(), parser.isAllDuplicates(), stdin, parser.getOutputFile());
+            if (inputFile != null) {
+                output = uniqFromFile(parser.isCount(), parser.isOnlyDuplicates(), parser.isAllDuplicates(), inputFile, outputFile);
             } else {
-                output = uniqFromFile(parser.isCount(), parser.isOnlyDuplicates(), parser.isAllDuplicates(), parser.getInputFile(), parser.getOutputFile());
+                output = uniqFromStdin(parser.isCount(), parser.isOnlyDuplicates(), parser.isAllDuplicates(), stdin, outputFile);
             }
         } catch (Exception e) {
             throw new UniqException(e.getMessage());
-        }
-
-        if (outputFileName == null && stdout == null) {
-            throw new UniqException(ERR_NO_OSTREAM);
         }
 
         // Write output
@@ -89,25 +83,24 @@ public class UniqApplication implements UniqInterface {
      */
     @Override
     public String uniqFromFile(Boolean isCount, Boolean isRepeated, Boolean isAllRepeated, String inputFileName, String outputFileName) throws AbstractApplicationException, IOException {
-
+        List<String> fileLines = new ArrayList<>();
         if (inputFileName == null) {
             throw new UniqException(ERR_NO_INPUT);
         }
 
-        List<String> fileLines = new ArrayList<>();
         //if only "-"
-        if (inputFileName.length() == 1 && inputFileName.toCharArray()[0] == '-') {
+        if (inputFileName.toCharArray()[0] == '-' && inputFileName.length() == 1) {
             List<String> linesFromInput = IOUtils.getLinesFromInputStream(stdin);
             fileLines.addAll(linesFromInput);
 
-            return uniqInputString(isCount, isRepeated, isAllRepeated, fileLines);
+            return uniqProcessInputString(isCount, isRepeated, isAllRepeated, fileLines);
         }
         File inputFile = IOUtils.resolveFilePath(inputFileName).toFile();
-        if (!inputFile.exists()) {
-            throw new UniqException(inputFileName + ": " + ERR_FILE_NOT_FOUND);
-        }
         if (inputFile.isDirectory()) {
             throw new UniqException(inputFileName + ": " + ERR_IS_DIR);
+        }
+        if (!inputFile.exists()) {
+            throw new UniqException(inputFileName + ": " + ERR_FILE_NOT_FOUND);
         }
         if (!inputFile.canRead()) {
             throw new UniqException(inputFileName + ": " + ERR_NO_PERM);
@@ -120,7 +113,7 @@ public class UniqApplication implements UniqInterface {
         } catch (ShellException e) {
             throw new UniqException(ERR_NULL_STREAMS);
         }
-        return uniqInputString(isCount, isRepeated, isAllRepeated, fileLines);
+        return uniqProcessInputString(isCount, isRepeated, isAllRepeated, fileLines);
     }
 
     /**
@@ -140,13 +133,15 @@ public class UniqApplication implements UniqInterface {
             stdinLines = IOUtils.getLinesFromInputStream(stdin);
         } catch (IOException e) {
             throw new UniqException(ERR_IO_EXCEPTION);
+        } catch (NullPointerException e) {
+            throw new UniqException(e.getMessage());
         }
-        return uniqInputString(isCount, isRepeated, isAllRepeated, stdinLines);
+        return uniqProcessInputString(isCount, isRepeated, isAllRepeated, stdinLines);
     }
 
 
     // Main method to process the input and generate the output string.
-    public String uniqInputString(Boolean isCount, Boolean isRepeated, Boolean isAllRepeated, List<String> input) {
+    public String uniqProcessInputString(Boolean isCount, Boolean isRepeated, Boolean isAllRepeated, List<String> input) {
         List<String> lines = new ArrayList<>();
         List<Integer> count = new ArrayList<>();
         countOccurrences(input, lines, count);
@@ -156,27 +151,29 @@ public class UniqApplication implements UniqInterface {
     }
 
     // Method to count occurrences of each string in the input.
-    private void countOccurrences(List<String> input, List<String> lines, List<Integer> count) {
-        int counter = 0;
-        String currString = "";
-        for (String s : input) {
-            if (currString.isEmpty()) {
-                currString = s;
-                counter = 1;
-                continue;
-            }
-
-            if (currString.equals(s)) {
-                counter++;
-            } else {
-                lines.add(currString);
-                count.add(counter);
-                currString = s;
-                counter = 1;
-            }
+    private void countOccurrences(List<String> inputs, List<String> distinctStrings, List<Integer> frequencies) {
+        if (inputs == null || inputs.isEmpty()) {
+            return;
         }
-        lines.add(currString); // Add the last string
-        count.add(counter); // Add the last count
+
+        String previousString = null;
+        int occurrenceCount = 0;
+
+        for (String currentString : inputs) {
+            if (previousString == null || previousString.equals(currentString)) {
+                occurrenceCount++;
+            } else {
+                distinctStrings.add(previousString);
+                frequencies.add(occurrenceCount);
+                occurrenceCount = 1;
+            }
+            previousString = currentString;
+        }
+
+        if (previousString != null) {
+            distinctStrings.add(previousString);
+            frequencies.add(occurrenceCount);
+        }
     }
 
     // Method to generate the output string based on the given flags.
