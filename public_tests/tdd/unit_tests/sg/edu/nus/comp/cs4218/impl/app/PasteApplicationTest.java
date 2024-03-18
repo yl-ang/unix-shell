@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.impl.app.PasteApplication;
+import sg.edu.nus.comp.cs4218.impl.parser.PasteArgsParser;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 import java.io.ByteArrayInputStream;
@@ -13,11 +14,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class PasteApplicationTest {
     @Mock
@@ -29,6 +29,10 @@ public class PasteApplicationTest {
     @Mock
     private IOUtils ioUtils;
 
+    @Mock
+    private PasteArgsParser pasteArgsParser;
+
+    @Spy
     @InjectMocks
     private PasteApplication pasteApplication;
 
@@ -47,7 +51,7 @@ public class PasteApplicationTest {
         String inputA = "A\nB\nC\nD\n";
         String inputB = "1\n2\n3\n4\n";
 
-        try (MockedStatic<IOUtils> mockedStatic = Mockito.mockStatic(IOUtils.class)) {
+        try (MockedStatic<IOUtils> mockedStatic = mockStatic(IOUtils.class)) {
             // Mocking input streams for fileA and fileB
             InputStream inputStreamA = new ByteArrayInputStream(inputA.getBytes(StandardCharsets.UTF_8));
             InputStream inputStreamB = new ByteArrayInputStream(inputB.getBytes(StandardCharsets.UTF_8));
@@ -76,7 +80,7 @@ public class PasteApplicationTest {
         String inputA = "A\nB\nC\nD\n";
         String inputB = "1\n2\n3\n4\n";
 
-        try (MockedStatic<IOUtils> mockedStatic = Mockito.mockStatic(IOUtils.class)) {
+        try (MockedStatic<IOUtils> mockedStatic = mockStatic(IOUtils.class)) {
             // Mocking input streams for fileA and fileB
             InputStream inputStreamA = new ByteArrayInputStream(inputA.getBytes(StandardCharsets.UTF_8));
             InputStream inputStreamB = new ByteArrayInputStream(inputB.getBytes(StandardCharsets.UTF_8));
@@ -100,12 +104,12 @@ public class PasteApplicationTest {
 
     // # Merge stdin, A.txt, stdin (stdin is B.txt), Example 3 from 9.9
     @Test
-    void mergeStdinFileStdin_ShouldBeSuccess() throws Exception {
+    void mergeStdinFileStdin_Parallel_ShouldBeSuccess() throws Exception {
         // GIVEN
         String inputA = "A\nB\nC\nD\n";
         String inputB = "1\n2\n3\n4\n";
 
-        try (MockedStatic<IOUtils> mockedStatic = Mockito.mockStatic(IOUtils.class)) {
+        try (MockedStatic<IOUtils> mockedStatic = mockStatic(IOUtils.class)) {
             // Mocking input streams for fileA, fileB
             InputStream inputStreamA = new ByteArrayInputStream(inputA.getBytes(StandardCharsets.UTF_8));
             InputStream inputStreamB = new ByteArrayInputStream(inputB.getBytes(StandardCharsets.UTF_8));
@@ -122,5 +126,118 @@ public class PasteApplicationTest {
             String expectedOutput = "1\tA\t2\n3\tB\t4\n \tC\t \n \tD\t \n";
             assertEquals(expectedOutput, result);
         }
+    }
+
+    // # Merge stdin, A.txt, stdin (stdin is B.txt), Example 3 from 9.9
+    @Test
+    void mergeFileAndStdin_Serial_ShouldBeSuccess() throws Exception {
+        // GIVEN
+        String inputA = "A\nB\nC\nD\n";
+        String inputB = "1\n2\n3\n4\n";
+
+        try (MockedStatic<IOUtils> mockedStatic = mockStatic(IOUtils.class)) {
+            // Mocking input streams for fileA, fileB
+            InputStream inputStreamA = new ByteArrayInputStream(inputA.getBytes(StandardCharsets.UTF_8));
+            InputStream inputStreamB = new ByteArrayInputStream(inputB.getBytes(StandardCharsets.UTF_8));
+
+            // Mocking opening of files: A.txt and B.txt
+            mockedStatic.when(() -> IOUtils.openInputStream("fileA.txt")).thenReturn(inputStreamA);
+            mockedStatic.when(() -> IOUtils.getLinesFromInputStream(inputStreamA)).thenReturn(Arrays.asList("A", "B", "C", "D"));
+            mockedStatic.when(() -> IOUtils.getLinesFromInputStream(inputStreamB)).thenReturn(Arrays.asList("1", "2", "3", "4"));
+
+            // WHEN
+            String result = pasteApplication.mergeFileAndStdin(true, inputStreamB, "-", "fileA.txt", "-");
+
+            // THEN
+            String expectedOutput = "1\t2\t3\t4\nA\tB\tC\tD\n";
+            assertEquals(expectedOutput, result);
+        }
+    }
+
+    // # Merge stdin input
+    @Test
+    void mergeStdin_Serial_ShouldBeSuccess() throws Exception {
+        // GIVEN
+        String inputA = "A\nB\nC\nD\n";
+        InputStream inputStreamA = new ByteArrayInputStream(inputA.getBytes(StandardCharsets.UTF_8));
+
+        try (MockedStatic<IOUtils> mockedStatic = mockStatic(IOUtils.class)) {
+            mockedStatic.when(() -> IOUtils.getLinesFromInputStream(inputStreamA)).thenReturn(Arrays.asList("A", "B", "C", "D"));
+
+            // WHEN
+            String result = pasteApplication.mergeStdin(true, inputStreamA);
+
+            // THEN
+            String expectedOutput = "A\tB\tC\tD";
+            assertEquals(expectedOutput, result);
+        }
+    }
+
+    @Test
+    void mergeStdin_Parallel_ShouldBeSuccess() throws Exception {
+        // GIVEN
+        String inputA = "A\nB\nC\nD\n";
+        InputStream inputStreamA = new ByteArrayInputStream(inputA.getBytes(StandardCharsets.UTF_8));
+
+        try (MockedStatic<IOUtils> mockedStatic = mockStatic(IOUtils.class)) {
+            mockedStatic.when(() -> IOUtils.getLinesFromInputStream(inputStreamA)).thenReturn(Arrays.asList("A", "B", "C", "D"));
+
+            // WHEN
+            String result = pasteApplication.mergeStdin(false, inputStreamA);
+
+            // THEN
+            String expectedOutput = "A\nB\nC\nD\n";
+            assertEquals(expectedOutput, result);
+        }
+    }
+
+    @Test
+    void run_mergeStdin_Success() throws AbstractApplicationException {
+        // GIVEN
+        String[] args = {"fileA.txt", "-"};
+        String inputB = "1\n2\n3\n4\n";
+        InputStream inputStreamB = new ByteArrayInputStream(inputB.getBytes(StandardCharsets.UTF_8));
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        // Mock PasteArgsParser
+        when(pasteArgsParser.getFileNames()).thenReturn(List.of("fileA.txt"));
+
+        // Mock PasteApplication methods
+        doReturn("A\t1\nB\t2\nC\t3\nD\t4").when(pasteApplication)
+                .mergeFileAndStdin(eq(false), any(InputStream.class), eq("fileA.txt"), eq("-"));
+
+        // WHEN
+        pasteApplication.run(args, inputStreamB, outputStream);
+
+        // THEN
+        String expectedOutput = "A\t1\nB\t2\nC\t3\nD\t4\n";
+        assertEquals(expectedOutput, outputStream.toString());
+
+        //VERIFY
+        verify(pasteApplication, times(1)).mergeFileAndStdin(anyBoolean(), any(InputStream.class), anyString());
+    }
+
+    @Test
+    void run_mergeFile_Success() throws AbstractApplicationException {
+        // GIVEN
+        String[] args = {"fileA.txt", "fileB.txt"};
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        // Mock PasteArgsParser
+        when(pasteArgsParser.getFileNames()).thenReturn(List.of("fileA.txt", "fileB.txt"));
+
+        // Mock PasteApplication methods
+        doReturn("A\t1\nB\t2\nC\t3\nD\t4").when(pasteApplication)
+                .mergeFile(eq(false), eq("fileA.txt"), eq("fileB.txt"));
+
+        // WHEN
+        pasteApplication.run(args, null, outputStream);
+
+        // THEN
+        String expectedOutput = "A\t1\nB\t2\nC\t3\nD\t4\n";
+        assertEquals(expectedOutput, outputStream.toString());
+
+        //VERIFY
+        verify(pasteApplication, times(1)).mergeFile(anyBoolean(),  anyString(), anyString());
     }
 }
