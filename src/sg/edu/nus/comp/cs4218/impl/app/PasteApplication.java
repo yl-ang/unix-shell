@@ -269,9 +269,11 @@ public class PasteApplication implements PasteInterface  {
                 List<String> tempStdinLines = new ArrayList<>();
 
                 // Determine whether to process stdin serially or not
-                if (isSerial && !hasProcessedSerialStdin) {
-                    allLines.add(stdinLines);
-                    hasProcessedSerialStdin = true;
+                if (isSerial) {
+                    if (!hasProcessedSerialStdin) {
+                        allLines.add(stdinLines);
+                        hasProcessedSerialStdin = true;
+                    }
                 } else {
                     // Add lines from stdin based on total flags count
                     for (int i = currFlagCount; i < stdinLines.size(); i += totalFlags) {
