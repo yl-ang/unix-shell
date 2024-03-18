@@ -166,7 +166,7 @@ public class GrepApplicationTest {
 
     @Test
     void run_validGrepFromFiles_shouldReturnGrepOutput() throws Exception {
-        grepApplication.run(new String[]{"hello world", String.valueOf(path)}, inputStream, stdout);
+        grepApplication.run(new String[]{"hello world", TEST_FILE}, inputStream, stdout);
         assertEquals(HELLO_LOWERCASE + STRING_NEWLINE, stdout.toString());
     }
 }

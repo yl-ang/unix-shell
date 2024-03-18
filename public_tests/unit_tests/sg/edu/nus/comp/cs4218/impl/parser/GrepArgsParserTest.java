@@ -83,7 +83,7 @@ class GrepArgsParserTest {
         }
 
         String[] expectedFiles = {"file1.txt", "file2.txt"};
-        assertArrayEquals(expectedFiles, grepArgsParser.getFileNames());
+        assertArrayEquals(expectedFiles, grepArgsParser.getFileNames().toArray());
     }
 
     @Test
