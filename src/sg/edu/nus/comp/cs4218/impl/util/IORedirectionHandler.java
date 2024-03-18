@@ -1,17 +1,11 @@
 package sg.edu.nus.comp.cs4218.impl.util;
 
-import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.exception.DirectoryNotFoundException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -47,87 +41,51 @@ public class IORedirectionHandler {
 
         // extract redirection operators (with their corresponding files) from argsList
         ListIterator<String> argsIterator = argsList.listIterator();
-        boolean hasInputRedir = false;
-        boolean hasOutputRedir = false;
         while (argsIterator.hasNext()) {
             String arg = argsIterator.next();
-
-            if (arg.equals(String.valueOf(CHAR_REDIR_INPUT))) {
-                hasInputRedir = true;
-            } else if (arg.equals(String.valueOf(CHAR_REDIR_OUTPUT))) {
-                hasOutputRedir = true;
-            }
 
             // leave the other args untouched
             if (!isRedirOperator(arg)) {
                 noRedirArgsList.add(arg);
-            } else {
-                // fast forward to last item
-                while (argsIterator.hasNext()) {
-                    String temp = argsIterator.next();
-                    if (hasInputRedir && temp.equals(String.valueOf(CHAR_REDIR_OUTPUT))) {
-                        throw new ShellException(ERR_SYNTAX);
-                    } else if (hasOutputRedir && temp.equals(String.valueOf(CHAR_REDIR_INPUT))) {
-                        throw new ShellException(ERR_SYNTAX);
-                    }
+                continue;
+            }
+
+            if (!argsIterator.hasNext()) {
+                throw new ShellException(ERR_FILE_NOT_FOUND);
+            }
+
+            String file = argsIterator.next();
+            if (isRedirOperator(file)) {
+                throw new ShellException(ERR_SYNTAX);
+            }
+
+            // handle quoting + globing + command substitution in file arg
+            List<String> fileSegment = argumentResolver.resolveOneArgument(file);
+            if (fileSegment.size() > 1) {
+                // ambiguous redirect if file resolves to more than one parsed arg
+                throw new ShellException(ERR_SYNTAX);
+            }
+            file = fileSegment.get(0);
+
+            // replace existing inputStream / outputStream
+            if (arg.equals(String.valueOf(CHAR_REDIR_INPUT))) {
+                IOUtils.closeInputStream(inputStream);
+                inputStream = IOUtils.openInputStream(file);
+                if (inputStream.equals(origInputStream)) { // Already have a stream
+                    throw new ShellException(ERR_MULTIPLE_STREAMS);
                 }
-
-                while (argsIterator.hasPrevious()) {
-                    String item = argsIterator.previous();
-                    if (isRedirOperator(item)) {
-                        argsIterator.next();
-                        break;
-                    }
+                inputStream = IOUtils.openInputStream(file);
+            } else if (arg.equals(String.valueOf(CHAR_REDIR_OUTPUT))) {
+                IOUtils.closeOutputStream(outputStream);
+                outputStream = IOUtils.openOutputStream(file);
+                if (outputStream.equals(origOutputStream)) { // Already have a stream
+                    throw new ShellException(ERR_MULTIPLE_STREAMS);
                 }
-
-                if (!argsIterator.hasNext()) {
-                    throw new ShellException(ERR_SYNTAX);
-                }
-
-                String file = argsIterator.next();
-
-                if (argsIterator.hasNext()) {
-                    while (argsIterator.hasNext()) {
-                        noRedirArgsList.add(argsIterator.next());
-                    }
-                    break;
-                }
-
-
-                // handle quoting + globing + command substitution in file arg
-                List<String> fileSegment = argumentResolver.resolveOneArgument(file);
-                if (fileSegment.size() > 1) {
-                    // ambiguous redirect if file resolves to more than one parsed arg
-                    throw new ShellException(ERR_SYNTAX);
-                }
-                file = fileSegment.get(0);
-
-                String filePath = Environment.currentDirectory + CHAR_FILE_SEP + file;
-                Path path = Paths.get(filePath);
-                // replace existing inputStream / outputStream
-                if (arg.equals(String.valueOf(CHAR_REDIR_INPUT))) {
-                    if (!Files.exists(path)) {
-                        String errorMessage = String.format("%s %s %s", ERR_FILE_NOT_FOUND, CHAR_COLON, filePath);
-                        throw new ShellException(errorMessage);
-                    }
-                    IOUtils.closeInputStream(inputStream);
-                    if (!inputStream.equals(origInputStream)) { // Already have a stream
-                        throw new ShellException(ERR_MULTIPLE_STREAMS);
-                    }
-                    inputStream = IOUtils.openInputStream(file);
-
-                } else if (arg.equals(String.valueOf(CHAR_REDIR_OUTPUT))) {
-                    IOUtils.closeOutputStream(outputStream);
-                    if (!outputStream.equals(origOutputStream)) { // Already have a stream
-                        throw new ShellException(ERR_MULTIPLE_STREAMS);
-                    }
-                    createFileIfNotExists(path);
-                    outputStream = IOUtils.openOutputStream(file);
-                }
-                break;
+                outputStream = IOUtils.openOutputStream(file);
             }
         }
     }
+
     public List<String> getNoRedirArgsList() {
         return noRedirArgsList;
     }
@@ -142,19 +100,5 @@ public class IORedirectionHandler {
 
     private boolean isRedirOperator(String str) {
         return str.equals(String.valueOf(CHAR_REDIR_INPUT)) || str.equals(String.valueOf(CHAR_REDIR_OUTPUT));
-    }
-
-    private void createFileIfNotExists(Path path) throws FileNotFoundException {
-        try {
-            // Check if the file exists
-            if (!Files.exists(path)) {
-                // If the file doesn't exist, create it
-                Files.createFile(path);
-            }
-        } catch (IOException e) {
-            // Handle potential IO exceptions
-            String errorMessage = String.format("%s %s %s", ERR_FILE_NOT_FOUND, CHAR_COLON, e.getMessage());
-            throw new FileNotFoundException(errorMessage);
-        }
     }
 }

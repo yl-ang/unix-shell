@@ -16,6 +16,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.impl.util.ApplicationRunner.APP_ECHO;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.*;
 
 public class CallCommandIT {
@@ -119,8 +120,7 @@ public class CallCommandIT {
         List<String> args = List.of(APP_ECHO, "<", "123");
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         Exception exception = assertThrows(ShellException.class, () -> callCommand.evaluate(systemInputStream, outputStream));
-        String expected = String.format("%s %s %s", "No such file or directory", ":", TEST_DIRECTORY + STR_FILE_SEP + "123");
-        assertEquals(new ShellException(expected).getMessage(), exception.getMessage());
+        assertEquals(new ShellException(ERR_FILE_NOT_FOUND).getMessage(), exception.getMessage());
     }
 
     @Test
@@ -164,8 +164,7 @@ public class CallCommandIT {
         List<String> args = List.of("cat", "<", FOLDER_NAME_2); // cat a dir
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         Exception exception = assertThrows(ShellException.class, () -> callCommand.evaluate(systemInputStream, outputStream));
-        String expected = String.format("shell: No such file or directory : %s%s%s", TEST_DIRECTORY, STR_FILE_SEP, FOLDER_NAME_2);
-        assertEquals(expected, exception.getMessage());
+        assertEquals(new ShellException(ERR_FILE_NOT_FOUND).getMessage(), exception.getMessage());
     }
 
     // COMMAND SUBSTITUTION POSITIVE TEST CASE
