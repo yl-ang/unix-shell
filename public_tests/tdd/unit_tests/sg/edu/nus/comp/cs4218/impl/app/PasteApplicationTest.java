@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
@@ -41,7 +42,7 @@ public class PasteApplicationTest {
 
     // Merge two files A.txt and B.txt (lines from the two files will be merged and separated by TAB)
     @Test
-    void paste_MergeTwoFilesParallel_Success() throws AbstractApplicationException, IOException {
+    void mergeFile_Parallel_ShouldBeSuccess() throws AbstractApplicationException, IOException {
         // Given
         String inputA = "A\nB\nC\nD\n";
         String inputB = "1\n2\n3\n4\n";
@@ -68,52 +69,58 @@ public class PasteApplicationTest {
         }
     }
 
-
     // # Merge two files A.txt and B.txt with -s (serial) flag, Example 2 from 9.9
     @Test
-    void paste_MergeTwoFilesSerial_Success() throws AbstractApplicationException, IOException {
+    void mergeFile_Serial_ShouldBeSuccess() throws AbstractApplicationException, IOException {
         // GIVEN
         String inputA = "A\nB\nC\nD\n";
         String inputB = "1\n2\n3\n4\n";
-        when(pasteApplication.mergeFile(anyBoolean(), anyString())).thenReturn("");
-        when(pasteApplication.mergeFile(anyBoolean(), anyString())).thenAnswer(invocation -> {
-            Object[] args = invocation.getArguments();
-            InputStream fileA = new ByteArrayInputStream(inputA.getBytes(StandardCharsets.UTF_8));
-            InputStream fileB = new ByteArrayInputStream(inputB.getBytes(StandardCharsets.UTF_8));
-            return pasteApplication.mergeFile((Boolean) args[0], "fileA.txt", "fileB.txt");
-        });
 
-        // WHEN
-        pasteApplication.run(new String[]{"-s", "fileA.txt", "fileB.txt"}, null, stdout);
+        try (MockedStatic<IOUtils> mockedStatic = Mockito.mockStatic(IOUtils.class)) {
+            // Mocking input streams for fileA and fileB
+            InputStream inputStreamA = new ByteArrayInputStream(inputA.getBytes(StandardCharsets.UTF_8));
+            InputStream inputStreamB = new ByteArrayInputStream(inputB.getBytes(StandardCharsets.UTF_8));
 
-        // THEN
-        String expectedOutput = "A\tB\tC\tD\t\n1\t2\t3\t4\t\n";
-        assertEquals(expectedOutput, stdout.toString());
+            // Mocking opening of files: A.txt and B.txt
+            mockedStatic.when(() -> IOUtils.openInputStream("fileA.txt")).thenReturn(inputStreamA);
+            mockedStatic.when(() -> IOUtils.openInputStream("fileB.txt")).thenReturn(inputStreamB);
+
+            // Mocking lines obtained from input streams
+            mockedStatic.when(() -> IOUtils.getLinesFromInputStream(inputStreamA)).thenReturn(Arrays.asList("A", "B", "C", "D"));
+            mockedStatic.when(() -> IOUtils.getLinesFromInputStream(inputStreamB)).thenReturn(Arrays.asList("1", "2", "3", "4"));
+
+            // WHEN
+            String result = pasteApplication.mergeFile(true, "fileA.txt", "fileB.txt");
+
+            // THEN
+            String expectedOutput = "A\tB\tC\tD\n1\t2\t3\t4\n";
+            assertEquals(expectedOutput, result);
+        }
     }
 
     // # Merge stdin, A.txt, stdin (stdin is B.txt), Example 3 from 9.9
     @Test
-    void paste_MergeStdinFileStdin_Success() throws Exception {
+    void mergeStdinFileStdin_ShouldBeSuccess() throws Exception {
         // GIVEN
         String inputA = "A\nB\nC\nD\n";
         String inputB = "1\n2\n3\n4\n";
-        String stdinInput = "20\nC\nD\n3\n4\n";
 
-        when(pasteApplication.mergeFileAndStdin(anyBoolean(), any(InputStream.class), anyString()))
-                .thenAnswer(invocation -> {
-                    Object[] args = invocation.getArguments();
-                    InputStream fileA = new ByteArrayInputStream(inputA.getBytes(StandardCharsets.UTF_8));
-                    InputStream fileB = new ByteArrayInputStream(inputB.getBytes(StandardCharsets.UTF_8));
-                    InputStream stdinStream = new ByteArrayInputStream(stdinInput.getBytes(StandardCharsets.UTF_8));
-                    return pasteApplication.mergeFileAndStdin((Boolean) args[0], stdinStream, "fileA.txt",
-                            "fileB.txt");
-                });
+        try (MockedStatic<IOUtils> mockedStatic = Mockito.mockStatic(IOUtils.class)) {
+            // Mocking input streams for fileA, fileB
+            InputStream inputStreamA = new ByteArrayInputStream(inputA.getBytes(StandardCharsets.UTF_8));
+            InputStream inputStreamB = new ByteArrayInputStream(inputB.getBytes(StandardCharsets.UTF_8));
 
-        // WHEN
-        pasteApplication.run(new String[]{"-", "fileA.txt", "-"}, System.in, stdout);
+            // Mocking opening of files: A.txt and B.txt
+            mockedStatic.when(() -> IOUtils.openInputStream("fileA.txt")).thenReturn(inputStreamA);
+            mockedStatic.when(() -> IOUtils.getLinesFromInputStream(inputStreamA)).thenReturn(Arrays.asList("A", "B", "C", "D"));
+            mockedStatic.when(() -> IOUtils.getLinesFromInputStream(inputStreamB)).thenReturn(Arrays.asList("1", "2", "3", "4"));
 
-        // THEN
-        String expectedOutput = "A\tB\t20\t\n1\t2\tC\t\n\t\tD\t\n3\t4\t3\t\n4\t\t4\t\n";
-        assertEquals(expectedOutput, stdout.toString());
+            // WHEN
+            String result = pasteApplication.mergeFileAndStdin(false, inputStreamB, "-", "fileA.txt", "-");
+
+            // THEN
+            String expectedOutput = "1\tA\t2\n3\tB\t4\n \tC\t \n \tD\t \n";
+            assertEquals(expectedOutput, result);
+        }
     }
 }
