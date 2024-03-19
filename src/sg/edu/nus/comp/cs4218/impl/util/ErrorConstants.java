@@ -22,6 +22,8 @@ public class ErrorConstants {
     public static final String ERR_TOO_MANY_ARGS = "Too many arguments";
     public static final String ERR_INVALID_FLAG = "Invalid flag option supplied";
     public static final String ERR_BAD_REGEX = "Invalid pattern";
+    public static final String ERR_BOTH_PATHS_SAME = "Both paths are same";
+    public static final String ERR_NOT_WRITEABLE = "Not Writeable";
 
     // Files and folders related
     public static final String ERR_FILE_NOT_FOUND = "No such file or directory";
@@ -31,7 +33,6 @@ public class ErrorConstants {
     public static final String ERR_NO_PERM = "Permission denied";
     public static final String ERR_NO_PERM_WRITE_FILE = "No write permission to file";
     public static final String ERR_NO_PERM_READ_FILE = "No read permission to file";
-
 
     // `date` related
     public static final String ERR_INVALID_FORMAT_PREFIX = "Invalid format. Date format must start with '+'";
