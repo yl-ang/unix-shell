@@ -109,7 +109,7 @@ public class CutApplicationTest {
         String[] fileNames = {"randomfilename.txt"};
 
         String output = cutApplication.cutFromFiles(true, false, ranges, fileNames);
-        assertEquals("cut: " + ERR_FILE_NOT_FOUND + STRING_NEWLINE, output);
+        assertEquals("cut: randomfilename.txt: " + ERR_FILE_NOT_FOUND + STRING_NEWLINE, output);
     }
 
     @Test
@@ -118,7 +118,7 @@ public class CutApplicationTest {
         String[] fileNames = {"src"};
 
         String output = cutApplication.cutFromFiles(true, false, ranges, fileNames);
-        assertEquals("cut: " + ERR_IS_DIR + STRING_NEWLINE, output);
+        assertEquals("cut: src: " + ERR_IS_DIR + STRING_NEWLINE, output);
     }
 
     @Test
@@ -136,7 +136,7 @@ public class CutApplicationTest {
 
         // then
         String output = cutApplication.cutFromFiles(true, false, ranges, fileNames);
-        assertEquals("cut: " + ERR_NO_PERM + STRING_NEWLINE, output);
+        assertEquals("cut: fileWithNoReadPermissions.txt: " + ERR_NO_PERM + STRING_NEWLINE, output);
 
         // remove file
         Files.deleteIfExists(filePath);

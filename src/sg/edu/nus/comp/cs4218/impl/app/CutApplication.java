@@ -98,15 +98,15 @@ public class CutApplication implements CutInterface {
             }
             File node = IOUtils.resolveFilePath(file).toFile();
             if (!node.exists()) {
-                result.add("cut: " + ERR_FILE_NOT_FOUND + STRING_NEWLINE);
+                result.add("cut: " + file + ": " + ERR_FILE_NOT_FOUND + STRING_NEWLINE);
                 continue;
             }
             if (node.isDirectory()) {
-                result.add("cut: " + ERR_IS_DIR + STRING_NEWLINE);
+                result.add("cut: " + file + ": " + ERR_IS_DIR + STRING_NEWLINE);
                 continue;
             }
             if (!node.canRead()) {
-                result.add("cut: " + ERR_NO_PERM + STRING_NEWLINE);
+                result.add("cut: " + file + ": " + ERR_NO_PERM + STRING_NEWLINE);
                 continue;
             }
 
@@ -156,15 +156,15 @@ public class CutApplication implements CutInterface {
             } else {
                 File node = IOUtils.resolveFilePath(file).toFile();
                 if (!node.exists()) {
-                    result.add("cut: " + ERR_FILE_NOT_FOUND + STRING_NEWLINE);
+                    result.add("cut: " + file + ": " + ERR_FILE_NOT_FOUND + STRING_NEWLINE);
                     continue;
                 }
                 if (node.isDirectory()) {
-                    result.add("cut: " + ERR_IS_DIR + STRING_NEWLINE);
+                    result.add("cut: " + file + ": " + ERR_IS_DIR + STRING_NEWLINE);
                     continue;
                 }
                 if (!node.canRead()) {
-                    result.add("cut: " + ERR_NO_PERM + STRING_NEWLINE);
+                    result.add("cut: " + file + ": " + ERR_NO_PERM + STRING_NEWLINE);
                     continue;
                 }
 
