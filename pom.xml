@@ -35,7 +35,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
     <build>
         <sourceDirectory>src</sourceDirectory>
         <testSourceDirectory>public_tests</testSourceDirectory>
@@ -48,6 +47,12 @@
             </testResource>
             <testResource>
                 <directory>tdd</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </testResource>
+            <testResource>
+                <directory>external_tests</directory>
                 <excludes>
                     <exclude>**/*.java</exclude>
                 </excludes>
@@ -65,6 +70,8 @@
                     </includes>
                     <excludes>
                         <exclude>**/tdd/**/*Test.java</exclude> <!-- Exclude all tests in the tdd folder -->
+                        <exclude>**/external_tests/**/*Test.java</exclude> <!-- Exclude Provided Test-->
+                        <exclude>**/external_tests/**/*IT.java</exclude> <!-- Exclude Provided Test-->
                     </excludes>
                 </configuration>
             </plugin>
