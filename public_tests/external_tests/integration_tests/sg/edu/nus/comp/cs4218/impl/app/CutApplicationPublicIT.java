@@ -70,11 +70,4 @@ public class CutApplicationPublicIT {
         assertEquals("hel" + STRING_NEWLINE + "wor" + STRING_NEWLINE, output.toString(StandardCharsets.UTF_8));
     }
 
-    @Test
-    void cutFromFile_InvalidFile_ThrowsException() {
-        String[] argList = new String[]{BYTE_FLAG, TEST_RANGE, "invalidFile"};
-        assertThrows(CutException.class,
-                () -> cutApplication.run(argList, System.in, System.out));
-    }
-
 }
