@@ -9,6 +9,7 @@ import sg.edu.nus.comp.cs4218.impl.app.CutApplication;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,6 +21,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import static sg.edu.nus.comp.cs4218.testutils.TestStringUtils.STRING_NEWLINE;
 
 public class CutApplicationTest {
 
@@ -107,7 +109,7 @@ public class CutApplicationTest {
         String[] fileNames = {"randomfilename.txt"};
 
         String output = cutApplication.cutFromFiles(true, false, ranges, fileNames);
-        assertEquals("cut: " + ERR_FILE_NOT_FOUND, output);
+        assertEquals("cut: " + ERR_FILE_NOT_FOUND + STRING_NEWLINE, output);
     }
 
     @Test
@@ -116,7 +118,7 @@ public class CutApplicationTest {
         String[] fileNames = {"src"};
 
         String output = cutApplication.cutFromFiles(true, false, ranges, fileNames);
-        assertEquals("cut: " + ERR_IS_DIR, output);
+        assertEquals("cut: " + ERR_IS_DIR + STRING_NEWLINE, output);
     }
 
     @Test
@@ -134,7 +136,7 @@ public class CutApplicationTest {
 
         // then
         String output = cutApplication.cutFromFiles(true, false, ranges, fileNames);
-        assertEquals("cut: " + ERR_NO_PERM, output);
+        assertEquals("cut: " + ERR_NO_PERM + STRING_NEWLINE, output);
 
         // remove file
         Files.deleteIfExists(filePath);
@@ -375,6 +377,50 @@ public class CutApplicationTest {
 
         cutApplication.run(args, inputTestFile, output);
         assertEquals("12345789\n12345789\n", output.toString());
+    }
+
+
+    private String joinStringsByLineSeparator(String... strs) {
+        return String.join(STRING_NEWLINE, strs);
+    }
+
+    private InputStream generateInputStreamFromStrings(String... strs) {
+        return new ByteArrayInputStream(joinStringsByLineSeparator(strs).getBytes(StandardCharsets.UTF_8));
+    }
+
+
+    @Test
+    void cutFromStdin_NullContent_ThrowsException() {
+        int[] ranges = new int[]{1, 2};
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        assertThrows(CutException.class, () -> cutApplication.cutFromStdin(false, true, List.of(ranges), null));
+    }
+
+    @Test
+    void cutFromStdin_SingleLineByCharRange_ReturnCutByLine() throws Exception {
+        int[] ranges = new int[]{1, 3};
+        InputStream stdin = generateInputStreamFromStrings("hello world");
+        String actual = cutApplication.cutFromStdin(true, false, List.of(ranges), stdin);
+        assertEquals("hel" + STRING_NEWLINE, actual);
+    }
+
+    @Test
+    void cutFromStdin_SingleLineByByteRange_ReturnCutByByte() throws Exception {
+        int[] ranges = new int[]{1, 3};
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        InputStream stdin = generateInputStreamFromStrings("hello world");
+        String actual = cutApplication.cutFromStdin(false, true, List.of(ranges), stdin);
+        assertEquals("hel" + STRING_NEWLINE, actual);
+    }
+
+
+    @Test
+    void cutFromStdin_MultipleLinesByByteRange_ReturnCutContentAtEachLineByByte() throws Exception {
+        int[] ranges = new int[]{1, 3};
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        InputStream stdin = generateInputStreamFromStrings("hello", "world");
+        String actual = cutApplication.cutFromStdin(false, true, List.of(ranges), stdin);
+        assertEquals("hel" + STRING_NEWLINE + "wor" + STRING_NEWLINE, actual);
     }
 
 
