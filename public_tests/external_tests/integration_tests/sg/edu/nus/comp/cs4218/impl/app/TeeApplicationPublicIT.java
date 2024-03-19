@@ -28,7 +28,7 @@ import sg.edu.nus.comp.cs4218.exception.TeeException;
 import sg.edu.nus.comp.cs4218.impl.app.TeeApplication;
 import sg.edu.nus.comp.cs4218.testutils.TestEnvironmentUtil;
 
-class TeeApplicationPublicIT {
+class TeeApplicationPublicIT { //NOPMD
     @TempDir
     static File tempDir;
 
