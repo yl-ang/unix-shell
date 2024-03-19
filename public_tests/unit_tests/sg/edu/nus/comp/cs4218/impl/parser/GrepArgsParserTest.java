@@ -11,6 +11,11 @@ import sg.edu.nus.comp.cs4218.impl.parser.GrepArgsParser;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GrepArgsParserTest {
+    private static final String VALID_PATTERN = "hello";
+    private static final String VALID_I_FLAG = "-i";
+    private static final String VALID_C_FLAG = "-c";
+    private static final String VALID_H_FLAG = "-H";
+    private static final String INVALID_FLAG = "-";
 
     @InjectMocks
     private GrepArgsParser grepArgsParser;
@@ -21,81 +26,34 @@ class GrepArgsParserTest {
     }
 
     @Test
-    void isInvert_FlagPresent_True() throws GrepException {
-        String[] args = {"-v", "pattern", "file.txt"};
-
-        try {
-            grepArgsParser.parse(args);
-        } catch (InvalidArgsException e) {
-            throw new GrepException(e.getMessage());
-        }
-
-        assertTrue(grepArgsParser.isInvert(), "isInvert returns False when flag is present");
+    public void isCaseInsensitive_IsFalse_ShouldReturnFalse() {
+        assertFalse(grepArgsParser.isCaseInsensitive());
     }
 
     @Test
-    void isInvert_FlagAbsent_False() throws GrepException {
-        String[] args = {"pattern", "file.txt"};
+    public void isCaseInsensitive_IsTrue_ShouldReturnTrue() throws Exception {
+        String[] args = {VALID_I_FLAG, VALID_PATTERN};
 
-        try {
-            grepArgsParser.parse(args);
-        } catch (InvalidArgsException e) {
-            throw new GrepException(e.getMessage());
-        }
+        grepArgsParser.parse(args);
 
-        assertFalse(grepArgsParser.isInvert(), "isInvert returns True when flag is absent");
+        assertTrue(grepArgsParser.isCaseInsensitive());
     }
 
     @Test
-    void getPattern_PatternInArgs_Pattern() throws GrepException {
-        String[] args = {"-v", "pattern", "file.txt"};
+    public void isCountOfLines_IsTrue_ShouldReturnTrue() throws Exception {
+        String[] args = {VALID_C_FLAG, VALID_PATTERN};
 
-        try {
-            grepArgsParser.parse(args);
-        } catch (InvalidArgsException e) {
-            throw new GrepException(e.getMessage());
-        }
+        grepArgsParser.parse(args);
 
-        assertEquals("pattern", grepArgsParser.getPattern());
+        assertTrue(grepArgsParser.isCount());
     }
 
     @Test
-    void getPattern_PatternNotInArgs_Null() throws GrepException {
-        String[] args = {"-v"};
+    public void isPrintFileName_IsTrue_ShouldReturnTrue() throws Exception {
+        String[] args = {VALID_H_FLAG, VALID_PATTERN};
 
-        try {
-            grepArgsParser.parse(args);
-        } catch (InvalidArgsException e) {
-            throw new GrepException(e.getMessage());
-        }
+        grepArgsParser.parse(args);
 
-        assertNull(grepArgsParser.getPattern());
-    }
-
-    @Test
-    void getFileNames_FilesInArgs_Files() throws GrepException {
-        String[] args = {"-v", "pattern", "file1.txt", "file2.txt"};
-
-        try {
-            grepArgsParser.parse(args);
-        } catch (InvalidArgsException e) {
-            throw new GrepException(e.getMessage());
-        }
-
-        String[] expectedFiles = {"file1.txt", "file2.txt"};
-        assertArrayEquals(expectedFiles, grepArgsParser.getFileNames().toArray());
-    }
-
-    @Test
-    void getFileNames_FilesNotInArgs_Null() throws GrepException {
-        String[] args = {"-v", "pattern"};
-
-        try {
-            grepArgsParser.parse(args);
-        } catch (InvalidArgsException e) {
-            throw new GrepException(e.getMessage());
-        }
-
-        assertNull(grepArgsParser.getFileNames());
+        assertTrue(grepArgsParser.isPrintFileName());
     }
 }
