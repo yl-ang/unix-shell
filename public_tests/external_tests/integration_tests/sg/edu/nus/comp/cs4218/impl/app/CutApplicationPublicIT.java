@@ -73,7 +73,7 @@
 //    void cutFromFile_InvalidFile_ThrowsException() {
 //        String[] argList = new String[]{BYTE_FLAG, TEST_RANGE, "invalidFile"};
 //        assertThrows(CutException.class,
-//                     () -> cutApplication.run(argList, System.in, System.out));
+//                () -> cutApplication.run(argList, System.in, System.out));
 //    }
 //
 //}

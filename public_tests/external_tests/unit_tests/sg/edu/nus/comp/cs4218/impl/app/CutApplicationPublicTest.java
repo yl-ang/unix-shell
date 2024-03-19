@@ -78,7 +78,7 @@
 //        int[] ranges = new int[]{1, 3};
 //        ByteArrayOutputStream output = new ByteArrayOutputStream();
 //        assertThrows(CutException.class,
-//                     () -> cutApplication.cutFromFiles(false, true, List.of(ranges), "invalidFile"));
+//                () -> cutApplication.cutFromFiles(false, true, List.of(ranges), "invalidFile"));
 //    }
 //
 //}

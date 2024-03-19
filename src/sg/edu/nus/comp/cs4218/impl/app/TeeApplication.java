@@ -7,6 +7,7 @@ import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -129,10 +130,16 @@ public class TeeApplication implements TeeInterface {
                         continue;
                     }
                 }
+                List<String> targetContentA = Files.readAllLines(node.toPath());
+                String before = Arrays.toString(targetContentA.toArray());
+                System.out.println(before);
 
                 try (FileOutputStream fileOutputStream = new FileOutputStream(node, isAppend)) {
                     fileOutputStream.write(input);
                 }
+                targetContentA = Files.readAllLines(node.toPath());
+                String after = Arrays.toString(targetContentA.toArray());
+                System.out.println(after);
             } catch (IOException e) {
                 throw new TeeException(ERR_WRITE_STREAM);
             }
