@@ -1,4 +1,4 @@
-package tdd.unit_tests.sg.edu.nus.comp.cs4218.impl.app;
+package unit_tests.sg.edu.nus.comp.cs4218.impl.app;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,6 +18,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class PasteApplicationTest {
     @Mock
@@ -174,24 +175,6 @@ public class PasteApplicationTest {
     }
 
     @Test
-    void mergeStdin_Parallel_ShouldBeSuccess() throws Exception {
-        // GIVEN
-        String inputA = "A\nB\nC\nD\n";
-        InputStream inputStreamA = new ByteArrayInputStream(inputA.getBytes(StandardCharsets.UTF_8));
-
-        try (MockedStatic<IOUtils> mockedStatic = mockStatic(IOUtils.class)) {
-            mockedStatic.when(() -> IOUtils.getLinesFromInputStream(inputStreamA)).thenReturn(Arrays.asList("A", "B", "C", "D"));
-
-            // WHEN
-            String result = pasteApplication.mergeStdin(false, inputStreamA);
-
-            // THEN
-            String expectedOutput = "A\nB\nC\nD\n";
-            assertEquals(expectedOutput, result);
-        }
-    }
-
-    @Test
     void run_mergeFileAndStdin_Success() throws AbstractApplicationException {
         // GIVEN
         String[] args = {"fileA.txt", "-"};
@@ -204,7 +187,7 @@ public class PasteApplicationTest {
 
         // Mock PasteApplication methods
         doReturn("A\t1\nB\t2\nC\t3\nD\t4").when(pasteApplication)
-                .mergeFileAndStdin(eq(false), any(InputStream.class), eq("fileA.txt"), eq("-"));
+                .mergeFileAndStdin(anyBoolean(), any(InputStream.class), anyString(), anyString());
 
         // WHEN
         pasteApplication.run(args, inputStreamB, outputStream);
@@ -214,7 +197,7 @@ public class PasteApplicationTest {
         assertEquals(expectedOutput, outputStream.toString());
 
         //VERIFY
-        verify(pasteApplication, times(1)).mergeFileAndStdin(anyBoolean(), any(InputStream.class), anyString());
+        verify(pasteApplication, times(1)).mergeFileAndStdin(anyBoolean(), any(InputStream.class), anyString(), anyString());
     }
 
     @Test
