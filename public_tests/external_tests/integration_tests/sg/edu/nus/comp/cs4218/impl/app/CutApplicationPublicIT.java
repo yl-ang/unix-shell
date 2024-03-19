@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static sg.edu.nus.comp.cs4218.testutils.TestStringUtils.STRING_NEWLINE;
 
-public class CutApplicationPublicIT {
+public class CutApplicationPublicIT { //NOPMD
     public static final String CHAR_FLAG = "-c";
     public static final String BYTE_FLAG = "-b";
     public static final String TEST_RANGE = "1-3";
