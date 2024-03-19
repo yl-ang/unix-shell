@@ -3,7 +3,7 @@ on: [push]
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -13,7 +13,31 @@ jobs:
         with:
           distribution: 'oracle'
           java-version: '17'
-          cache: maven
+
+      - name: Run Tests
+        run: mvn test
+
+  external-test:
+    runs-on: ubuntu-20.04
+    continue-on-error: true
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'oracle'
+          java-version: '17'
+
+      - name: Include external test
+        run: |
+          #!/bin/bash
+          cd scripts
+          chmod +x run-external-test.sh
+          cd ..
+          ./scripts/run-external-test.sh
+        shell: bash
 
       - name: Run Tests
         run: mvn test

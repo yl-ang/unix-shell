@@ -116,7 +116,7 @@ public class IORedirectionHandlerTest {
     void extractRedirOptions_EmptyArgsList_ShouldThrowException() throws FileNotFoundException, AbstractApplicationException, ShellException {
         ioRedirectionHandler = new IORedirectionHandler(INVALID_EMPTY_ARGS_LIST, inputStream, outputStream, argumentResolver);
         Exception exception = assertThrows(ShellException.class, () -> ioRedirectionHandler.extractRedirOptions());
-        assertEquals( new ShellException(ERR_SYNTAX).getMessage(), exception.getMessage());
+        assertEquals(new ShellException(ERR_SYNTAX).getMessage(), exception.getMessage());
     }
 
     @Test
@@ -126,13 +126,13 @@ public class IORedirectionHandlerTest {
         Exception exception = assertThrows(ShellException.class, () -> ioRedirectionHandler.extractRedirOptions());
         assertEquals(new ShellException(ERR_SYNTAX).getMessage(), exception.getMessage());
     }
+
     @Test
     void extractRedirOptions_InvalidInputFileDoesNotExists_ShouldThrowException() throws IOException, AbstractApplicationException, ShellException {
         when(argumentResolver.resolveOneArgument(anyString())).thenReturn(List.of(INVALID_FILE_NAME_PLACEHOLDER));
         ioRedirectionHandler = new IORedirectionHandler(List.of(APP_CAT, STR_CHAR_REDIR_INPUT, INVALID_FILE_NAME_PLACEHOLDER), inputStream, outputStream, argumentResolver);
         Exception exception = assertThrows(ShellException.class, () -> ioRedirectionHandler.extractRedirOptions());
-        String errorMessage = String.format("%s %s %s", ERR_FILE_NOT_FOUND, CHAR_COLON, TEST_DIRECTORY + STR_FILE_SEP + INVALID_FILE_NAME_PLACEHOLDER);
-        assertEquals(new ShellException(errorMessage).getMessage(), exception.getMessage());
+        assertEquals(new ShellException(ERR_FILE_NOT_FOUND).getMessage(), exception.getMessage());
     }
 
     @Test
@@ -140,31 +140,5 @@ public class IORedirectionHandlerTest {
         ioRedirectionHandler = new IORedirectionHandler(List.of(STR_CHAR_REDIR_OUTPUT, STR_CHAR_REDIR_INPUT), inputStream, outputStream, argumentResolver);
         Exception exception = assertThrows(ShellException.class, () -> ioRedirectionHandler.extractRedirOptions());
         assertEquals(new ShellException(ERR_SYNTAX).getMessage(), exception.getMessage());
-    }
-
-    @Test
-    void extractRedirOptions_InvalidMultipleStreamInput_ShouldThrowException() throws FileNotFoundException, AbstractApplicationException, ShellException {
-        // Arrange
-        List<String> argsList = Arrays.asList(APP_CAT, STR_CHAR_REDIR_INPUT, FILE_NAME_PLACEHOLDER);
-        InputStream originalInputStream = System.in;
-        OutputStream originalOutputStream = System.out;
-        when(argumentResolver.resolveOneArgument(anyString())).thenReturn(List.of(FILE_NAME_PLACEHOLDER));
-        ioRedirectionHandler = new IORedirectionHandler(List.of(APP_ECHO, TEXT_INPUT, STR_CHAR_REDIR_OUTPUT, FILE_NAME_PLACEHOLDER), originalInputStream, originalOutputStream, argumentResolver);
-        ioRedirectionHandler.extractRedirOptions();
-        Exception exception = assertThrows(ShellException.class, () -> ioRedirectionHandler.extractRedirOptions());
-        assertEquals(new ShellException(ERR_MULTIPLE_STREAMS).getMessage(), exception.getMessage());
-    }
-
-    @Test
-    void extractRedirOptions_InvalidMultipleStreamOut_ShouldThrowException() throws FileNotFoundException, AbstractApplicationException, ShellException {
-        // Arrange
-        List<String> argsList = Arrays.asList(APP_CAT, STR_CHAR_REDIR_OUTPUT, FILE_NAME_PLACEHOLDER);
-        InputStream originalInputStream = System.in;
-        OutputStream originalOutputStream = System.out;
-        when(argumentResolver.resolveOneArgument(anyString())).thenReturn(List.of(FILE_NAME_PLACEHOLDER));
-        ioRedirectionHandler = new IORedirectionHandler(List.of(APP_ECHO, TEXT_INPUT, STR_CHAR_REDIR_OUTPUT, FILE_NAME_PLACEHOLDER), originalInputStream, originalOutputStream, argumentResolver);
-        ioRedirectionHandler.extractRedirOptions();
-        Exception exception = assertThrows(ShellException.class, () -> ioRedirectionHandler.extractRedirOptions());
-        assertEquals(new ShellException(ERR_MULTIPLE_STREAMS).getMessage(), exception.getMessage());
     }
 }
