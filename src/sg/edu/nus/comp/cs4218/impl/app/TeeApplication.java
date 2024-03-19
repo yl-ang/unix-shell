@@ -42,9 +42,6 @@ public class TeeApplication implements TeeInterface {
         }
         String result;
         try {
-//            if (teeArgsParser.getFileNames().isEmpty()) {
-//                return;
-//            }
             result = teeFromStdin(teeArgsParser.isAppend(), stdin, teeArgsParser.getFileNames().toArray(new String[0]));
         } catch (Exception e) {
             // Will never happen
@@ -130,16 +127,11 @@ public class TeeApplication implements TeeInterface {
                         continue;
                     }
                 }
-//                List<String> targetContentA = Files.readAllLines(node.toPath());
-//                String before = Arrays.toString(targetContentA.toArray());
-//                System.out.println(before);
 
                 try (FileOutputStream fileOutputStream = new FileOutputStream(node, isAppend)) {
                     fileOutputStream.write(input);
                 }
-//                targetContentA = Files.readAllLines(node.toPath());
-//                String after = Arrays.toString(targetContentA.toArray());
-//                System.out.println(after);
+
             } catch (IOException e) {
                 throw new TeeException(ERR_WRITE_STREAM);
             }
