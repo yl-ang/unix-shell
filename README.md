@@ -15,3 +15,11 @@ using bash.
 `mvn clean package` 
 using bash.
 2. Run `java -cp target/classes sg.edu.nus.comp.cs4218.impl.ShellImpl` in bash.
+
+## Tests
+This section describe the folders in the test folder `public_tests`
+- `unit_tests`: unit test written by our team
+- `integration_tests`: integration test written by our team
+- `tdd`: test-driven develop test cases written in milestone 1 for unimplemented features in milestone 1
+- `external_tests`: provided test-driven develop test cases as part of milestone 2
+- `resources`: files use for supporting testing
