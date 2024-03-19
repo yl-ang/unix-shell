@@ -45,5 +45,5 @@ public interface GrepInterface extends Application {
      * @throws Exception
      */
     String grepFromFileAndStdin(String pattern, Boolean isCaseInsensitive, Boolean isCountLines, Boolean isPrefixFileName, InputStream stdin, String... fileNames)
-            throws AbstractApplicationException;
+            throws Exception;
 }
