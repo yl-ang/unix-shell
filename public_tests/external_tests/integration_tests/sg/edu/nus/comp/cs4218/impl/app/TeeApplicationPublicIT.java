@@ -1,5 +1,6 @@
 package external_tests.integration_tests.sg.edu.nus.comp.cs4218.impl.app;
 
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,10 +47,9 @@ class TeeApplicationPublicIT {
         standardOut = System.out;
         stdout = new ByteArrayOutputStream();
         System.setOut(new PrintStream(stdout));
-        TestEnvironmentUtil.setCurrentDirectory(tempDir.getAbsolutePath());
-        File existing = new File(tempDir, "existing.txt");
+        File existing = new File("existing.txt");
         FileWriter fileWriter = new FileWriter(existing, false);
-        File existing2 = new File(tempDir, "existing2.txt");
+        File existing2 = new File("existing2.txt");
         FileWriter fileWriter2 = new FileWriter(existing2, false);
         try {
             fileWriter.write("Hello World" + STRING_NEWLINE);
@@ -60,17 +60,22 @@ class TeeApplicationPublicIT {
             fileWriter.close();
             fileWriter2.close();
         }
-        File unwritable = new File(tempDir, "unwritable.txt");
+        File unwritable = new File("unwritable.txt");
         unwritable.createNewFile();
         unwritable.setReadOnly();
     }
 
     @AfterEach
-    public void tearDown() {
+    public void tearDown() throws IOException {
         System.setOut(standardOut);
         for (File file : tempDir.listFiles()) {
             file.delete();
         }
+        Files.deleteIfExists(Paths.get("unwritable.txt"));
+        Files.deleteIfExists(Paths.get("existing.txt"));
+        Files.deleteIfExists(Paths.get("existing2.txt"));
+        Files.deleteIfExists(Paths.get("tee1.txt"));
+        Files.deleteIfExists(Paths.get("tee2.txt"));
     }
 
     @AfterAll
@@ -84,7 +89,7 @@ class TeeApplicationPublicIT {
         String[] argList = new String[]{"tee1.txt"};
         teeApplication.run(argList, stdin, System.out);
         assertEquals(STDIN_STRING, stdout.toString());
-        File outputFile = new File(tempDir, "tee1.txt");
+        File outputFile = new File("tee1.txt");
         assertTrue(outputFile.exists());
         String fileContents = Files.readString(Paths.get(outputFile.getAbsolutePath()), StandardCharsets.UTF_8);
         assertEquals(STDIN_STRING, fileContents);
@@ -108,11 +113,11 @@ class TeeApplicationPublicIT {
         String[] argList = new String[]{"tee1.txt", "tee2.txt"};
         teeApplication.run(argList, stdin, System.out);
         assertEquals(STDIN_STRING, stdout.toString());
-        File outputFile = new File(tempDir, "tee1.txt");
+        File outputFile = new File("tee1.txt");
         assertTrue(outputFile.exists());
         String fileContents = Files.readString(Paths.get(outputFile.getAbsolutePath()), StandardCharsets.UTF_8);
         assertEquals(STDIN_STRING, fileContents);
-        File outputFile2 = new File(tempDir, "tee2.txt");
+        File outputFile2 = new File("tee2.txt");
         assertTrue(outputFile2.exists());
         String fileContents2 = Files.readString(Paths.get(outputFile2.getAbsolutePath()), StandardCharsets.UTF_8);
         assertEquals(STDIN_STRING, fileContents2);
@@ -131,7 +136,7 @@ class TeeApplicationPublicIT {
     public void run_WritableAndUnWritableFile_PrintsNoPermAndWritesToStdoutAndFile() throws Exception {
         String[] argList = new String[]{"unwritable.txt", "tee1.txt"};
         teeApplication.run(argList, stdin, System.out);
-        File outputFile = new File(tempDir, "tee1.txt");
+        File outputFile = new File("tee1.txt");
         assertTrue(outputFile.exists());
         String fileContents = Files.readString(Paths.get(outputFile.getAbsolutePath()), StandardCharsets.UTF_8);
         assertEquals(STDIN_STRING, fileContents);
@@ -143,7 +148,7 @@ class TeeApplicationPublicIT {
         String[] argList = new String[]{"-a", "existing.txt"};
         teeApplication.run(argList, stdin, System.out);
         assertEquals(STDIN_STRING, stdout.toString());
-        File outputFile = new File(tempDir, "existing.txt");
+        File outputFile = new File("existing.txt");
         assertTrue(outputFile.exists());
         String fileContents = Files.readString(Paths.get(outputFile.getAbsolutePath()), StandardCharsets.UTF_8);
         assertEquals("Hello World" + STRING_NEWLINE + STDIN_STRING, fileContents);
@@ -155,12 +160,12 @@ class TeeApplicationPublicIT {
         String[] argList = new String[]{"-a", "existing.txt", "existing2.txt"};
         teeApplication.run(argList, stdin, System.out);
         assertEquals(STDIN_STRING, stdout.toString());
-        File outputFile = new File(tempDir, "existing.txt");
+        File outputFile = new File("existing.txt");
         assertTrue(outputFile.exists());
         String fileContents = Files.readString(Paths.get(outputFile.getAbsolutePath()), StandardCharsets.UTF_8);
         assertEquals("Hello World" + STRING_NEWLINE + STDIN_STRING, fileContents);
 
-        File outputFile2 = new File(tempDir, "existing2.txt");
+        File outputFile2 = new File("existing2.txt");
         assertTrue(outputFile2.exists());
         String fileContents2 = Files.readString(Paths.get(outputFile2.getAbsolutePath()), StandardCharsets.UTF_8);
         assertEquals("Hello CS4218" + STRING_NEWLINE + STDIN_STRING, fileContents2);

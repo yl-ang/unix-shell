@@ -1,4 +1,5 @@
-package external_tests.unit_tests.sg.edu.nus.comp.cs4218.impl.app;
+package external_tests.integration_tests.sg.edu.nus.comp.cs4218.impl.app;
+
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -24,7 +25,6 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class TeeApplicationPublicTest {
     private static final String TEMP = "temp-tee";
-    private static final Path TEMP_PATH = Paths.get(TEMP).toAbsolutePath();
     private static final String TEXT_A = "textA.txt";
     private static final String TEXT_B = "textB.txt";
     private static final String ONE_LINE_INPUT = "test 1";
@@ -67,9 +67,6 @@ public class TeeApplicationPublicTest {
         teeApplication = new TeeApplication();
         Files.createDirectories(Paths.get(TEMP));
         TestEnvironmentUtil.setCurrentDirectory(TEMP);
-
-//        initialDir = TestEnvironmentUtil.getCurrentDirectory();
-//        Files.createDirectories(TEMP_PATH);
     }
 
     @AfterEach
@@ -78,8 +75,9 @@ public class TeeApplicationPublicTest {
                 .sorted(Comparator.reverseOrder())
                 .map(Path::toFile)
                 .forEach(File::delete);
-//        Files.deleteIfExists(TEMP_PATH);
         TestEnvironmentUtil.setCurrentDirectory(initialDir);
+        Files.deleteIfExists(Paths.get(TEXT_A));
+        Files.deleteIfExists(Paths.get(TEXT_B));
     }
 
     @Test
@@ -100,7 +98,7 @@ public class TeeApplicationPublicTest {
         try (InputStream inputStream = mockInputStream(ONE_LINE_INPUT)) {
             String[] arr = {TEXT_A};
             String result = teeApplication.teeFromStdin(false, inputStream, arr);
-            File file = new File(TEMP, TEXT_A);
+            File file = new File(TEXT_A);
             List<String> targetContent = Files.readAllLines(file.toPath());
 
             assertTrue(file.exists());
@@ -123,7 +121,7 @@ public class TeeApplicationPublicTest {
     public void teeFromStdin_NoAppendOneFileNameWithMultipleLineInput_returnsCorrectString() throws Exception {
         try (InputStream inputStream = mockInputStream(MULTI_LINE_INPUT)) {
             String[] arr = {TEXT_A};
-            File file = new File(TEMP, TEXT_A);
+            File file = new File(TEXT_A);
             String result = teeApplication.teeFromStdin(false, inputStream, arr);
             List<String> targetContent = Files.readAllLines(file.toPath());
 
@@ -137,15 +135,14 @@ public class TeeApplicationPublicTest {
     public void teeFromStdin_AppendSingleFilenamesWithSingleLineInput_returnsCorrectString() throws Exception {
         try (InputStream inputStream = mockInputStream(ONE_LINE_INPUT)) {
             String[] arr = {TEXT_A};
-            File fileA = new File(TEMP, TEXT_A);
+            File fileA = new File(TEXT_A);
             fileA.createNewFile();
             writeToFile(fileA);
             String result = teeApplication.teeFromStdin(true, inputStream, arr);
             List<String> targetContentA = Files.readAllLines(fileA.toPath());
 
-            Files.deleteIfExists(fileA.toPath());
             assertEquals(ONE_LINE_INPUT, result);
-            assertEquals(ONE_LINE_INPUT + STRING_NEWLINE + ONE_LINE_INPUT,
+            assertEquals(ONE_LINE_INPUT + ONE_LINE_INPUT,
                     convertListOfStringToStrings(targetContentA));
         }
     }
@@ -154,10 +151,10 @@ public class TeeApplicationPublicTest {
     public void teeFromStdin_AppendMultipleFilenamesWithSingleLineInput_returnsCorrectString() throws Exception {
         try (InputStream inputStream = mockInputStream(ONE_LINE_INPUT)) {
             String[] arr = {TEXT_A, TEXT_B};
-            File fileA = new File(TEMP, TEXT_A);
+            File fileA = new File(TEXT_A);
             fileA.createNewFile();
             writeToFile(fileA);
-            File fileB = new File(TEMP, TEXT_B);
+            File fileB = new File(TEXT_B);
             fileB.createNewFile();
             writeToFile(fileB);
 
@@ -166,8 +163,8 @@ public class TeeApplicationPublicTest {
             List<String> targetContentB = Files.readAllLines(fileB.toPath());
 
             assertEquals(ONE_LINE_INPUT, result);
-            assertEquals(ONE_LINE_INPUT + STRING_NEWLINE + ONE_LINE_INPUT, convertListOfStringToStrings(targetContentA));
-            assertEquals(ONE_LINE_INPUT + STRING_NEWLINE + ONE_LINE_INPUT, convertListOfStringToStrings(targetContentB));
+            assertEquals(ONE_LINE_INPUT + ONE_LINE_INPUT, convertListOfStringToStrings(targetContentA));
+            assertEquals(ONE_LINE_INPUT + ONE_LINE_INPUT, convertListOfStringToStrings(targetContentB));
         }
     }
 }
