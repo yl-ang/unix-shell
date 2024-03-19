@@ -58,11 +58,18 @@ public class MvApplication implements MvInterface {
         MvUtils.checkFileExists(destFile);
         MvUtils.checkSrcIsWritable(srcFile);
         MvUtils.checkSrcAndTargetAreDifferent(absoluteSrcPath, absoluteTargetPath);
+
         try {
             if (isOverwrite) {
                 MvUtils.checkDestIsWritable(absoluteTargetPath, destFile);
+                if (Files.isDirectory(absoluteTargetPath)) {
+                    absoluteTargetPath = absoluteTargetPath.resolve(absoluteSrcPath.getFileName());
+                }
                 Files.move(absoluteSrcPath, absoluteTargetPath, StandardCopyOption.REPLACE_EXISTING);
             } else {
+                if (Files.isDirectory(absoluteTargetPath)) {
+                    absoluteTargetPath = absoluteTargetPath.resolve(absoluteSrcPath.getFileName());
+                }
                 Files.move(absoluteSrcPath, absoluteTargetPath);
             }
         } catch (IOException e) {
