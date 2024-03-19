@@ -35,7 +35,8 @@ jobs:
           #!/bin/bash
           cd scripts
           chmod +x run-external-test.sh
-          ./run-external-test.sh
+          cd ..
+          ./scripts/run-external-test.sh
         shell: bash
 
       - name: Run Tests
