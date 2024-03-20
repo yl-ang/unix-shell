@@ -3,6 +3,7 @@ package sg.edu.nus.comp.cs4218.app;
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 public interface UniqInterface extends Application {
@@ -17,7 +18,7 @@ public interface UniqInterface extends Application {
      * @param outputFileName of path to output file (if any)
      * @throws Exception
      */
-    String uniqFromFile(Boolean isCount, Boolean isRepeated, Boolean isAllRepeated, String inputFileName, String outputFileName) throws AbstractApplicationException;
+    String uniqFromFile(Boolean isCount, Boolean isRepeated, Boolean isAllRepeated, String inputFileName, String outputFileName) throws AbstractApplicationException, IOException;
 
 
     /**
