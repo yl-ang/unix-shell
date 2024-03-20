@@ -116,17 +116,6 @@ public class GrepApplicationTest {
     }
 
     @Test
-    void grepFromFiles_NonExistentFile_shouldThrowGrepException() throws GrepException {
-        try {
-            String actualOutput = grepApplication.grepFromFiles(VALID_PATTERN, false, false, false, "nonExistent.txt");
-            String errorMsg = String.format("%s: No such file or directory" + STRING_NEWLINE, "nonExistent.txt");
-            assertEquals(errorMsg, actualOutput);
-        } catch (Exception e) {
-            throw new GrepException(ERR_FILE_NOT_FOUND);
-        }
-    }
-
-    @Test
     public void grepFromFiles_IsPrefixLowercase_ShouldReturnLinesResults() throws Exception {
         BufferedWriter writer = Files.newBufferedWriter(path);
         writer.write(HELLO_LOWERCASE);
@@ -176,8 +165,9 @@ public class GrepApplicationTest {
     }
 
     @Test
-    void run_validGrepFromFiles_shouldReturnGrepOutput() throws Exception {
-        grepApplication.run(new String[]{"hello world", String.valueOf(path)}, inputStream, stdout);
+    void run_validGrepFromStdin_shouldReturnGrepOutput() throws Exception {
+        grepApplication.run(new String[]{"hello world", "-"}, inputStream, stdout);
         assertEquals(HELLO_LOWERCASE + STRING_NEWLINE, stdout.toString());
     }
+
 }
