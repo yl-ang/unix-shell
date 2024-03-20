@@ -29,7 +29,8 @@
 //import sg.edu.nus.comp.cs4218.impl.app.WcApplication;
 //import sg.edu.nus.comp.cs4218.testutils.TestEnvironmentUtil;
 //
-//public class WcApplicationPublicIT {
+
+//public class WcApplicationPublicIT { //NOPMD
 //    private static final String TEMP = "temp-wc";
 //
 //    private static String currPathString;

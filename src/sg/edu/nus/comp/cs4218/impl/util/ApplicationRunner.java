@@ -23,6 +23,7 @@ public class ApplicationRunner {
     public final static String APP_MKDIR = "mkdir";
     public final static String APP_SORT = "sort";
     public final static String APP_TEE = "tee";
+    public final static String APP_CUT = "cut";
     public final static String APP_MV = "mv";
 
     /**
@@ -73,6 +74,8 @@ public class ApplicationRunner {
 
             case APP_TEE:
                 application = new TeeApplication();
+            case APP_CUT:
+                application = new CutApplication();
                 break;
             case APP_PASTE:
                 application = new PasteApplication();
@@ -80,7 +83,6 @@ public class ApplicationRunner {
             case APP_MV:
                 application = new MvApplication();
                 break;
-
             default:
                 throw new ShellException(app + ": " + ERR_INVALID_APP);
         }
