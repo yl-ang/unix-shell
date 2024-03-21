@@ -51,7 +51,7 @@ public class GrepApplication implements GrepInterface {
      */
     @Override
     public String grepFromFiles(String pattern, Boolean isCaseInsensitive, Boolean isCountLines, Boolean isPrefixFileName, String... fileNames) throws Exception {
-        if (fileNames == null) {
+        if (fileNames == null | pattern == null) {
             throw new GrepException(NULL_POINTER);
         }
 
