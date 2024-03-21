@@ -149,6 +149,10 @@ public class GrepApplicationTest {
         String results = grepApplication.grepFromFiles("line2", false, false, false, files);
 
         assertEquals("file1.txt: line2" + STRING_NEWLINE + "file2.txt: line2" + STRING_NEWLINE, results);
+
+        for (String file : files) {
+            Files.deleteIfExists(Path.of(file));
+        }
     }
 
     @Test
