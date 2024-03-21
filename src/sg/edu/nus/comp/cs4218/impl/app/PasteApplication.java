@@ -101,9 +101,13 @@ public class PasteApplication implements PasteInterface  {
                     mergedLines.deleteCharAt(mergedLines.length() - 1);
                 }
             } else {
-                for (String line : stdinLines) {
+                int size = stdinLines.size();
+                for (int i = 0; i < size; i++) {
+                    String line = stdinLines.get(i);
                     mergedLines.append(line);
-                    mergedLines.append(STRING_NEWLINE);
+                    if (i < size - 1) {
+                        mergedLines.append(STRING_NEWLINE);
+                    }
                 }
             }
             return mergedLines.toString();
@@ -200,12 +204,14 @@ public class PasteApplication implements PasteInterface  {
      * @param allLines    List of lists of lines to be merged.
      */
     private void mergeSerially(StringBuilder mergedLines, List<List<String>> allLines) {
-        for (List<String> lines : allLines) {
+        int totalLines = allLines.size();
+        for (int i = 0; i < totalLines; i++) {
+            List<String> lines = allLines.get(i);
             appendLines(mergedLines, lines);
-            if (!lines.isEmpty()) {
-                mergedLines.deleteCharAt(mergedLines.length() - 1);
+            mergedLines.deleteCharAt(mergedLines.length() - 1);
+            if (i < totalLines - 1) {
+                mergedLines.append(STRING_NEWLINE);
             }
-            mergedLines.append("\n");
         }
     }
 
@@ -227,7 +233,10 @@ public class PasteApplication implements PasteInterface  {
                 }
             }
             mergedLines.deleteCharAt(mergedLines.length() - 1);
-            mergedLines.append("\n");
+
+            if (i < maxLines - 1) {
+                mergedLines.append(STRING_NEWLINE);
+            }
         }
     }
 
