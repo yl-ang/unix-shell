@@ -34,12 +34,6 @@ public class RmApplication implements RmInterface {
         }
 
         String[] fileNames = parser.getFileNames().toArray(new String[0]);
-
-        // fileNames wouldn't be null due to new String, need to check length
-        if (stdin == null && fileNames.length == 0) {
-            throw new RmException(ERR_NO_INPUT);
-        }
-
         remove(parser.isEmptyFolder(), parser.isRecursive(), fileNames);
     }
 
