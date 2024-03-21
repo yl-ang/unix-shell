@@ -96,7 +96,7 @@ public class GrepApplication implements GrepInterface {
                 continue;
             }
 
-            File file = getFileIfValid(filePath, lineResults, countResults);
+            File file = getFileIfValid(Environment.currentDirectory + CHAR_FILE_SEP + filePath, lineResults, countResults);
             if (file != null) {
                 Pattern compiledPattern = compilePattern(pattern, isCaseInsensitive);
                 try (BufferedReader reader = Files.newBufferedReader(Paths.get(file.toURI()))) {
