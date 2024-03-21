@@ -47,17 +47,20 @@ public class RmApplicationTest {
 
     @Test
     void run_NullStdout_ExceptionThrown() {
-        assertThrows(AbstractApplicationException.class, () -> rmApplication.run(new String[]{"file.txt"}, System.in, null));
+        assertThrows(AbstractApplicationException.class, () -> rmApplication.run(new String[]{"file.txt"},
+                System.in, null));
     }
 
     @Test
     void remove_NullArgs_ExceptionThrown() {
-        assertThrows(AbstractApplicationException.class, () -> rmApplication.remove(null, false, "file.txt"));
+        assertThrows(AbstractApplicationException.class, () -> rmApplication.remove(null, false,
+                "file.txt"));
     }
 
     @Test
     void remove_NonExistingFile_ExceptionThrown() {
-        assertThrows(RmException.class, () -> rmApplication.remove(false, false, "non_existing_file.txt"));
+        assertThrows(RmException.class, () -> rmApplication.remove(false, false,
+                "non_existing_file.txt"));
     }
 
     @Test
