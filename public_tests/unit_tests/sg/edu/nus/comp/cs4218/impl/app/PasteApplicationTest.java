@@ -69,7 +69,7 @@ public class PasteApplicationTest {
             String result = pasteApplication.mergeFile(false, "fileA.txt", "fileB.txt");
 
             // THEN
-            String expectedOutput = "A\t1\nB\t2\nC\t3\nD\t4\n";
+            String expectedOutput = "A\t1\nB\t2\nC\t3\nD\t4";
             assertEquals(expectedOutput, result);
         }
     }
@@ -98,7 +98,7 @@ public class PasteApplicationTest {
             String result = pasteApplication.mergeFile(true, "fileA.txt", "fileB.txt");
 
             // THEN
-            String expectedOutput = "A\tB\tC\tD\n1\t2\t3\t4\n";
+            String expectedOutput = "A\tB\tC\tD\n1\t2\t3\t4";
             assertEquals(expectedOutput, result);
         }
     }
@@ -124,7 +124,7 @@ public class PasteApplicationTest {
             String result = pasteApplication.mergeFileAndStdin(false, inputStreamB, "-", "fileA.txt", "-");
 
             // THEN
-            String expectedOutput = "1\tA\t2\n3\tB\t4\n \tC\t \n \tD\t \n";
+            String expectedOutput = "1\tA\t2\n3\tB\t4\n \tC\t \n \tD\t ";
             assertEquals(expectedOutput, result);
         }
     }
@@ -150,7 +150,7 @@ public class PasteApplicationTest {
             String result = pasteApplication.mergeFileAndStdin(true, inputStreamB, "-", "fileA.txt", "-");
 
             // THEN
-            String expectedOutput = "1\t2\t3\t4\nA\tB\tC\tD\n";
+            String expectedOutput = "1\t2\t3\t4\nA\tB\tC\tD";
             assertEquals(expectedOutput, result);
         }
     }
