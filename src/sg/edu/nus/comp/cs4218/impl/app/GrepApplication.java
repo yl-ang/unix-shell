@@ -51,8 +51,13 @@ public class GrepApplication implements GrepInterface {
      */
     @Override
     public String grepFromFiles(String pattern, Boolean isCaseInsensitive, Boolean isCountLines, Boolean isPrefixFileName, String... fileNames) throws Exception {
-        if (fileNames == null || pattern == null) {
+        if (fileNames == null) {
             throw new GrepException(NULL_POINTER);
+        }
+
+        // java does not treat empty patterns as invalid
+        if (pattern.isEmpty()) {
+            throw new GrepException(ERR_EMPTY_PATTERN);
         }
 
         StringJoiner lineResults = new StringJoiner(STRING_NEWLINE);
@@ -182,8 +187,12 @@ public class GrepApplication implements GrepInterface {
 
     @Override
     public String grepFromStdin(String pattern, Boolean isCaseInsensitive, Boolean isCountLines, Boolean isPrefixFileName, InputStream stdin) throws AbstractApplicationException {
-        // TODO: To implement -H flag print file name with output lines
         int count = 0;
+        // java does not treat empty patterns as invalid
+        if (pattern.isEmpty()) {
+            throw new GrepException(ERR_EMPTY_PATTERN);
+        }
+
         StringJoiner stringJoiner = new StringJoiner(STRING_NEWLINE);
 
         try {
@@ -200,8 +209,9 @@ public class GrepApplication implements GrepInterface {
                 if (matcher.find()) { // match
                     if (isPrefixFileName) {
                         stringJoiner.add("(standard input): " + line);
+                    } else {
+                        stringJoiner.add(line);
                     }
-                    stringJoiner.add(line);
                     count++;
                 }
             }
@@ -217,9 +227,11 @@ public class GrepApplication implements GrepInterface {
         String results = "";
         if (isCountLines) {
             if (isPrefixFileName) {
-                results = "(standard input): " + count + STRING_NEWLINE;
+                results = String.format("(standard input): %d%s", count, STRING_NEWLINE);
             }
-            results = count + STRING_NEWLINE;
+            else {
+                results = String.format("%d%s", count, STRING_NEWLINE);
+            }
         } else {
             if (!stringJoiner.toString().isEmpty()) {
                 results = stringJoiner.toString() + STRING_NEWLINE;
