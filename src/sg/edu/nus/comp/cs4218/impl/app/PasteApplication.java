@@ -208,7 +208,11 @@ public class PasteApplication implements PasteInterface  {
         for (int i = 0; i < totalLines; i++) {
             List<String> lines = allLines.get(i);
             appendLines(mergedLines, lines);
-            mergedLines.deleteCharAt(mergedLines.length() - 1);
+
+            if (!mergedLines.isEmpty()) {
+                mergedLines.deleteCharAt(mergedLines.length() - 1);
+            }
+
             if (i < totalLines - 1) {
                 mergedLines.append(STRING_NEWLINE);
             }
