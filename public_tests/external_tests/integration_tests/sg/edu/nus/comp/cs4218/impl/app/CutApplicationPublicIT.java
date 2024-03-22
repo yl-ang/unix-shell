@@ -40,7 +40,7 @@ public class CutApplicationPublicIT { //NOPMD
         InputStream stdin = generateInputStreamFromStrings("hello world");
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         cutApplication.run(argList, stdin, output);
-        assertEquals("hel" + STRING_NEWLINE, output.toString(StandardCharsets.UTF_8));
+        assertEquals("hel" + STRING_NEWLINE, output.toString(StandardCharsets.UTF_8)); //NOPMD
     }
 
     @Test

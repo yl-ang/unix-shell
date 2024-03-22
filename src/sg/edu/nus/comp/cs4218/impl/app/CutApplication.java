@@ -20,6 +20,7 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class CutApplication implements CutInterface {
+    private final String CUT_ERROR_START = "cut: ";
 
     /**
      * Runs the cut application with the specified arguments.
@@ -101,15 +102,15 @@ public class CutApplication implements CutInterface {
             }
             File node = IOUtils.resolveFilePath(file).toFile();
             if (!node.exists()) {
-                result.add("cut: " + file + ": " + ERR_FILE_NOT_FOUND + STRING_NEWLINE);
+                result.add(CUT_ERROR_START + file + ": " + ERR_FILE_NOT_FOUND + STRING_NEWLINE);
                 continue;
             }
             if (node.isDirectory()) {
-                result.add("cut: " + file + ": " + ERR_IS_DIR + STRING_NEWLINE);
+                result.add(CUT_ERROR_START + file + ": " + ERR_IS_DIR + STRING_NEWLINE);
                 continue;
             }
             if (!node.canRead()) {
-                result.add("cut: " + file + ": " + ERR_NO_PERM + STRING_NEWLINE);
+                result.add(CUT_ERROR_START + file + ": " + ERR_NO_PERM + STRING_NEWLINE);
                 continue;
             }
 
@@ -161,15 +162,15 @@ public class CutApplication implements CutInterface {
             } else {
                 File node = IOUtils.resolveFilePath(file).toFile();
                 if (!node.exists()) {
-                    result.add("cut: " + file + ": " + ERR_FILE_NOT_FOUND + STRING_NEWLINE);
+                    result.add(CUT_ERROR_START + file + ": " + ERR_FILE_NOT_FOUND + STRING_NEWLINE);
                     continue;
                 }
                 if (node.isDirectory()) {
-                    result.add("cut: " + file + ": " + ERR_IS_DIR + STRING_NEWLINE);
+                    result.add(CUT_ERROR_START + file + ": " + ERR_IS_DIR + STRING_NEWLINE);
                     continue;
                 }
                 if (!node.canRead()) {
-                    result.add("cut: " + file + ": " + ERR_NO_PERM + STRING_NEWLINE);
+                    result.add(CUT_ERROR_START + file + ": " + ERR_NO_PERM + STRING_NEWLINE);
                     continue;
                 }
 
