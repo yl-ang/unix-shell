@@ -9,6 +9,7 @@ import sg.edu.nus.comp.cs4218.impl.parser.CatArgsParser;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -97,13 +98,34 @@ public class CatApplication implements CatInterface {
         }
 
         List<String> outputLines = new ArrayList<>();
-
+        InputStream fileStream = null;
         for (String fileName : fileNames) {
-            InputStream fileInputStream = null;
+            File node = null;
+
+            if (fileName == null) {
+                outputLines.add("cat: " + ERR_NULL_ARGS + STRING_NEWLINE);
+                continue;
+            }
 
             try {
-                fileInputStream = IOUtils.openInputStream(fileName);
-                List<String> fileLines = IOUtils.getLinesFromInputStream(fileInputStream);
+                node = IOUtils.resolveFilePath(fileName).toFile();
+
+                if (!node.exists()){
+                    continue;
+                }
+
+                if (node.isDirectory()) {
+                    outputLines.add("cat: " + ERR_IS_DIR + STRING_NEWLINE);
+                    continue;
+                }
+
+                if (!node.canRead()) {
+                    outputLines.add("cat: " + ERR_NO_PERM_READ_FILE + STRING_NEWLINE);
+                    continue;
+                }
+
+                fileStream = IOUtils.openInputStream(fileName);
+                List<String> fileLines = IOUtils.getLinesFromInputStream(fileStream);
 
                 if (isLineNumber) {
                     fileLines = addLineNumbers(fileLines);
@@ -114,7 +136,7 @@ public class CatApplication implements CatInterface {
                 throw new CatException(ERR_READING_FILE + ": " + fileName);
             } finally {
                 try {
-                    IOUtils.closeInputStream(fileInputStream);
+                    IOUtils.closeInputStream(fileStream);
                 } catch (ShellException e) {
                     throw new RuntimeException(e);
                 }
