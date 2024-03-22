@@ -9,6 +9,7 @@ import sg.edu.nus.comp.cs4218.impl.parser.PasteArgsParser;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -134,6 +135,12 @@ public class PasteApplication implements PasteInterface  {
         List<List<String>> allLines = new ArrayList<>();
 
         for (String fileName : fileNames) {
+
+            // Handle file input
+            if (fileName.isEmpty() || isFileResolveToDirectory(fileName)) {
+                continue;
+            }
+
             try (InputStream inputStream = IOUtils.openInputStream(fileName)) {
                 List<String> lines = IOUtils.getLinesFromInputStream(inputStream);
                 allLines.add(lines);
@@ -297,6 +304,14 @@ public class PasteApplication implements PasteInterface  {
                 }
             } else {
                 // Handle file input
+                if (fileName.isEmpty()) {
+                    continue;
+                }
+
+                if (isFileResolveToDirectory(fileName)) {
+                    continue;
+                }
+
                 try (InputStream inputStream = IOUtils.openInputStream(fileName)) {
                     List<String> lines = IOUtils.getLinesFromInputStream(inputStream);
                     allLines.add(lines);
@@ -319,5 +334,10 @@ public class PasteApplication implements PasteInterface  {
         return (int) Arrays.stream(arr)
                 .filter(fileName -> fileName != null && fileName.equals(target))
                 .count();
+    }
+
+    private boolean isFileResolveToDirectory(String fileName) {
+        File fileOrDir = IOUtils.resolveFilePath(fileName).toFile();
+        return fileOrDir.isDirectory();
     }
 }
