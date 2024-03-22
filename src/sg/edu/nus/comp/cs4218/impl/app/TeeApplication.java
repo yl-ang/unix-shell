@@ -1,5 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.app.TeeInterface;
 import sg.edu.nus.comp.cs4218.exception.*;
 import sg.edu.nus.comp.cs4218.impl.parser.TeeArgsParser;
@@ -115,11 +116,12 @@ public class TeeApplication implements TeeInterface {
         }
 
         byte[] input = inputBytes.toByteArray(); // Convert ByteArrayOutputStream to byte array
+        String currentDirectory = Environment.currentDirectory;
 
         // Loop through the files, create if not exist, then write or append input
         for (String file : fileName) {
             try {
-                File node = new File(file);
+                File node = new File(currentDirectory, file);
                 if (!node.exists()) {
                     boolean isCreated = node.createNewFile();
                     if (!isCreated) {
