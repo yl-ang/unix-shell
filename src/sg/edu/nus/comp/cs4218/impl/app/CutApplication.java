@@ -33,8 +33,11 @@ public class CutApplication implements CutInterface {
      */
     @Override
     public void run(String[] args, InputStream stdin, OutputStream stdout) throws CutException {
-        if (stdin == null || stdout == null) {
-            throw new CutException(ERR_NULL_STREAMS);
+        if (stdin == null) {
+            throw new CutException(ERR_NO_ISTREAM);
+        }
+        if (stdout == null) {
+            throw new CutException(ERR_NO_OSTREAM);
         }
         CutArgsParser cutArgsParser = new CutArgsParser();
         try {
@@ -201,7 +204,7 @@ public class CutApplication implements CutInterface {
      */
     public String cutFromStdin(Boolean isCharPo, Boolean isBytePo, List<int[]> ranges, InputStream stdin) throws CutException {
         if (stdin == null) {
-            throw new CutException(ERR_NULL_STREAMS);
+            throw new CutException(ERR_NO_ISTREAM);
         }
         if (!isBytePo && !isCharPo) {
             throw new CutException(ERR_ISCHARPO_AND_ISBYTEPO_FALSE);
