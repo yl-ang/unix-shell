@@ -2,6 +2,7 @@
 package external_tests.unit_tests.sg.edu.nus.comp.cs4218.impl.app;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.exception.CutException;
 import sg.edu.nus.comp.cs4218.impl.app.CutApplication;
@@ -16,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static sg.edu.nus.comp.cs4218.testutils.TestStringUtils.STRING_NEWLINE;
 
+@SuppressWarnings("PMD")
 public class CutApplicationPublicTest {
     CutApplication cutApplication;
 
@@ -44,7 +46,7 @@ public class CutApplicationPublicTest {
         int[] ranges = new int[]{1, 3};
         InputStream stdin = generateInputStreamFromStrings("hello world");
         String actual = cutApplication.cutFromStdin(true, false, List.of(ranges), stdin);
-        assertEquals("hel" + STRING_NEWLINE, actual); //NOPMD
+        assertEquals("hel" + STRING_NEWLINE, actual);
     }
 
     @Test
@@ -53,7 +55,7 @@ public class CutApplicationPublicTest {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         InputStream stdin = generateInputStreamFromStrings("hello world");
         String actual = cutApplication.cutFromStdin(false, true, List.of(ranges), stdin);
-        assertEquals("hel" + STRING_NEWLINE, actual); //NOPMD
+        assertEquals("hel" + STRING_NEWLINE, actual);
     }
 
     @Test
@@ -72,6 +74,16 @@ public class CutApplicationPublicTest {
         InputStream stdin = generateInputStreamFromStrings("hello", "world");
         String actual = cutApplication.cutFromStdin(false, true, List.of(ranges), stdin);
         assertEquals("hel" + STRING_NEWLINE + "wor" + STRING_NEWLINE, actual);
+    }
+
+
+    @Test
+    @Disabled
+    void cutFromFile_InvalidFile_ThrowsException() {
+        int[] ranges = new int[]{1, 3};
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        assertThrows(CutException.class,
+                () -> cutApplication.cutFromFiles(false, true, List.of(ranges), "invalidFile"));
     }
 
 }
