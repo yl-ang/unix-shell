@@ -20,11 +20,6 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.*;
 public class CatApplication implements CatInterface {
     public static final String ERR_READING_FILE = "Could not read file";
     public static final String ERR_WRITE_STREAM = "Could not write to output stream";
-    private int lineNumber;
-
-    public CatApplication() {
-        this.lineNumber = 1;
-    }
 
     /**
      * Runs the cat application with the specified arguments.
@@ -193,7 +188,6 @@ public class CatApplication implements CatInterface {
                 output.add(catFiles(isLineNumber, name));
             }
         }
-        lineNumber = 1;
         return String.join(STRING_NEWLINE, output);
     }
 
@@ -204,6 +198,7 @@ public class CatApplication implements CatInterface {
     * @return List of lines with line numbers.
     */
     private List<String> addLineNumbers(List<String> lines) {
+        int lineNumber = 1;
         List<String> numberedLines = new ArrayList<>();
         for (String line : lines) {
             numberedLines.add(lineNumber + " " + line);
