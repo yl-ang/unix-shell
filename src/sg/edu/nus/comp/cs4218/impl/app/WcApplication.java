@@ -33,9 +33,19 @@ public class WcApplication implements WcInterface {
     @Override
     public void run(String[] args, InputStream stdin, OutputStream stdout)
             throws WcException {
-        // Format: wc [-clw] [FILES]
+        if (stdin == null) {
+            throw new WcException(ERR_NO_ISTREAM);
+        }
         if (stdout == null) {
-            throw new WcException(ERR_NULL_STREAMS);
+            throw new WcException(ERR_NO_OSTREAM);
+        }
+        if (args == null) {
+            throw new WcException(ERR_NULL_ARGS);
+        }
+        for (String arg : args) {
+            if (arg == null) {
+                throw new WcException(ERR_NULL_ARGS);
+            }
         }
         WcArgsParser wcArgsParser = new WcArgsParser();
         try {
@@ -58,7 +68,6 @@ public class WcApplication implements WcInterface {
         }
         try {
             stdout.write(result.getBytes());
-            stdout.write(STRING_NEWLINE.getBytes());
         } catch (IOException e) {
             throw new WcException(ERR_WRITE_STREAM);//NOPMD
         }
@@ -156,7 +165,7 @@ public class WcApplication implements WcInterface {
             sb.append(" total");
             result.add(sb.toString());
         }
-        return String.join(STRING_NEWLINE, result);
+        return String.join(STRING_NEWLINE, result) + STRING_NEWLINE;
     }
 
     /**
@@ -192,7 +201,7 @@ public class WcApplication implements WcInterface {
             sb.append(String.format(NUMBER_FORMAT, count[BYTES_INDEX]));
         }
 
-        return sb.toString();
+        return sb + STRING_NEWLINE;
     }
 
     @Override
@@ -262,7 +271,9 @@ public class WcApplication implements WcInterface {
                 sb.append(String.format(NUMBER_FORMAT, count[BYTES_INDEX]));
             }
 
-            if (!file.equals("-")) {
+            if (file.equals("-")) {
+                sb.append((" -"));
+            } else {
                 sb.append(String.format(" %s", file));
             }
             result.add(sb.toString());
@@ -288,7 +299,7 @@ public class WcApplication implements WcInterface {
             sb.append(" total");
             result.add(sb.toString());
         }
-        return String.join(STRING_NEWLINE, result);
+        return String.join(STRING_NEWLINE, result) + STRING_NEWLINE;
     }
 
     /**
