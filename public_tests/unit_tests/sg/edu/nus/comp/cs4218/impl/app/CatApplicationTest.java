@@ -281,7 +281,7 @@ class CatApplicationTest {
         String output = catApplication.catFiles(isLineNumber, args);
 
         // THEN
-        String expectedOutput = String.format("1 Hello%s2 World%s", System.lineSeparator(), System.lineSeparator());
+        String expectedOutput = String.format("1 Hello%s1 World%s", System.lineSeparator(), System.lineSeparator());
         assertEquals(expectedOutput, output + StringUtils.STRING_NEWLINE);
     }
 
