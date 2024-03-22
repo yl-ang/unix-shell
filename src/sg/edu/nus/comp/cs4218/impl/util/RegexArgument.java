@@ -16,12 +16,12 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_ASTERISK;
 public final class RegexArgument {
     private StringBuilder plaintext;
     private StringBuilder regex;
-    private boolean isRegex;
+    private boolean contentIsRegex;
 
     public RegexArgument() {
         this.plaintext = new StringBuilder();
         this.regex = new StringBuilder();
-        this.isRegex = false;
+        this.contentIsRegex = false;
     }
 
     public RegexArgument(String str) {
@@ -54,7 +54,7 @@ public final class RegexArgument {
     public void appendAsterisk() {
         plaintext.append(CHAR_ASTERISK);
         regex.append("[^").append(StringUtils.fileSeparator()).append("]*");
-        isRegex = true;
+        contentIsRegex = true;
     }
 
     public void merge(RegexArgument other) {
@@ -63,7 +63,7 @@ public final class RegexArgument {
         }
         plaintext.append(other.plaintext);
         regex.append(other.regex);
-        isRegex = isRegex || other.isRegex;
+        contentIsRegex = contentIsRegex || other.contentIsRegex;
     }
 
     public void merge(String str) {
@@ -77,7 +77,7 @@ public final class RegexArgument {
     public List<String> globFiles() {
         List<String> globbedFiles = new LinkedList<>();
 
-        if (isRegex) {
+        if (contentIsRegex) {
             Pattern regexPattern = Pattern.compile(regex.toString());
             String dir = "";
             String tokens[] = plaintext.toString().replaceAll("\\\\", "/").split("/");
@@ -122,7 +122,9 @@ public final class RegexArgument {
             return matches;
         }
         String[] list = node.list();
-        if (list == null) return matches;
+        if (list == null) {
+            return matches;
+        }
         for (String current : list) {
             File nextNode = new File(node, current);
             String match = isAbsolute
@@ -141,7 +143,7 @@ public final class RegexArgument {
     }
 
     public boolean isRegex() {
-        return isRegex;
+        return contentIsRegex;
     }
 
     public boolean isEmpty() {
