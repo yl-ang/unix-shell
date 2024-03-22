@@ -1,5 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.app.CutInterface;
 import sg.edu.nus.comp.cs4218.exception.CutException;
 import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
@@ -61,7 +62,6 @@ public class CutApplication implements CutInterface {
 
         try {
             stdout.write(result.getBytes());
-//            stdout.write(STRING_NEWLINE.getBytes());
         } catch (IOException e) {
             throw new CutException(ERR_WRITE_STREAM);//NOPMD
         }
@@ -111,7 +111,9 @@ public class CutApplication implements CutInterface {
             }
 
             String cutResult;
-            Path path = Paths.get(file);
+            String currentDirectory = Environment.currentDirectory;
+            Path path = Paths.get(currentDirectory).resolve(file);
+
             try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
                 cutResult = cutFromInputStream(isCharPo, isBytePo, ranges, reader);
             } catch (IOException e) {
@@ -168,7 +170,9 @@ public class CutApplication implements CutInterface {
                     continue;
                 }
 
-                Path path = Paths.get(file);
+                String currentDirectory = Environment.currentDirectory;
+                Path path = Paths.get(currentDirectory).resolve(file);
+
                 try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
                     cutResult = cutFromInputStream(isCharPo, isBytePo, ranges, reader);
                 } catch (IOException e) {
