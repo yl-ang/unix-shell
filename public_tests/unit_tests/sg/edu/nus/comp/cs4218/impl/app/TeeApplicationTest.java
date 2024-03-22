@@ -28,9 +28,6 @@ public class TeeApplicationTest {
     private OutputStream outputStream;
 
     private static final String OUTPUT_FILENAME = "teeOutputTestFile.txt";
-    private static final String FILE_CONTENT = "test tee\n123456789\n";
-
-
     private static final String INPUT_FILENAME = "cutTestFile.txt";
     private static Path outputFilePath;
 
@@ -142,11 +139,11 @@ public class TeeApplicationTest {
         String output = teeApplication.teeFromStdin(false, inputStdin, fileNames);
 
         // check output
-        assertEquals(FILE_CONTENT, output);
+        assertEquals("test tee\n123456789\n", output);
 
         // check file changed
         String result = new String(Files.readAllBytes(outputFilePath));
-        assertEquals(FILE_CONTENT, result);
+        assertEquals("test tee\n123456789\n", result);
     }
 
     @Test
@@ -163,7 +160,7 @@ public class TeeApplicationTest {
         String output = teeApplication.teeFromStdin(true, inputStdin, fileNames);
 
         // check output
-        assertEquals(FILE_CONTENT, output);
+        assertEquals("test tee\n123456789\n", output);
 
         // check file changed
         String result = new String(Files.readAllBytes(outputFilePath));
@@ -178,15 +175,15 @@ public class TeeApplicationTest {
         String output = teeApplication.teeFromStdin(false, inputStdin, fileNames);
 
         // check output
-        assertEquals(FILE_CONTENT, output);
+        assertEquals("test tee\n123456789\n", output);
 
         // check file changed
         String result = new String(Files.readAllBytes(outputFilePath));
-        assertEquals(FILE_CONTENT, result);
+        assertEquals("test tee\n123456789\n", result);
 
         Path path = Paths.get(secondFile);
         String result2 = new String(Files.readAllBytes(path));
-        assertEquals(FILE_CONTENT, result2);
+        assertEquals("test tee\n123456789\n", result2);
 
         Files.deleteIfExists(path);
     }
@@ -197,7 +194,7 @@ public class TeeApplicationTest {
 
         String output = teeApplication.teeFromStdin(false, inputStdin, fileNames);
 
-        assertEquals(FILE_CONTENT, output);
+        assertEquals("test tee\n123456789\n", output);
     }
 
     @Test
@@ -214,7 +211,7 @@ public class TeeApplicationTest {
         teeApplication.run(args, inputStdin, outputStream);
 
         // check output
-        assertEquals(FILE_CONTENT, outputStream.toString());
+        assertEquals("test tee\n123456789\n", outputStream.toString());
 
         // check file changed
         String result = new String(Files.readAllBytes(outputFilePath));
