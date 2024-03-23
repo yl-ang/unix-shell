@@ -18,8 +18,7 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.testutils.TestStringUtils.CHAR_FILE_SEP;
 import static sg.edu.nus.comp.cs4218.testutils.TestStringUtils.STRING_NEWLINE;
 
@@ -155,13 +154,15 @@ public class PasteApplicationPublicIT {
     }
 
     //mergeFiles cases
+    // Assumption ERR_NO_SUCH_FILE is thrown
     @Test
-    void run_NonexistentFileNoFlag_ThrowsException() throws Exception {
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
+    void run_NonexistentFileNoFlag_ThrowsException() {
         String nonexistentFileName = "nonexistent_file.txt";
-        pasteApplication.run(toArgs("", nonexistentFileName), System.in, output);
-        assertEquals(String.format(ERR_NO_SUCH_FILE, TEMP + CHAR_FILE_SEP + nonexistentFileName),
-                output.toString(StandardCharsets.UTF_8));
+        Exception exception = assertThrows(Exception.class, () ->
+                pasteApplication.run(toArgs("", nonexistentFileName), System.in, new ByteArrayOutputStream()));
+
+        assertInstanceOf(PasteException.class, exception);
+        assertTrue(exception.getMessage().contains(ERR_NO_SUCH_FILE));
     }
 
     @Test
@@ -271,15 +272,19 @@ public class PasteApplicationPublicIT {
     }
 
     //mergeFilesAndStdin cases
+    // Assumption ERR_NO_SUCH_FILE is thrown
     @Test
-    void run_SingleStdinNonexistentFileNoFlag_ThrowsException() throws Exception {
+    void run_SingleStdinNonexistentFileNoFlag_ThrowsException() {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         String stdinText = "Test line 1.1\nTest line 1.2\nTest line 1.3";
         InputStream inputStream = new ByteArrayInputStream(stdinText.getBytes(StandardCharsets.UTF_8));
         String nonexistentFileName = "nonexistent_file.txt";
-        pasteApplication.run(toArgs("", nonexistentFileName), inputStream, output);
-        assertEquals(String.format(ERR_NO_SUCH_FILE, TEMP + CHAR_FILE_SEP + nonexistentFileName),
-                output.toString(StandardCharsets.UTF_8));
+
+        Exception exception = assertThrows(Exception.class, () ->
+                pasteApplication.run(toArgs("", nonexistentFileName), inputStream, output));
+
+        assertInstanceOf(PasteException.class, exception);
+        assertTrue(exception.getMessage().contains(String.format(ERR_NO_SUCH_FILE, TEMP + CHAR_FILE_SEP + nonexistentFileName)));
     }
 
     @Test
