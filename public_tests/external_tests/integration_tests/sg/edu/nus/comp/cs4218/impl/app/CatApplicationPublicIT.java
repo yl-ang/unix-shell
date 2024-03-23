@@ -1,7 +1,6 @@
 package external_tests.integration_tests.sg.edu.nus.comp.cs4218.impl.app;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.testutils.TestStringUtils.CHAR_FILE_SEP;
 import static sg.edu.nus.comp.cs4218.testutils.TestStringUtils.STRING_NEWLINE;
 
@@ -140,19 +139,29 @@ public class CatApplicationPublicIT {
     }
 
     //catFiles cases
+// Assumption: Error is throw ERR_NO_SUCH_FILE
     @Test
-    void run_NonexistentFileNoFlag_DisplaysErrMsg() throws AbstractApplicationException {
+    void run_NonexistentFileNoFlag_DisplaysErrMsg() {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         String nonexistentFileName = "nonexistent_file.txt";
-        catApplication.run(toArgs("", nonexistentFileName), System.in, output);
+
+        Exception exception = assertThrows(AbstractApplicationException.class, () -> {
+            catApplication.run(toArgs("", nonexistentFileName), System.in, output);
+        });
+
         assertEquals(String.format(ERR_NO_SUCH_FILE, nonexistentFileName),
                 output.toString(StandardCharsets.UTF_8));
     }
 
+    // Assumption: Error is throw ERR_IS_DIR
     @Test
-    void run_DirectoryNoFlag_DisplaysErrMsg() throws AbstractApplicationException {
+    void run_DirectoryNoFlag_DisplaysErrMsg() {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        catApplication.run(toArgs("", DIR), System.in, output);
+
+        Exception exception = assertThrows(AbstractApplicationException.class, () -> {
+            catApplication.run(toArgs("", DIR), System.in, output);
+        });
+
         assertEquals(ERR_IS_DIR, output.toString(StandardCharsets.UTF_8));
     }
 
@@ -257,22 +266,34 @@ public class CatApplicationPublicIT {
     }
 
     //catFilesAndStdin cases
+    // Assumption: Error is throw ERR_NO_SUCH_FILE
     @Test
     void run_SingleStdinNonexistentFileNoFlag_DisplaysErrMsg() throws Exception {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         InputStream inputStream = new ByteArrayInputStream(TEXT_ONE.getBytes(StandardCharsets.UTF_8));
         String nonexistentFileName = "nonexistent_file.txt";
-        catApplication.run(toArgs("", nonexistentFileName), inputStream, output);
+
+        Exception exception = assertThrows(Exception.class, () -> {
+            catApplication.run(toArgs("", nonexistentFileName), inputStream, output);
+        });
+
         assertEquals(String.format("cat: %s: No such file or directory", nonexistentFileName),
                 output.toString(StandardCharsets.UTF_8));
+        assertInstanceOf(CatException.class, exception);
     }
 
+    // Assumption: Error is throw ERR_IS_DIR
     @Test
     void run_SingleStdinDirectoryNoFlag_ThrowsException() throws Exception  {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         InputStream inputStream = new ByteArrayInputStream(TEXT_ONE.getBytes(StandardCharsets.UTF_8));
-        catApplication.run(toArgs("", DIR), inputStream, output);
+
+        Exception exception = assertThrows(Exception.class, () -> {
+            catApplication.run(toArgs("", DIR), inputStream, output);
+        });
+
         assertEquals(ERR_IS_DIR, output.toString(StandardCharsets.UTF_8));
+        assertInstanceOf(CatException.class, exception);
     }
 
     @Test

@@ -60,7 +60,7 @@ public class CatApplicationPublicTest {
         assertEquals(TEXT_ONE, actual);
     }
 
-    // If the test is about checking for thrown exception, it should access that and then check the exception message
+    // Assumption: Error is throw ERR_IS_DIR
     @Test
     void catFiles_FolderSpecifiedAbsolutePath_ThrowsException() throws AbstractApplicationException {
         AbstractApplicationException exception = assertThrows(AbstractApplicationException.class, () -> {
@@ -70,8 +70,7 @@ public class CatApplicationPublicTest {
         assertEquals(String.format("cat: %s: Is a directory", TEST_DIR_PATH), exception.getMessage());
     }
 
-    // Based on the implementation of cat, the STRING_NEWLINE is only added in the run method after
-    // everything is executed
+    // Assumption: STRING_NEWLINE is only added in the run method after helper function in cat is executed
     @Test
     void catStdin_NoFlag_ReturnsStdinString() throws AbstractApplicationException {
         InputStream inputStream = new ByteArrayInputStream(TEXT_ONE.getBytes());
@@ -87,8 +86,7 @@ public class CatApplicationPublicTest {
         assertEquals(text, actual);
     }
 
-    // Based on the implementation of cat, the STRING_NEWLINE is only added in the run method after
-    // everything is executed
+    // Assumption: STRING_NEWLINE is only added in the run method after helper function in cat is executed
     @Test
     void catStdin_IsLineNumberFlag_ReturnsStdinStringLineNo() throws AbstractApplicationException {
         InputStream inputStream = new ByteArrayInputStream(TEXT_ONE.getBytes());
