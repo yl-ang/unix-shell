@@ -137,7 +137,7 @@ public class CatApplication implements CatInterface {
 
                 outputLines.addAll(fileLines);
             } catch (Exception e) {
-                throw new CatException(ERR_READING_FILE + ": " + fileName);
+                throw new CatException(e.getMessage());
             } finally {
                 try {
                     IOUtils.closeInputStream(fileStream);
