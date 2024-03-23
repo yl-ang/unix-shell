@@ -150,7 +150,7 @@ public class CatApplicationPublicIT {
         });
 
         assertEquals(String.format(ERR_NO_SUCH_FILE, nonexistentFileName),
-                output.toString(StandardCharsets.UTF_8));
+                exception.getMessage());
     }
 
     // Assumption: Error is throw ERR_IS_DIR
@@ -162,7 +162,7 @@ public class CatApplicationPublicIT {
             catApplication.run(toArgs("", DIR), System.in, output);
         });
 
-        assertEquals(ERR_IS_DIR, output.toString(StandardCharsets.UTF_8));
+        assertEquals(ERR_IS_DIR, exception.getMessage());
     }
 
     @Test
@@ -278,7 +278,7 @@ public class CatApplicationPublicIT {
         });
 
         assertEquals(String.format("cat: %s: No such file or directory", nonexistentFileName),
-                output.toString(StandardCharsets.UTF_8));
+                exception.getMessage());
         assertInstanceOf(CatException.class, exception);
     }
 
@@ -292,7 +292,7 @@ public class CatApplicationPublicIT {
             catApplication.run(toArgs("", DIR), inputStream, output);
         });
 
-        assertEquals(ERR_IS_DIR, output.toString(StandardCharsets.UTF_8));
+        assertEquals(ERR_IS_DIR, exception.getMessage());
         assertInstanceOf(CatException.class, exception);
     }
 

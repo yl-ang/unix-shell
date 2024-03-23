@@ -67,7 +67,7 @@ public class CatApplicationPublicTest {
             catApplication.catFiles(false, TEST_DIR_PATH.toString());
         });
 
-        assertEquals(String.format("cat: %s: Is a directory", TEST_DIR_PATH), exception.getMessage());
+        assertEquals(String.format("cat: %s: Is a directory", TEST_DIR), exception.getMessage());
     }
 
     // Assumption: STRING_NEWLINE is only added in the run method after helper function in cat is executed
