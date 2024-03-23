@@ -119,17 +119,13 @@ public class CatApplication implements CatInterface {
                 }
                 node = pathToFile.toFile();
                 if (!node.exists()){
-                    outputLines.add("cat: " + pathToFile.getFileName() + ": No such file or directory");
-                    continue;
+                    throw new CatException("cat: " + pathToFile.getFileName() + ": No such file or directory");
                 }
                 if (node.isDirectory()) {
-                    outputLines.add("cat: " + pathToFile.getFileName() + ": Is a directory");
-                    continue;
+                    throw new CatException("cat: " + pathToFile.getFileName() + ": No such file or directory");
                 }
-
                 if (!node.canRead()) {
-                    outputLines.add("cat: " + ERR_NO_PERM_READ_FILE);
-                    continue;
+                    throw new CatException("cat: " + ERR_NO_PERM_READ_FILE);
                 }
 
                 fileStream = IOUtils.openInputStream(fileName);
