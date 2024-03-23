@@ -111,6 +111,7 @@ public class CatApplication implements CatInterface {
                 node = IOUtils.resolveFilePath(fileName).toFile();
 
                 if (!node.exists()){
+                    outputLines.add("cat: " + fileName + ": No such file or directory" + STRING_NEWLINE);
                     continue;
                 }
 
