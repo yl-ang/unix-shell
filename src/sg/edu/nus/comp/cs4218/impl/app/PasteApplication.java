@@ -1,5 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.app.PasteInterface;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
@@ -13,6 +14,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -133,19 +136,39 @@ public class PasteApplication implements PasteInterface  {
         }
 
         List<List<String>> allLines = new ArrayList<>();
+        InputStream fileStream = null;
+        String currentDirectory = Environment.currentDirectory;
+        Path pathToFile;
 
         for (String fileName : fileNames) {
+            File node;
+            try {
+                pathToFile = Paths.get(fileName);
 
-            // Handle file input
-            if (fileName.isEmpty() || isFileResolveToDirectory(fileName)) {
-                continue;
-            }
-
-            try (InputStream inputStream = IOUtils.openInputStream(fileName)) {
+                if (!pathToFile.isAbsolute()) {
+                    pathToFile = Paths.get(currentDirectory).resolve(fileName);
+                }
+                node = pathToFile.toFile();
+                if (!node.exists()){
+                    throw new PasteException(pathToFile.getFileName() + ": No such file or directory");
+                }
+                if (node.isDirectory()) {
+                    throw new PasteException(pathToFile.getFileName() + ": Is a directory");
+                }
+                if (!node.canRead()) {
+                    throw new PasteException(pathToFile.getFileName() + ": " + ERR_NO_PERM_READ_FILE);
+                }
+                InputStream inputStream = IOUtils.openInputStream(fileName);
                 List<String> lines = IOUtils.getLinesFromInputStream(inputStream);
                 allLines.add(lines);
             } catch (IOException | ShellException e) {
                 throw new PasteException(e.getMessage());
+            } finally {
+                try {
+                    IOUtils.closeInputStream(fileStream);
+                } catch (ShellException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
         return mergeLines(allLines, isSerial);
@@ -279,23 +302,25 @@ public class PasteApplication implements PasteInterface  {
         boolean hasProcessedSerialStdin = false;
         int currFlagCount = 0;
         List<List<String>> allLines = new ArrayList<>();
+        String currentDirectory = Environment.currentDirectory;
+        Path pathToFile;
+        File node;
+        InputStream fileStream = null;
 
         for (String fileName : fileNames) {
             if (fileName == null) {
                 continue;
             }
-            // Handle stdin input
-            if (fileName.equals(STRING_FLAG_PREFIX)) {
-                List<String> tempStdinLines = new ArrayList<>();
 
-                // Determine whether to process stdin serially or not
+            if (fileName.equals(STRING_FLAG_PREFIX)) {
+                // Handle stdin input
+                List<String> tempStdinLines = new ArrayList<>();
                 if (isSerial) {
                     if (!hasProcessedSerialStdin) {
                         allLines.add(stdinLines);
                         hasProcessedSerialStdin = true;
                     }
                 } else {
-                    // Add lines from stdin based on total flags count
                     for (int i = currFlagCount; i < stdinLines.size(); i += totalFlags) {
                         tempStdinLines.add(stdinLines.get(i));
                     }
@@ -303,20 +328,33 @@ public class PasteApplication implements PasteInterface  {
                     allLines.add(tempStdinLines);
                 }
             } else {
-                // Handle file input
-                if (fileName.isEmpty()) {
-                    continue;
-                }
-
-                if (isFileResolveToDirectory(fileName)) {
-                    continue;
-                }
-
-                try (InputStream inputStream = IOUtils.openInputStream(fileName)) {
-                    List<String> lines = IOUtils.getLinesFromInputStream(inputStream);
+                try {
+                    // Handle file input
+                    pathToFile = Paths.get(fileName);
+                    if (!pathToFile.isAbsolute()) {
+                        pathToFile = Paths.get(currentDirectory).resolve(fileName);
+                    }
+                    node = pathToFile.toFile();
+                    if (!node.exists()){
+                        throw new PasteException(pathToFile.getFileName() + ": No such file or directory");
+                    }
+                    if (node.isDirectory()) {
+                        throw new PasteException(pathToFile.getFileName() + ": Is a directory");
+                    }
+                    if (!node.canRead()) {
+                        throw new PasteException(pathToFile.getFileName() + ": " + ERR_NO_PERM_READ_FILE);
+                    }
+                    fileStream = IOUtils.openInputStream(fileName);
+                    List<String> lines = IOUtils.getLinesFromInputStream(fileStream);
                     allLines.add(lines);
                 } catch (IOException | ShellException e) {
                     throw new PasteException(e.getMessage());
+                } finally {
+                    try {
+                        IOUtils.closeInputStream(fileStream);
+                    } catch (ShellException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
         }
@@ -334,10 +372,5 @@ public class PasteApplication implements PasteInterface  {
         return (int) Arrays.stream(arr)
                 .filter(fileName -> fileName != null && fileName.equals(target))
                 .count();
-    }
-
-    private boolean isFileResolveToDirectory(String fileName) {
-        File fileOrDir = IOUtils.resolveFilePath(fileName).toFile();
-        return fileOrDir.isDirectory();
     }
 }
