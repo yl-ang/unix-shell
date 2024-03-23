@@ -1,5 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.app.CatInterface;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.CatException;
@@ -12,6 +13,8 @@ import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -99,22 +102,25 @@ public class CatApplication implements CatInterface {
 
         List<String> outputLines = new ArrayList<>();
         InputStream fileStream = null;
+        String currentDirectory = Environment.currentDirectory;
+        Path pathToFile;
+
         for (String fileName : fileNames) {
             File node = null;
-
             if (fileName == null) {
                 outputLines.add("cat: " + ERR_NULL_ARGS + STRING_NEWLINE);
                 continue;
             }
-
             try {
-                node = IOUtils.resolveFilePath(fileName).toFile();
-
+                pathToFile = Paths.get(fileName);
+                if (!pathToFile.isAbsolute()) {
+                    pathToFile = Paths.get(currentDirectory).resolve(fileName);
+                }
+                node = pathToFile.toFile();
                 if (!node.exists()){
                     outputLines.add("cat: " + fileName + ": No such file or directory" + STRING_NEWLINE);
                     continue;
                 }
-
                 if (node.isDirectory()) {
                     outputLines.add("cat: " + fileName + ": Is a directory" + STRING_NEWLINE);
                     continue;
