@@ -1,5 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.app.CatInterface;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.CatException;
@@ -9,9 +10,14 @@ import sg.edu.nus.comp.cs4218.impl.parser.CatArgsParser;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
@@ -20,11 +26,6 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.*;
 public class CatApplication implements CatInterface {
     public static final String ERR_READING_FILE = "Could not read file";
     public static final String ERR_WRITE_STREAM = "Could not write to output stream";
-    private int lineNumber;
-
-    public CatApplication() {
-        this.lineNumber = 1;
-    }
 
     /**
      * Runs the cat application with the specified arguments.
@@ -76,7 +77,7 @@ public class CatApplication implements CatInterface {
 
         try {
             stdout.write(output.getBytes());
-            stdout.write(StringUtils.STRING_NEWLINE.getBytes());
+            stdout.write(STRING_NEWLINE.getBytes());
         } catch (Exception e) {
             throw new CatException(ERR_WRITE_STREAM);
         }
@@ -102,24 +103,44 @@ public class CatApplication implements CatInterface {
         }
 
         List<String> outputLines = new ArrayList<>();
+        InputStream fileStream = null;
+        String currentDirectory = Environment.currentDirectory;
+        Path pathToFile;
 
         for (String fileName : fileNames) {
-            InputStream fileInputStream = null;
-
+            File node;
+            if (fileName == null) {
+                outputLines.add("cat: " + ERR_NULL_ARGS + STRING_NEWLINE);
+                continue;
+            }
             try {
-                fileInputStream = IOUtils.openInputStream(fileName);
-                List<String> fileLines = IOUtils.getLinesFromInputStream(fileInputStream);
+                pathToFile = Paths.get(fileName);
+                if (!pathToFile.isAbsolute()) {
+                    pathToFile = Paths.get(currentDirectory).resolve(fileName);
+                }
+                node = pathToFile.toFile();
+                if (!node.exists()){
+                    throw new CatException(pathToFile.getFileName() + ": No such file or directory");
+                }
+                if (node.isDirectory()) {
+                    throw new CatException(pathToFile.getFileName() + ": Is a directory");
+                }
+                if (!node.canRead()) {
+                    throw new CatException(pathToFile.getFileName() + ": " + ERR_NO_PERM_READ_FILE);
+                }
+
+                fileStream = IOUtils.openInputStream(fileName);
+                List<String> fileLines = IOUtils.getLinesFromInputStream(fileStream);
 
                 if (isLineNumber) {
                     fileLines = addLineNumbers(fileLines);
                 }
-
                 outputLines.addAll(fileLines);
-            } catch (Exception e) {
-                throw new CatException(ERR_READING_FILE + ": " + fileName);
+            } catch (IOException | ShellException e) {
+                throw new CatException(ERR_READING_FILE);
             } finally {
                 try {
-                    IOUtils.closeInputStream(fileInputStream);
+                    IOUtils.closeInputStream(fileStream);
                 } catch (ShellException e) {
                     throw new RuntimeException(e);
                 }
@@ -193,7 +214,6 @@ public class CatApplication implements CatInterface {
                 output.add(catFiles(isLineNumber, name));
             }
         }
-        lineNumber = 1;
         return String.join(STRING_NEWLINE, output);
     }
 
@@ -204,6 +224,7 @@ public class CatApplication implements CatInterface {
     * @return List of lines with line numbers.
     */
     private List<String> addLineNumbers(List<String> lines) {
+        int lineNumber = 1;
         List<String> numberedLines = new ArrayList<>();
         for (String line : lines) {
             numberedLines.add(lineNumber + " " + line);

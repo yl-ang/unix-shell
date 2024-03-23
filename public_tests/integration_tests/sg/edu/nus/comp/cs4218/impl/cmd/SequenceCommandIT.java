@@ -185,7 +185,7 @@ public class SequenceCommandIT {
         sequenceCommand = (SequenceCommand) command;
         sequenceCommand.evaluate(systemInputStream, outputStream);
         String[] expectedOResultArr = new String[] {
-                String.format("cat: Could not read file: %s", FILE_NAME_2),
+                String.format("cat: %s: No such file or directory", FILE_NAME_2),
                 "chicken-rice",
                 "wc: No such file or directory",
                 "sort: sort: No such file or directory"

@@ -51,8 +51,13 @@ public class GrepApplication implements GrepInterface {
      */
     @Override
     public String grepFromFiles(String pattern, Boolean isCaseInsensitive, Boolean isCountLines, Boolean isPrefixFileName, String... fileNames) throws Exception {
-        if (fileNames == null || pattern == null) {
+        if (fileNames == null | pattern == null) {
             throw new GrepException(NULL_POINTER);
+        }
+
+        // java does not treat empty patterns as invalid
+        if (pattern.isEmpty()) {
+            throw new GrepException(ERR_EMPTY_PATTERN);
         }
 
         StringJoiner lineResults = new StringJoiner(STRING_NEWLINE);
@@ -91,7 +96,7 @@ public class GrepApplication implements GrepInterface {
                 continue;
             }
 
-            File file = getFileIfValid(Environment.currentDirectory + CHAR_FILE_SEP + filePath, lineResults, countResults);
+            File file = getFileIfValid(filePath, lineResults, countResults);
             if (file != null) {
                 Pattern compiledPattern = compilePattern(pattern, isCaseInsensitive);
                 try (BufferedReader reader = Files.newBufferedReader(Paths.get(file.toURI()))) {
@@ -105,18 +110,19 @@ public class GrepApplication implements GrepInterface {
     }
 
     private File getFileIfValid(String filePath, StringJoiner lineResults, StringJoiner countResults) {
-        File file = new File(filePath);
+        String absolutePath = convertToAbsolutePath(filePath);
+        File file = new File(absolutePath);
         if (!file.exists()) {
-            String errorMessage = "grep: " + filePath + ": " + ERR_FILE_NOT_FOUND;
+            String errorMessage = "grep: " + absolutePath + ": " + ERR_FILE_NOT_FOUND;
             lineResults.add(errorMessage);
             countResults.add(errorMessage);
             return null;
         }
         if (file.isDirectory()) {
-            String directoryMessage = "grep: " + filePath + ": " + IS_DIRECTORY;
+            String directoryMessage = "grep: " + absolutePath + ": " + IS_DIRECTORY;
             lineResults.add(directoryMessage);
             countResults.add(directoryMessage);
-            countResults.add(filePath + ": 0");
+            countResults.add(absolutePath + ": 0");
             return null;
         }
         return file;
@@ -182,8 +188,12 @@ public class GrepApplication implements GrepInterface {
 
     @Override
     public String grepFromStdin(String pattern, Boolean isCaseInsensitive, Boolean isCountLines, Boolean isPrefixFileName, InputStream stdin) throws AbstractApplicationException {
-        // TODO: To implement -H flag print file name with output lines
         int count = 0;
+        // java does not treat empty patterns as invalid
+        if (pattern.isEmpty()) {
+            throw new GrepException(ERR_EMPTY_PATTERN);
+        }
+
         StringJoiner stringJoiner = new StringJoiner(STRING_NEWLINE);
 
         try {
@@ -200,8 +210,9 @@ public class GrepApplication implements GrepInterface {
                 if (matcher.find()) { // match
                     if (isPrefixFileName) {
                         stringJoiner.add("(standard input): " + line);
+                    } else {
+                        stringJoiner.add(line);
                     }
-                    stringJoiner.add(line);
                     count++;
                 }
             }
@@ -217,9 +228,11 @@ public class GrepApplication implements GrepInterface {
         String results = "";
         if (isCountLines) {
             if (isPrefixFileName) {
-                results = "(standard input): " + count + STRING_NEWLINE;
+                results = String.format("(standard input): %d%s", count, STRING_NEWLINE);
             }
-            results = count + STRING_NEWLINE;
+            else {
+                results = String.format("%d%s", count, STRING_NEWLINE);
+            }
         } else {
             if (!stringJoiner.toString().isEmpty()) {
                 results = stringJoiner.toString() + STRING_NEWLINE;

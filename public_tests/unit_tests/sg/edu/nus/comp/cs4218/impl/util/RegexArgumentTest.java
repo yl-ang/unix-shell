@@ -12,8 +12,9 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
 class RegexArgumentTest {
     private static final String STR_FILE_SEP = String.valueOf(CHAR_FILE_SEP);
     private static final String ROOT_DIRECTORY = Environment.currentDirectory;
-    private static final String[] TEST_DIRECTORY_ARR = {ROOT_DIRECTORY, "public_tests", "resources", "unit_tests", "regexArgument"};
-    private static final String TEST_DIRECTORY = String.join(STR_FILE_SEP, TEST_DIRECTORY_ARR);
+    private static final String[] TEST_DIR_ARR = {ROOT_DIRECTORY, "public_tests", "resources", "unit_tests", "regexArgument"};
+    private static final String TEST_DIRECTORY = String.join(STR_FILE_SEP, TEST_DIR_ARR);
+    private static final String SECOND_REGEX_ARG = "regexArg2";
 
     private RegexArgument regexArg;
 
@@ -78,18 +79,18 @@ class RegexArgumentTest {
         regexArg.merge(regexArg2);
         assertEquals("", regexArg.toString());
     }
- 
+
     @Test
     void merge_regexArgumentInstanceProvided_plainTextUpdated() {
-        RegexArgument regexArg2 = new RegexArgument("regexArg2");
+        RegexArgument regexArg2 = new RegexArgument(SECOND_REGEX_ARG);
         regexArg.merge(regexArg2);
-        assertEquals("regexArg2", regexArg.toString());
+        assertEquals(SECOND_REGEX_ARG, regexArg.toString());
     }
 
     @Test
     void merge_regexArgumentInstanceProvided_isRegexUpdated() {
         assertFalse(regexArg.isRegex());
-        RegexArgument regexArg2 = new RegexArgument("regexArg2");
+        RegexArgument regexArg2 = new RegexArgument(SECOND_REGEX_ARG);
         regexArg2.appendAsterisk();
 
         regexArg.merge(regexArg2);
@@ -98,22 +99,22 @@ class RegexArgumentTest {
 
     @Test
     void merge_stringProvided_plainTextUpdated() {
-        regexArg.merge("regexArg2");
-        assertEquals("regexArg2", regexArg.toString());
+        regexArg.merge(SECOND_REGEX_ARG);
+        assertEquals(SECOND_REGEX_ARG, regexArg.toString());
     }
 
     @Test
     void globFiles_isNotRegex_plaintext() {
-        regexArg.merge("regexArg2");
+        regexArg.merge(SECOND_REGEX_ARG);
         assertFalse(regexArg.isRegex());
 
-        List<String> expectedList = List.of("regexArg2");
+        List<String> expectedList = List.of(SECOND_REGEX_ARG);
         assertEquals(expectedList, regexArg.globFiles());
     }
 
     @Test
     void globFiles_isRegexButListOfGlobbedFilesEmpty_plaintext() {
-        regexArg.merge("regexArg2");
+        regexArg.merge(SECOND_REGEX_ARG);
         regexArg.appendAsterisk();
         assertTrue(regexArg.isRegex());
 

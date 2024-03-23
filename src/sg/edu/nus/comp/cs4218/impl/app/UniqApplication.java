@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class UniqApplication implements UniqInterface {
     private OutputStream outputStream;
@@ -62,6 +63,9 @@ public class UniqApplication implements UniqInterface {
                 if (outputFile != null) {
                     Path outputPath = IOUtils.resolveFilePath(outputFile);
                     Files.write(outputPath, output.getBytes());
+
+                    // similar to actual shell, need to have a newline
+                    stdout.write(STRING_NEWLINE.getBytes());
                 } else {
                     stdout.write(output.getBytes());
                 }
@@ -179,6 +183,10 @@ public class UniqApplication implements UniqInterface {
     // Method to generate the output string based on the given flags.
     private String generateOutput(Boolean isCount, Boolean isRepeated, Boolean isAllRepeated, List<String> lines, List<Integer> count) {
         StringBuilder output = new StringBuilder();
+        // special case for empty input files
+        if (lines.isEmpty()) {
+            return "\n";
+        }
         for (int i = 0; i < lines.size(); i++) {
             if (isAllRepeated) {
                 if (count.get(i) > 1) {
