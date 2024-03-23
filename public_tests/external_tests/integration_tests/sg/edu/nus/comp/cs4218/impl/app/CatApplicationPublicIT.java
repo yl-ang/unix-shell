@@ -98,7 +98,7 @@ public class CatApplicationPublicIT {
     @Test
     void run_SingleStdinFlag_DisplaysNumberedStdinContents() throws Exception {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        String expectedText = "1 Test line 1\n2 Test line 2\n3 Test line 3";
+        String expectedText = "1\tTest line 1\n2\tTest line 2\n3\tTest line 3";
         InputStream inputStream = new ByteArrayInputStream(TEXT_ONE.getBytes(StandardCharsets.UTF_8));
         catApplication.run(toArgs("n"), inputStream, output);
         assertEquals((expectedText + STRING_NEWLINE), output.toString(StandardCharsets.UTF_8));
