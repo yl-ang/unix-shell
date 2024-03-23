@@ -65,6 +65,8 @@ public class CatApplicationPublicTest {
         assertEquals(String.format("cat: %s: Is a directory", TEST_DIR), actual);
     }
 
+    // Based on the implementation of cat, the STRING_NEWLINE is only added in the run method after
+    // everything is executed
     @Test
     void catStdin_NoFlag_ReturnsStdinString() throws AbstractApplicationException {
         InputStream inputStream = new ByteArrayInputStream(TEXT_ONE.getBytes());
@@ -80,10 +82,12 @@ public class CatApplicationPublicTest {
         assertEquals(text, actual);
     }
 
+    // Based on the implementation of cat, the STRING_NEWLINE is only added in the run method after
+    // everything is executed
     @Test
     void catStdin_IsLineNumberFlag_ReturnsStdinStringLineNo() throws AbstractApplicationException {
         InputStream inputStream = new ByteArrayInputStream(TEXT_ONE.getBytes());
         String actual = catApplication.catStdin(true, inputStream);
-        assertEquals(EXPECT_ONE_NUM + STRING_NEWLINE, actual);
+        assertEquals(EXPECT_ONE_NUM, actual);
     }
 }
