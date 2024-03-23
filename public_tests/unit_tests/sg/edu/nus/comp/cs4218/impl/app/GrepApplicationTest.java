@@ -201,7 +201,7 @@ public class GrepApplicationTest {
         InputStream inputStream = new ByteArrayInputStream(HELLO_LOWERCASE.getBytes());
         assertDoesNotThrow(() -> {
             String results = grepApplication.grepFromStdin(VALID_PATTERN, true, true, true, inputStream);
-            assertEquals("(standard input): 1" + STRING_NEWLINE, results);
+            assertEquals("(standard input):1" + STRING_NEWLINE, results);
         });
     }
 

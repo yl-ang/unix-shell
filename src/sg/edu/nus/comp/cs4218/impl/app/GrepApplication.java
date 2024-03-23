@@ -209,7 +209,7 @@ public class GrepApplication implements GrepInterface {
                 Matcher matcher = compiledPattern.matcher(line);
                 if (matcher.find()) { // match
                     if (isPrefixFileName) {
-                        stringJoiner.add("(standard input): " + line);
+                        stringJoiner.add("(standard input):" + line);
                     } else {
                         stringJoiner.add(line);
                     }
@@ -228,7 +228,7 @@ public class GrepApplication implements GrepInterface {
         String results = "";
         if (isCountLines) {
             if (isPrefixFileName) {
-                results = String.format("(standard input): %d%s", count, STRING_NEWLINE);
+                results = String.format("(standard input):%d%s", count, STRING_NEWLINE);
             }
             else {
                 results = String.format("%d%s", count, STRING_NEWLINE);
