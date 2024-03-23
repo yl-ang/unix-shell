@@ -56,7 +56,6 @@ public class CutApplication implements CutInterface {
         } else if (Arrays.asList(cutArgsParser.getFileNames().toArray(new String[0])).contains("-")) {
             result = cutFromFilesAndStdin(cutArgsParser.isCharCut(), cutArgsParser.isByteCut(), ranges, stdin, cutArgsParser.getFileNames().toArray(new String[0]));
         } else {
-            System.out.println(Arrays.toString(cutArgsParser.getFileNames().toArray(new String[0])));
             result = cutFromFiles(cutArgsParser.isCharCut(), cutArgsParser.isByteCut(), ranges, cutArgsParser.getFileNames().toArray(new String[0]));
         }
 
