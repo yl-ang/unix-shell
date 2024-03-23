@@ -1,5 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.app.TeeInterface;
 import sg.edu.nus.comp.cs4218.exception.*;
 import sg.edu.nus.comp.cs4218.impl.parser.TeeArgsParser;
@@ -8,6 +9,8 @@ import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,6 +18,7 @@ import java.util.List;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
+@SuppressWarnings({"PMD.PreserveStackTrace"})   // Suppress as exception is thrown in the catch block
 public class TeeApplication implements TeeInterface {
 
 
@@ -38,7 +42,7 @@ public class TeeApplication implements TeeInterface {
         try {
             teeArgsParser.parse(args);
         } catch (InvalidArgsException e) {
-            throw new TeeException(e.getMessage());
+            throw new TeeException(e.getMessage()); //NOPMD
         }
         String result;
         try {
@@ -65,7 +69,7 @@ public class TeeApplication implements TeeInterface {
      * @throws TeeException
      */
     @Override
-    public String teeFromStdin(Boolean isAppend, InputStream stdin, String... fileName) throws AbstractApplicationException {
+    public String teeFromStdin(Boolean isAppend, InputStream stdin, String... fileName) throws AbstractApplicationException { //NOPMD
         if (stdin == null) {
             throw new TeeException(ERR_NULL_STREAMS);
         }
@@ -115,11 +119,22 @@ public class TeeApplication implements TeeInterface {
         }
 
         byte[] input = inputBytes.toByteArray(); // Convert ByteArrayOutputStream to byte array
+        String currentDirectory = Environment.currentDirectory;
+        Path pathToFile;
 
         // Loop through the files, create if not exist, then write or append input
         for (String file : fileName) {
             try {
-                File node = new File(file);
+                // Check if the provided filename is an absolute path
+                if (Paths.get(file).isAbsolute()) {
+                    // Use the absolute path as is
+                    pathToFile = Paths.get(file);
+                } else {
+                    // If it's not absolute, resolve it against the current directory
+                    pathToFile = Paths.get(currentDirectory).resolve(file);
+                }
+
+                File node = pathToFile.toFile();
                 if (!node.exists()) {
                     boolean isCreated = node.createNewFile();
                     if (!isCreated) {

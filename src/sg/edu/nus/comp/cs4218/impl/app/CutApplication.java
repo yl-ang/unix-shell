@@ -1,5 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.app.CutInterface;
 import sg.edu.nus.comp.cs4218.exception.CutException;
 import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
@@ -18,7 +19,9 @@ import java.util.List;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
+
 public class CutApplication implements CutInterface {
+    private static final String CUT_ERROR_START = "cut: ";
 
     /**
      * Runs the cut application with the specified arguments.
@@ -32,14 +35,17 @@ public class CutApplication implements CutInterface {
      */
     @Override
     public void run(String[] args, InputStream stdin, OutputStream stdout) throws CutException {
-        if (stdin == null || stdout == null) {
-            throw new CutException(ERR_NULL_STREAMS);
+        if (stdin == null) {
+            throw new CutException(ERR_NO_ISTREAM);
+        }
+        if (stdout == null) {
+            throw new CutException(ERR_NO_OSTREAM);
         }
         CutArgsParser cutArgsParser = new CutArgsParser();
         try {
             cutArgsParser.parse(args);
         } catch (InvalidArgsException e) {
-            throw new CutException(e.getMessage());
+            throw new CutException(e.getMessage()); //NOPMD
         }
         String result;
         List<int[]> ranges = cutArgsParser.getRanges();
@@ -61,7 +67,6 @@ public class CutApplication implements CutInterface {
 
         try {
             stdout.write(result.getBytes());
-//            stdout.write(STRING_NEWLINE.getBytes());
         } catch (IOException e) {
             throw new CutException(ERR_WRITE_STREAM);//NOPMD
         }
@@ -98,24 +103,26 @@ public class CutApplication implements CutInterface {
             }
             File node = IOUtils.resolveFilePath(file).toFile();
             if (!node.exists()) {
-                result.add("cut: " + file + ": " + ERR_FILE_NOT_FOUND + STRING_NEWLINE);
+                result.add(CUT_ERROR_START + file + ": " + ERR_FILE_NOT_FOUND + STRING_NEWLINE);
                 continue;
             }
             if (node.isDirectory()) {
-                result.add("cut: " + file + ": " + ERR_IS_DIR + STRING_NEWLINE);
+                result.add(CUT_ERROR_START + file + ": " + ERR_IS_DIR + STRING_NEWLINE);
                 continue;
             }
             if (!node.canRead()) {
-                result.add("cut: " + file + ": " + ERR_NO_PERM + STRING_NEWLINE);
+                result.add(CUT_ERROR_START + file + ": " + ERR_NO_PERM + STRING_NEWLINE);
                 continue;
             }
 
-            String cutResult;
-            Path path = Paths.get(file);
+            String cutResult = "";
+            String currentDirectory = Environment.currentDirectory;
+            Path path = Paths.get(currentDirectory).resolve(file);
+
             try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
                 cutResult = cutFromInputStream(isCharPo, isBytePo, ranges, reader);
             } catch (IOException e) {
-                throw new CutException(e.getMessage());
+                e.printStackTrace();
             }
 
             result.add(cutResult);
@@ -134,7 +141,7 @@ public class CutApplication implements CutInterface {
      * @return
      * @throws Exception
      */
-    public String cutFromFilesAndStdin(Boolean isCharPo, Boolean isBytePo, List<int[]> ranges, InputStream stdin, String... fileName) throws CutException {
+    public String cutFromFilesAndStdin(Boolean isCharPo, Boolean isBytePo, List<int[]> ranges, InputStream stdin, String... fileName) throws CutException { //NOPMD
         if (fileName == null) {
             throw new CutException(ERR_GENERAL);
         }
@@ -148,31 +155,34 @@ public class CutApplication implements CutInterface {
             throw new CutException(ERR_RANGE_EMPTY);
         }
         List<String> result = new ArrayList<>();
-        String cutResult;
+        String cutResult = "";
 
         for (String file : fileName) {
-            if (file.equals("-")) {
+            if ("-".equals(file)) {
                 cutResult = cutFromStdin(isCharPo, isBytePo, ranges, stdin);
             } else {
                 File node = IOUtils.resolveFilePath(file).toFile();
                 if (!node.exists()) {
-                    result.add("cut: " + file + ": " + ERR_FILE_NOT_FOUND + STRING_NEWLINE);
+                    result.add(CUT_ERROR_START + file + ": " + ERR_FILE_NOT_FOUND + STRING_NEWLINE);
                     continue;
                 }
                 if (node.isDirectory()) {
-                    result.add("cut: " + file + ": " + ERR_IS_DIR + STRING_NEWLINE);
+                    result.add(CUT_ERROR_START + file + ": " + ERR_IS_DIR + STRING_NEWLINE);
                     continue;
                 }
                 if (!node.canRead()) {
-                    result.add("cut: " + file + ": " + ERR_NO_PERM + STRING_NEWLINE);
+                    result.add(CUT_ERROR_START + file + ": " + ERR_NO_PERM + STRING_NEWLINE);
                     continue;
                 }
 
-                Path path = Paths.get(file);
+                String currentDirectory = Environment.currentDirectory;
+                Path path = Paths.get(currentDirectory).resolve(file);
+
                 try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
                     cutResult = cutFromInputStream(isCharPo, isBytePo, ranges, reader);
                 } catch (IOException e) {
-                    throw new CutException(e.getMessage());
+                    e.printStackTrace();
+
                 }
             }
 
@@ -197,7 +207,7 @@ public class CutApplication implements CutInterface {
      */
     public String cutFromStdin(Boolean isCharPo, Boolean isBytePo, List<int[]> ranges, InputStream stdin) throws CutException {
         if (stdin == null) {
-            throw new CutException(ERR_NULL_STREAMS);
+            throw new CutException(ERR_NO_ISTREAM);
         }
         if (!isBytePo && !isCharPo) {
             throw new CutException(ERR_ISCHARPO_AND_ISBYTEPO_FALSE);
@@ -209,7 +219,7 @@ public class CutApplication implements CutInterface {
             throw new CutException(ERR_RANGE_EMPTY);
         }
         String cutResult;
-        BufferedReader reader = null;
+        BufferedReader reader = null;  //NOPMD
         reader = new BufferedReader(new InputStreamReader(stdin, StandardCharsets.UTF_8));
         cutResult = cutFromInputStream(isCharPo, isBytePo, ranges, reader);
         return cutResult;
@@ -258,7 +268,8 @@ public class CutApplication implements CutInterface {
 
             }
         } catch (IOException e) {
-            throw new CutException(e.getMessage());
+            e.printStackTrace();
+
         }
         return result.toString();
     }
