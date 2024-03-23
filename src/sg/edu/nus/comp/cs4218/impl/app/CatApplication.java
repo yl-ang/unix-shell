@@ -115,7 +115,7 @@ public class CatApplication implements CatInterface {
                 }
 
                 if (node.isDirectory()) {
-                    outputLines.add("cat: " + ERR_IS_DIR + STRING_NEWLINE);
+                    outputLines.add("cat: " + fileName + ": Is a directory" + STRING_NEWLINE);
                     continue;
                 }
 
