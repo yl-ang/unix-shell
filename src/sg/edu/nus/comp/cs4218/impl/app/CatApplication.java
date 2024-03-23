@@ -76,7 +76,6 @@ public class CatApplication implements CatInterface {
 
         try {
             stdout.write(output.getBytes());
-            stdout.write(StringUtils.STRING_NEWLINE.getBytes());
         } catch (Exception e) {
             throw new CatException(ERR_WRITE_STREAM);
         }
@@ -119,16 +118,16 @@ public class CatApplication implements CatInterface {
                 }
                 node = pathToFile.toFile();
                 if (!node.exists()){
-                    outputLines.add("cat: " + pathToFile.getFileName() + ": No such file or directory" + STRING_NEWLINE);
+                    outputLines.add("cat: " + pathToFile.getFileName() + ": No such file or directory");
                     continue;
                 }
                 if (node.isDirectory()) {
-                    outputLines.add("cat: " + pathToFile.getFileName() + ": Is a directory" + STRING_NEWLINE);
+                    outputLines.add("cat: " + pathToFile.getFileName() + ": Is a directory");
                     continue;
                 }
 
                 if (!node.canRead()) {
-                    outputLines.add("cat: " + ERR_NO_PERM_READ_FILE + STRING_NEWLINE);
+                    outputLines.add("cat: " + ERR_NO_PERM_READ_FILE);
                     continue;
                 }
 
@@ -185,7 +184,7 @@ public class CatApplication implements CatInterface {
         if (isLineNumber) {
             lines = addLineNumbers(lines);
         }
-        return String.join(STRING_NEWLINE, lines);
+        return String.join(STRING_NEWLINE, lines) + STRING_NEWLINE;
     }
 
     /**
@@ -231,7 +230,7 @@ public class CatApplication implements CatInterface {
         int lineNumber = 1;
         List<String> numberedLines = new ArrayList<>();
         for (String line : lines) {
-            numberedLines.add(lineNumber + "\t" + line);
+            numberedLines.add(lineNumber + " " + line);
             lineNumber++;
         }
         return numberedLines;

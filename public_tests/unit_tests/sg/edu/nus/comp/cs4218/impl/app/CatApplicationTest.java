@@ -233,7 +233,7 @@ class CatApplicationTest {
         String output = catApplication.catFiles(isLineNumber, args);
 
         // THEN
-        String expectedOutput = String.format("1\tHello%s1\tWorld%s", System.lineSeparator(), System.lineSeparator());
+        String expectedOutput = String.format("1 Hello%s1 World%s", System.lineSeparator(), System.lineSeparator());
         assertEquals(expectedOutput, output + StringUtils.STRING_NEWLINE);
     }
 
@@ -250,7 +250,7 @@ class CatApplicationTest {
         String output = catApplication.catStdin(isLineNumber, stdinContent);
 
         // THEN
-        String expectedOutput = String.format("1\tHello%s2\tWorld%s", System.lineSeparator(), System.lineSeparator());
+        String expectedOutput = String.format("1 Hello%s2 World%s", System.lineSeparator(), System.lineSeparator());
         assertEquals(expectedOutput, output + StringUtils.STRING_NEWLINE);
     }
 }
