@@ -57,7 +57,6 @@ public class CatApplication implements CatInterface {
 
         Boolean isLineNumber = parser.isLineNumber();
         String[] fileNames = parser.getFileNames().toArray(new String[0]);
-        System.out.println(Arrays.toString(fileNames));
 
         // fileNames wouldn't be null due to new String, need to check length
         if (stdin == null && fileNames.length == 0) {
@@ -120,11 +119,11 @@ public class CatApplication implements CatInterface {
                 }
                 node = pathToFile.toFile();
                 if (!node.exists()){
-                    outputLines.add("cat: " + fileName + ": No such file or directory" + STRING_NEWLINE);
+                    outputLines.add("cat: " + pathToFile.getFileName() + ": No such file or directory" + STRING_NEWLINE);
                     continue;
                 }
                 if (node.isDirectory()) {
-                    outputLines.add("cat: " + fileName + ": Is a directory" + STRING_NEWLINE);
+                    outputLines.add("cat: " + pathToFile.getFileName() + ": Is a directory" + STRING_NEWLINE);
                     continue;
                 }
 
