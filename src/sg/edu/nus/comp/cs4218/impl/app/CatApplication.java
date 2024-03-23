@@ -122,7 +122,7 @@ public class CatApplication implements CatInterface {
                     throw new CatException("cat: " + pathToFile.getFileName() + ": No such file or directory");
                 }
                 if (node.isDirectory()) {
-                    throw new CatException("cat: " + pathToFile.getFileName() + ": No such file or directory");
+                    throw new CatException("cat: " + pathToFile.getFileName() + ": Is a directory");
                 }
                 if (!node.canRead()) {
                     throw new CatException("cat: " + ERR_NO_PERM_READ_FILE);
