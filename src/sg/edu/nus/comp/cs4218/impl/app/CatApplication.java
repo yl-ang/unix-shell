@@ -224,7 +224,7 @@ public class CatApplication implements CatInterface {
         int lineNumber = 1;
         List<String> numberedLines = new ArrayList<>();
         for (String line : lines) {
-            numberedLines.add(lineNumber + CHAR_TAB + line);
+            numberedLines.add(lineNumber + "\t" + line);
             lineNumber++;
         }
         return numberedLines;
