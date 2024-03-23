@@ -106,7 +106,8 @@ public class CatApplication implements CatInterface {
         Path pathToFile;
 
         for (String fileName : fileNames) {
-            File node = null;
+            System.out.println(fileName);
+            File node;
             if (fileName == null) {
                 outputLines.add("cat: " + ERR_NULL_ARGS + STRING_NEWLINE);
                 continue;
