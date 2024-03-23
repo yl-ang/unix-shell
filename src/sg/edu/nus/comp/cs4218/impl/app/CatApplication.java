@@ -11,6 +11,7 @@ import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Path;
@@ -134,10 +135,9 @@ public class CatApplication implements CatInterface {
                 if (isLineNumber) {
                     fileLines = addLineNumbers(fileLines);
                 }
-
                 outputLines.addAll(fileLines);
-            } catch (Exception e) {
-                throw new CatException(e.getMessage());
+            } catch (IOException | ShellException e) {
+                throw new CatException("cat: " + ERR_READING_FILE);
             } finally {
                 try {
                     IOUtils.closeInputStream(fileStream);
