@@ -51,7 +51,7 @@ public class GrepApplication implements GrepInterface {
      */
     @Override
     public String grepFromFiles(String pattern, Boolean isCaseInsensitive, Boolean isCountLines, Boolean isPrefixFileName, String... fileNames) throws Exception {
-        if (fileNames == null) {
+        if (fileNames == null | pattern == null) {
             throw new GrepException(NULL_POINTER);
         }
 
@@ -96,7 +96,7 @@ public class GrepApplication implements GrepInterface {
                 continue;
             }
 
-            File file = getFileIfValid(Environment.currentDirectory + CHAR_FILE_SEP + filePath, lineResults, countResults);
+            File file = getFileIfValid(filePath, lineResults, countResults);
             if (file != null) {
                 Pattern compiledPattern = compilePattern(pattern, isCaseInsensitive);
                 try (BufferedReader reader = Files.newBufferedReader(Paths.get(file.toURI()))) {
@@ -110,18 +110,19 @@ public class GrepApplication implements GrepInterface {
     }
 
     private File getFileIfValid(String filePath, StringJoiner lineResults, StringJoiner countResults) {
-        File file = new File(filePath);
+        String absolutePath = convertToAbsolutePath(filePath);
+        File file = new File(absolutePath);
         if (!file.exists()) {
-            String errorMessage = "grep: " + filePath + ": " + ERR_FILE_NOT_FOUND;
+            String errorMessage = "grep: " + absolutePath + ": " + ERR_FILE_NOT_FOUND;
             lineResults.add(errorMessage);
             countResults.add(errorMessage);
             return null;
         }
         if (file.isDirectory()) {
-            String directoryMessage = "grep: " + filePath + ": " + IS_DIRECTORY;
+            String directoryMessage = "grep: " + absolutePath + ": " + IS_DIRECTORY;
             lineResults.add(directoryMessage);
             countResults.add(directoryMessage);
-            countResults.add(filePath + ": 0");
+            countResults.add(absolutePath + ": 0");
             return null;
         }
         return file;
