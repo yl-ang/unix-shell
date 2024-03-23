@@ -16,6 +16,7 @@ import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
@@ -56,6 +57,7 @@ public class CatApplication implements CatInterface {
 
         Boolean isLineNumber = parser.isLineNumber();
         String[] fileNames = parser.getFileNames().toArray(new String[0]);
+        System.out.println(Arrays.toString(fileNames));
 
         // fileNames wouldn't be null due to new String, need to check length
         if (stdin == null && fileNames.length == 0) {
@@ -106,7 +108,6 @@ public class CatApplication implements CatInterface {
         Path pathToFile;
 
         for (String fileName : fileNames) {
-            System.out.println(fileName);
             File node;
             if (fileName == null) {
                 outputLines.add("cat: " + ERR_NULL_ARGS + STRING_NEWLINE);
