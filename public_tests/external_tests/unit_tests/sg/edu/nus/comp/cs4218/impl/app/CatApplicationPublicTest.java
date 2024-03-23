@@ -71,7 +71,7 @@ public class CatApplicationPublicTest {
     void catStdin_NoFlag_ReturnsStdinString() throws AbstractApplicationException {
         InputStream inputStream = new ByteArrayInputStream(TEXT_ONE.getBytes());
         String actual = catApplication.catStdin(false, inputStream);
-        assertEquals(TEXT_ONE + STRING_NEWLINE, actual);
+        assertEquals(TEXT_ONE, actual);
     }
 
     @Test
