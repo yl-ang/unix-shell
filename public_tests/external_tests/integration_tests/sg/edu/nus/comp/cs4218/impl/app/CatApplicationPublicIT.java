@@ -97,7 +97,7 @@ public class CatApplicationPublicIT {
     @Test
     void run_SingleStdinFlag_DisplaysNumberedStdinContents() throws Exception {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        String expectedText = "1 Test line 1\n2 Test line 2\n3 Test line 3";
+        String expectedText = "\t1 Test line 1\n\t2 Test line 2\n\t3 Test line 3";
         InputStream inputStream = new ByteArrayInputStream(TEXT_ONE.getBytes(StandardCharsets.UTF_8));
         catApplication.run(toArgs("n"), inputStream, output);
         assertEquals((expectedText + STRING_NEWLINE), output.toString(StandardCharsets.UTF_8));
@@ -114,7 +114,7 @@ public class CatApplicationPublicIT {
     @Test
     void run_SingleStdinDashFlag_DisplaysNumberedStdinContents() throws AbstractApplicationException {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        String expectedText = "1 Test line 1\n2 Test line 2\n3 Test line 3";
+        String expectedText = "\t1 Test line 1\n\t2 Test line 2\n\t3 Test line 3";
         InputStream inputStream = new ByteArrayInputStream(TEXT_ONE.getBytes(StandardCharsets.UTF_8));
         catApplication.run(toArgs("n", "-"), inputStream, output);
         assertEquals((expectedText + STRING_NEWLINE), output.toString(StandardCharsets.UTF_8));
@@ -179,7 +179,7 @@ public class CatApplicationPublicIT {
     void run_SingleFileFlag_DisplaysNumberedFileContents() throws AbstractApplicationException, IOException {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         String fileName = "fileB.txt";
-        String expectedText = "1 Test line 1\n2 Test line 2\n3 Test line 3";
+        String expectedText = "\t1 Test line 1\n\t2 Test line 2\n\t3 Test line 3";
         createFile(fileName, TEXT_ONE);
         catApplication.run(toArgs("n", fileName), System.in, output);
         assertEquals((expectedText + STRING_NEWLINE), output.toString(StandardCharsets.UTF_8));
@@ -234,7 +234,7 @@ public class CatApplicationPublicIT {
         String fileName2 = "fileI.txt";
         String text1 = "Test line 1.1\nTest line 1.2\nTest line 1.3";
         String text2 = "Test line 2.1\nTest line 2.2";
-        String expectedText = "1 Test line 1.1\n2 Test line 1.2\n3 Test line 1.3\n1 Test line 2.1\n2 Test line 2.2";
+        String expectedText = "\t1 Test line 1.1\n\t2 Test line 1.2\n\t3 Test line 1.3\n\t1 Test line 2.1\n\t2 Test line 2.2";
         createFile(fileName1, text1);
         createFile(fileName2, text2);
         catApplication.run(toArgs("n", fileName1, fileName2), System.in, output);
