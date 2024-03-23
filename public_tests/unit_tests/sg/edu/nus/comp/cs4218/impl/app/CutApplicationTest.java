@@ -28,24 +28,25 @@ public class CutApplicationTest {
     private CutInterface cutApplication;
     private static InputStream inputStdin;
     private InputStream inputTestFile;
-    private InputStream inputEmptyTestFile;
+    private InputStream inputEmptyFile;
     private OutputStream output;
 
+    private static final String SAMPLE_RANGE = "1-5";
+
     private static final String TEST_FILENAME = "cutTestFile.txt";
-    private static final String EMPTY_TEST_FILENAME = "cutEmptyTestFile.txt";
+    private static final String EMPTY_FILENAME = "cutEmptyTestFile.txt";
 
     @BeforeAll
     static void setUp() {
         inputStdin = System.in;
 
         try {
-            FileWriter myWriter = new FileWriter(TEST_FILENAME);
-            myWriter.write("123456789\n");
-            myWriter.write("123456789\n");
-            myWriter.close();
-
-            FileWriter myWriter2 = new FileWriter(EMPTY_TEST_FILENAME);
-            myWriter2.close();
+            try (FileWriter myWriter = new FileWriter(TEST_FILENAME)) {
+                myWriter.write("123456789\n");
+                myWriter.write("123456789\n");
+            }
+            try (FileWriter myWriter2 = new FileWriter(EMPTY_FILENAME)) {
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -56,7 +57,7 @@ public class CutApplicationTest {
         cutApplication = new CutApplication();
 
         inputTestFile = IOUtils.openInputStream(TEST_FILENAME);
-        inputEmptyTestFile = IOUtils.openInputStream(EMPTY_TEST_FILENAME);
+        inputEmptyFile = IOUtils.openInputStream(EMPTY_FILENAME);
 
         output = new ByteArrayOutputStream();
     }
@@ -64,7 +65,7 @@ public class CutApplicationTest {
     @AfterEach
     void done() throws ShellException {
         IOUtils.closeInputStream(inputTestFile);
-        IOUtils.closeInputStream(inputEmptyTestFile);
+        IOUtils.closeInputStream(inputEmptyFile);
     }
 
     @AfterAll
@@ -72,7 +73,7 @@ public class CutApplicationTest {
         Path path = Paths.get(TEST_FILENAME);
         Files.deleteIfExists(path);
 
-        path = Paths.get(EMPTY_TEST_FILENAME);
+        path = Paths.get(EMPTY_FILENAME);
         Files.deleteIfExists(path);
     }
 
@@ -209,7 +210,7 @@ public class CutApplicationTest {
     @Test
     void cutFromFiles_fileIsEmpty_noOutput() throws AbstractApplicationException {
         List<int[]> ranges = List.of(new int[]{3, 7});
-        String[] fileNames = {EMPTY_TEST_FILENAME};
+        String[] fileNames = {EMPTY_FILENAME};
 
         String output = cutApplication.cutFromFiles(true, false, ranges, fileNames);
         assertEquals("", output);
@@ -324,7 +325,7 @@ public class CutApplicationTest {
 
     @Test
     void run_charFlagGivenWithFilenames_cutByCharFromFiles() throws AbstractApplicationException {
-        String[] args = {"-c", "1-5", TEST_FILENAME, TEST_FILENAME};
+        String[] args = {"-c", SAMPLE_RANGE, TEST_FILENAME, TEST_FILENAME};
 
         cutApplication.run(args, inputStdin, output);
         assertEquals("12345\n12345\n12345\n12345\n", output.toString());
@@ -332,7 +333,7 @@ public class CutApplicationTest {
 
     @Test
     void run_charFlagNoFilenames_cutByCharFromStdin() throws AbstractApplicationException {
-        String[] args = {"-c", "1-5"};
+        String[] args = {"-c", SAMPLE_RANGE};
 
         cutApplication.run(args, inputTestFile, output);
         assertEquals("12345\n12345\n", output.toString());
@@ -340,7 +341,7 @@ public class CutApplicationTest {
 
     @Test
     void run_byteFlagWithFilenamesAndDash_cutByByteFromFilesAndStdin() throws AbstractApplicationException {
-        String[] args = {"-b", "1-5", TEST_FILENAME, "-"};
+        String[] args = {"-b", SAMPLE_RANGE, TEST_FILENAME, "-"};
 
         cutApplication.run(args, inputTestFile, output);
         assertEquals("12345\n12345\n12345\n12345\n", output.toString());
@@ -348,7 +349,7 @@ public class CutApplicationTest {
 
     @Test
     void run_byteFlagWithTwoDash_cutByByteFromStdinOnlyOnce() throws AbstractApplicationException {
-        String[] args = {"-b", "1-5", "-", "-"};
+        String[] args = {"-b", SAMPLE_RANGE, "-", "-"};
 
         cutApplication.run(args, inputTestFile, output);
         assertEquals("12345\n12345\n", output.toString());
@@ -373,7 +374,7 @@ public class CutApplicationTest {
 
     @Test
     void run_twoRanges_cutAllIndividualNumbers() throws AbstractApplicationException {
-        String[] args = {"-b", "1-5", "7-9", TEST_FILENAME};
+        String[] args = {"-b", SAMPLE_RANGE, "7-9", TEST_FILENAME};
 
         cutApplication.run(args, inputTestFile, output);
         assertEquals("12345789\n12345789\n", output.toString());
