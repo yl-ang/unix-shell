@@ -184,7 +184,7 @@ public class CatApplication implements CatInterface {
         if (isLineNumber) {
             lines = addLineNumbers(lines);
         }
-        return String.join(STRING_NEWLINE, lines) + STRING_NEWLINE;
+        return String.join(STRING_NEWLINE, lines);
     }
 
     /**
