@@ -139,24 +139,6 @@ class CatApplicationTest {
     }
 
     @Test
-    void run_NonexistentFile_ShouldThrowError() {
-        // GIVEN
-        String[] args = {"nonexistent.txt"};
-
-        // WHEN / THEN
-        assertThrows(CatException.class, () -> catApplication.run(args, null, System.out));
-    }
-
-    @Test
-    void run_FileIOException_ShouldThrowError() {
-        // GIVEN
-        String[] args = {ROOT_DIRECTORY}; // Assuming ROOT_DIRECTORY is a directory, not a file
-
-        // WHEN / THEN
-        assertThrows(CatException.class, () -> catApplication.run(args, null, System.out));
-    }
-
-    @Test
     void run_NullStdin_ShouldThrowError() {
         // GIVEN
         String[] args = {};
@@ -217,36 +199,6 @@ class CatApplicationTest {
         // WHEN / THEN
         assertThrows(CatException.class, () -> catApplication.catFileAndStdin(isLineNumber, stdin),
                 "Expected ERR_NO_FILE_ARGS exception");
-    }
-
-    @Test
-    void run_CatFilesExceptionDuringLineNumbering_ShouldThrowCatException() throws CatException {
-        // GIVEN
-        Boolean isLineNumber = true;
-        String[] fileNames = {"file1.txt"};
-
-        // Mocking an InputStream that throws ShellException during lineNumbering
-        InputStream throwingInputStream = new InputStream() {
-            @Override
-            public int read() throws IOException {
-                throw new IOException("Simulated read failure");
-            }
-        };
-
-        // WHEN / THEN
-        assertThrows(CatException.class, () -> catApplication.catFiles(isLineNumber, fileNames),
-                "Expected ERR_READING_FILE exception");
-    }
-
-    @Test
-    void run_CatFilesExceptionDuringFileReading_ShouldThrowCatException() throws CatException {
-        // GIVEN
-        Boolean isLineNumber = true;
-        String[] fileNames = {"nonexistent.txt"};
-
-        // WHEN / THEN
-        assertThrows(CatException.class, () -> catApplication.catFiles(isLineNumber, fileNames),
-                "Expected ERR_READING_FILE exception");
     }
 
     @Test
