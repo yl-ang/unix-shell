@@ -18,6 +18,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static sg.edu.nus.comp.cs4218.testutils.TestStringUtils.STRING_NEWLINE;
 
 public class CatApplicationPublicTest {
@@ -59,10 +60,14 @@ public class CatApplicationPublicTest {
         assertEquals(TEXT_ONE, actual);
     }
 
+    // If the test is about checking for thrown exception, it should access that and then check the exception message
     @Test
     void catFiles_FolderSpecifiedAbsolutePath_ThrowsException() throws AbstractApplicationException {
-        String actual = catApplication.catFiles(false, TEST_DIR_PATH.toString());
-        assertEquals(String.format("cat: %s: Is a directory", TEST_DIR), actual);
+        AbstractApplicationException exception = assertThrows(AbstractApplicationException.class, () -> {
+            catApplication.catFiles(false, TEST_DIR_PATH.toString());
+        });
+
+        assertEquals(String.format("cat: %s: Is a directory", TEST_DIR_PATH), exception.getMessage());
     }
 
     // Based on the implementation of cat, the STRING_NEWLINE is only added in the run method after
