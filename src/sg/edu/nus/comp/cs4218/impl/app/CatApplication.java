@@ -120,13 +120,13 @@ public class CatApplication implements CatInterface {
                 }
                 node = pathToFile.toFile();
                 if (!node.exists()){
-                    throw new CatException("cat: " + pathToFile.getFileName() + ": No such file or directory");
+                    throw new CatException(pathToFile.getFileName() + ": No such file or directory");
                 }
                 if (node.isDirectory()) {
-                    throw new CatException("cat: " + pathToFile.getFileName() + ": Is a directory");
+                    throw new CatException(pathToFile.getFileName() + ": Is a directory");
                 }
                 if (!node.canRead()) {
-                    throw new CatException("cat: " + ERR_NO_PERM_READ_FILE);
+                    throw new CatException(pathToFile.getFileName() + ": " + ERR_NO_PERM_READ_FILE);
                 }
 
                 fileStream = IOUtils.openInputStream(fileName);
@@ -137,7 +137,7 @@ public class CatApplication implements CatInterface {
                 }
                 outputLines.addAll(fileLines);
             } catch (IOException | ShellException e) {
-                throw new CatException("cat: " + ERR_READING_FILE);
+                throw new CatException(ERR_READING_FILE);
             } finally {
                 try {
                     IOUtils.closeInputStream(fileStream);
