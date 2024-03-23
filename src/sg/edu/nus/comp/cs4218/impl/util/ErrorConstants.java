@@ -52,6 +52,7 @@ public class ErrorConstants {
 
     // `grep` related
     public static final String ERR_NO_REGEX = "No regular expression supplied";
+    public static final String ERR_EMPTY_PATTERN = "Empty pattern supplied";
 
     // `mkdir` related
     public static final String ERR_NO_FOLDERS = "No folder names are supplied";
