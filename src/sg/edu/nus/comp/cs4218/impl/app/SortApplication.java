@@ -31,7 +31,7 @@ public class SortApplication implements SortInterface {
      * @throws SortException
      */
     @Override
-    public void run(String[] args, InputStream stdin, OutputStream stdout) throws SortException {
+    public void run(String[] args, InputStream stdin, OutputStream stdout) throws AbstractApplicationException {
         // Format: sort [-nrf] [FILES]
         if (stdout == null) {
             throw new SortException(ERR_NULL_STREAMS);
@@ -43,14 +43,10 @@ public class SortApplication implements SortInterface {
             throw new SortException(e.getMessage());
         }
         StringBuilder output = new StringBuilder();
-        try {
-            if (sortArgsParser.getFileNames().isEmpty()) {
-                output.append(sortFromStdin(sortArgsParser.isFirstWordNumber(), sortArgsParser.isReverseOrder(), sortArgsParser.isCaseIndependent(), stdin));
-            } else {
-                output.append(sortFromFiles(sortArgsParser.isFirstWordNumber(), sortArgsParser.isReverseOrder(), sortArgsParser.isCaseIndependent(), sortArgsParser.getFileNames().toArray(new String[0])));
-            }
-        } catch (Exception e) {
-            throw new SortException(e.getMessage());//NOPMD
+        if (sortArgsParser.getFileNames().isEmpty()) {
+            output.append(sortFromStdin(sortArgsParser.isFirstWordNumber(), sortArgsParser.isReverseOrder(), sortArgsParser.isCaseIndependent(), stdin));
+        } else {
+            output.append(sortFromFiles(sortArgsParser.isFirstWordNumber(), sortArgsParser.isReverseOrder(), sortArgsParser.isCaseIndependent(), sortArgsParser.getFileNames().toArray(new String[0])));
         }
         try {
             if (!output.toString().isEmpty()) {
