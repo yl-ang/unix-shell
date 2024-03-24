@@ -75,7 +75,9 @@ public class PasteApplication implements PasteInterface  {
 
         try {
             stdout.write(mergedStr.getBytes());
-            stdout.write(StringUtils.STRING_NEWLINE.getBytes());
+            if (!mergedStr.isEmpty()) {
+                stdout.write(StringUtils.STRING_NEWLINE.getBytes());
+            }
         } catch (Exception e) {
             throw new PasteException(ERR_WRITE_STREAM);
         }
