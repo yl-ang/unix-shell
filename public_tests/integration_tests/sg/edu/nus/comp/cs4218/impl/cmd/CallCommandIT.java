@@ -347,24 +347,24 @@ public class CallCommandIT {
 
         String fileContent = new String(Files.readAllBytes(path));
         String expected = """
-                1 hello world
-                1 banana
-                2 apple
-                3 orange
-                4 grape
-                5 kiwi
-                1 Hello World
-                2 Hello World
-                3 Alice
-                4 Alice
-                5 Bob
-                6 Alice
-                7 Bob
-                1 alice
-                2 Alice
-                3 sam
-                4 sAm
-                5 saM
+                \t1 hello world
+                \t1 banana
+                \t2 apple
+                \t3 orange
+                \t4 grape
+                \t5 kiwi
+                \t1 Hello World
+                \t2 Hello World
+                \t3 Alice
+                \t4 Alice
+                \t5 Bob
+                \t6 Alice
+                \t7 Bob
+                \t1 alice
+                \t2 Alice
+                \t3 sam
+                \t4 sAm
+                \t5 saM
                 """;
 
         assertEquals(expected, fileContent);
@@ -393,11 +393,13 @@ public class CallCommandIT {
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
-        String expected = "1 banana\n" +
-                "2 apple\n" +
-                "3 orange\n" +
-                "4 grape\n" +
-                "5 kiwi" + STRING_NEWLINE;
+        String expected = """
+                \t1 banana
+                \t2 apple
+                \t3 orange
+                \t4 grape
+                \t5 kiwi
+                """;
         String actual = outputStream.toString();
         assertEquals(expected, actual);
     }
@@ -601,21 +603,21 @@ public class CallCommandIT {
         callCommand.evaluate(systemInputStream, outputStream);
 
         String expected = """
-                   1 hello worldbanana
-                   1 apple
-                   1 orange
-                   1 grape
-                   1 kiwi
-                   2 Hello World
-                   2 Alice
-                   1 Bob
-                   1 Alice
-                   1 Bob
-                   1 alice
-                   1 Alice
-                   1 sam
-                   1 sAm
-                   1 saM% \
+                \t1 hello worldbanana
+                \t1 apple
+                \t1 orange
+                \t1 grape
+                \t1 kiwi
+                \t2 Hello World
+                \t2 Alice
+                \t1 Bob
+                \t1 Alice
+                \t1 Bob
+                \t1 alice
+                \t1 Alice
+                \t1 sam
+                \t1 sAm
+                \t1 saM
                 """;
         String actual = outputStream.toString();
         assertEquals(expected, actual);
@@ -629,8 +631,8 @@ public class CallCommandIT {
         callCommand.evaluate(systemInputStream, outputStream);
 
         String expected = """
-                2 Hello World
-                2 Alice
+                \t2 Hello World
+                \t2 Alice
                 """;
         String actual = outputStream.toString();
         assertEquals(expected, actual);
@@ -644,11 +646,11 @@ public class CallCommandIT {
         callCommand.evaluate(systemInputStream, outputStream);
 
         String expected = """
-                2 Hello World
-                2 Alice
-                1 Bob
-                1 Alice
-                1 Bob
+                \t2 Hello World
+                \t2 Alice
+                \t1 Bob
+                \t1 Alice
+                \t1 Bob
                 """;
         String actual = outputStream.toString();
         assertEquals(expected, actual);
@@ -1455,11 +1457,11 @@ public class CallCommandIT {
         List<String> args = List.of("uniq", "-c", FILE_NAME_3);
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
-        String expected = "2 Hello World" + STRING_NEWLINE +
-                "2 Alice\n" +
-                "1 Bob\n" +
-                "1 Alice\n" +
-                "1 Bob\n";
+        String expected = CHAR_TAB + "2 Hello World" + STRING_NEWLINE +
+                CHAR_TAB + "2 Alice\n" +
+                CHAR_TAB + "1 Bob\n" +
+                CHAR_TAB + "1 Alice\n" +
+                CHAR_TAB + "1 Bob\n";
         assertEquals(expected, outputStream.toString());
     }
 

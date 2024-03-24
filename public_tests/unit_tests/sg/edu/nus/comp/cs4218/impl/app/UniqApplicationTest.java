@@ -17,8 +17,7 @@ import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.*;
 
 public class UniqApplicationTest {
 
@@ -41,11 +40,11 @@ public class UniqApplicationTest {
             "ALICE" + STRING_NEWLINE +
             "BOB" + STRING_NEWLINE +
             "ALICE" + STRING_NEWLINE + "BOB" + STRING_NEWLINE;
-    private static final String EXPECTEDOUTPUT_C = "2 " + "HELLO_WORLD" + STRING_NEWLINE +
-            "2 " + "ALICE" + STRING_NEWLINE +
-            "1 " + "BOB" + STRING_NEWLINE +
-            "1 " + "ALICE" + STRING_NEWLINE +
-            "1 " + "BOB" + STRING_NEWLINE;
+    private static final String EXPECTEDOUTPUT_C = CHAR_TAB + "2 " + "HELLO_WORLD" + STRING_NEWLINE +
+            CHAR_TAB + "2 " + "ALICE" + STRING_NEWLINE +
+            CHAR_TAB + "1 " + "BOB" + STRING_NEWLINE +
+            CHAR_TAB + "1 " + "ALICE" + STRING_NEWLINE +
+            CHAR_TAB + "1 " + "BOB" + STRING_NEWLINE;
     private static final String EXPECTEDOUTPUT_SMALLD = "HELLO_WORLD" + STRING_NEWLINE +
             "ALICE" + STRING_NEWLINE;
     private static final String EXPECTEDOUTPUT_D = "HELLO_WORLD" + STRING_NEWLINE +
@@ -134,10 +133,10 @@ public class UniqApplicationTest {
 
     @Test
     public void uniqFromFile_AllTrue_returnsExpectedOutputToFile() throws Exception {
-        String expected = "2 " + "HELLO_WORLD" + STRING_NEWLINE +
-                "2 " + "HELLO_WORLD" + STRING_NEWLINE +
-                "2 " + "ALICE" + STRING_NEWLINE +
-                "2 " + "ALICE" + STRING_NEWLINE;
+        String expected = CHAR_TAB + "2 " + "HELLO_WORLD" + STRING_NEWLINE +
+                CHAR_TAB + "2 " + "HELLO_WORLD" + STRING_NEWLINE +
+                CHAR_TAB + "2 " + "ALICE" + STRING_NEWLINE +
+                CHAR_TAB + "2 " + "ALICE" + STRING_NEWLINE;
         String output = uniqApplication.uniqFromFile(true, true, true, TEST_FILENAME, OUTPUTTEST_FILENAME);
         Path path = Paths.get(OUTPUTTEST_FILENAME);
         Files.write(path, output.getBytes());
@@ -230,10 +229,10 @@ public class UniqApplicationTest {
     @Test
     public void uniqFromStdin_AllTrue_returnsExpectedOutput() throws Exception {
         inputStdin = new ByteArrayInputStream(TEST_INPUT.getBytes());
-        String expected = "2 " + "HELLO_WORLD" + STRING_NEWLINE +
-                "2 " + "HELLO_WORLD" + STRING_NEWLINE +
-                "2 " + "ALICE" + STRING_NEWLINE +
-                "2 " + "ALICE" + STRING_NEWLINE;
+        String expected = CHAR_TAB + "2 " + "HELLO_WORLD" + STRING_NEWLINE +
+                CHAR_TAB + "2 " + "HELLO_WORLD" + STRING_NEWLINE +
+                CHAR_TAB + "2 " + "ALICE" + STRING_NEWLINE +
+                CHAR_TAB + "2 " + "ALICE" + STRING_NEWLINE;
         String output = uniqApplication.uniqFromStdin(true, true, true, inputStdin, null);
         assertEquals(expected, output);
     }
