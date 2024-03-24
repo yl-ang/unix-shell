@@ -161,7 +161,8 @@ public class PasteApplicationTest {
         String inputA = "A\nB\nC\nD\n";
         String inputB = "1\n2\n3\n4\n";
 
-        try (MockedStatic<IOUtils> mockedStatic = mockStatic(IOUtils.class)) {
+        try (MockedStatic<IOUtils> mockedStatic = mockStatic(IOUtils.class);
+             MockedStatic<Paths> pathsMockedStatic = mockStatic(Paths.class)) {
             // Mocking input streams for fileA, fileB
             InputStream inputStreamA = new ByteArrayInputStream(inputA.getBytes(StandardCharsets.UTF_8));
             InputStream inputStreamB = new ByteArrayInputStream(inputB.getBytes(StandardCharsets.UTF_8));
@@ -170,6 +171,20 @@ public class PasteApplicationTest {
             mockedStatic.when(() -> IOUtils.openInputStream("fileA.txt")).thenReturn(inputStreamA);
             mockedStatic.when(() -> IOUtils.getLinesFromInputStream(inputStreamA)).thenReturn(Arrays.asList("A", "B", "C", "D"));
             mockedStatic.when(() -> IOUtils.getLinesFromInputStream(inputStreamB)).thenReturn(Arrays.asList("1", "2", "3", "4"));
+
+            // Mocking Paths.get() to return mocked Path instances
+            Path pathToFileMockA = mock(Path.class);
+            pathsMockedStatic.when(() -> Paths.get("fileA.txt")).thenReturn(pathToFileMockA);
+
+            // Mocking behavior of Path.toFile() for each mocked Path instance
+            File fileMockA = mock(File.class);
+            when(pathToFileMockA.toFile()).thenReturn(fileMockA);
+
+            // Mocking behavior of isAbsolute, node.exists(), node.isDirectory(), and node.canRead()
+            when(pathToFileMockA.isAbsolute()).thenReturn(true);
+            when(fileMockA.exists()).thenReturn(true);
+            when(fileMockA.isDirectory()).thenReturn(false);
+            when(fileMockA.canRead()).thenReturn(true);
 
             // WHEN
             String result = pasteApplication.mergeFileAndStdin(false, inputStreamB, "-", "fileA.txt", "-");
@@ -187,7 +202,9 @@ public class PasteApplicationTest {
         String inputA = "A\nB\nC\nD\n";
         String inputB = "1\n2\n3\n4\n";
 
-        try (MockedStatic<IOUtils> mockedStatic = mockStatic(IOUtils.class)) {
+        try (MockedStatic<IOUtils> mockedStatic = mockStatic(IOUtils.class);
+            MockedStatic<Paths> pathsMockedStatic = mockStatic(Paths.class)) {
+
             // Mocking input streams for fileA, fileB
             InputStream inputStreamA = new ByteArrayInputStream(inputA.getBytes(StandardCharsets.UTF_8));
             InputStream inputStreamB = new ByteArrayInputStream(inputB.getBytes(StandardCharsets.UTF_8));
@@ -196,6 +213,20 @@ public class PasteApplicationTest {
             mockedStatic.when(() -> IOUtils.openInputStream("fileA.txt")).thenReturn(inputStreamA);
             mockedStatic.when(() -> IOUtils.getLinesFromInputStream(inputStreamA)).thenReturn(Arrays.asList("A", "B", "C", "D"));
             mockedStatic.when(() -> IOUtils.getLinesFromInputStream(inputStreamB)).thenReturn(Arrays.asList("1", "2", "3", "4"));
+
+            // Mocking Paths.get() to return mocked Path instances
+            Path pathToFileMockA = mock(Path.class);
+            pathsMockedStatic.when(() -> Paths.get("fileA.txt")).thenReturn(pathToFileMockA);
+
+            // Mocking behavior of Path.toFile() for each mocked Path instance
+            File fileMockA = mock(File.class);
+            when(pathToFileMockA.toFile()).thenReturn(fileMockA);
+
+            // Mocking behavior of isAbsolute, node.exists(), node.isDirectory(), and node.canRead()
+            when(pathToFileMockA.isAbsolute()).thenReturn(true);
+            when(fileMockA.exists()).thenReturn(true);
+            when(fileMockA.isDirectory()).thenReturn(false);
+            when(fileMockA.canRead()).thenReturn(true);
 
             // WHEN
             String result = pasteApplication.mergeFileAndStdin(true, inputStreamB, "-", "fileA.txt", "-");
