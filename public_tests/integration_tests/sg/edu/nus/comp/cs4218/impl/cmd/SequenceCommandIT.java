@@ -188,7 +188,7 @@ public class SequenceCommandIT {
                 String.format("cat: %s: No such file or directory", FILE_NAME_2),
                 "chicken-rice",
                 "wc: No such file or directory",
-                "sort: sort: No such file or directory"
+                "sort: No such file or directory"
         };
         String expectedOutput = String.join(STRING_NEWLINE, expectedOResultArr) + STRING_NEWLINE;
         assertEquals(expectedOutput, outputStream.toString());

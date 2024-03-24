@@ -155,7 +155,7 @@ public class CallCommandIT {
         List<String> args = List.of("sort", FOLDER_NAME_2); // sort a dir
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         Exception exception = assertThrows(SortException.class, () -> callCommand.evaluate(systemInputStream, outputStream));
-        String expected = "sort: sort: No such file or directory";
+        String expected = "sort: No such file or directory";
         assertEquals(expected, exception.getMessage());
     }
 
