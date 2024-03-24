@@ -1,7 +1,9 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.app.RmInterface;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.exception.CatException;
 import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
 import sg.edu.nus.comp.cs4218.exception.RmException;
 import sg.edu.nus.comp.cs4218.impl.parser.RmArgsParser;
@@ -9,6 +11,8 @@ import sg.edu.nus.comp.cs4218.impl.parser.RmArgsParser;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
@@ -47,11 +51,19 @@ public class RmApplication implements RmInterface {
             throw new RmException(ERR_NULL_ARGS);
         }
 
-        for (String fileName : fileNames) {
-            File file = new File(fileName);
+        File file;
+        String currentDirectory = Environment.currentDirectory;
+        Path pathToFile;
 
-            if (!file.exists()) {
-                throw new RmException(ERR_FILE_NOT_FOUND);
+        for (String fileName : fileNames) {
+            pathToFile = Paths.get(fileName);
+            if (!pathToFile.isAbsolute()) {
+                pathToFile = Paths.get(currentDirectory).resolve(fileName);
+            }
+
+            file = pathToFile.toFile();
+            if (!file.exists()){
+                throw new RmException(pathToFile.getFileName() + ": No such file or directory");
             }
 
             if (file.isDirectory()) {
