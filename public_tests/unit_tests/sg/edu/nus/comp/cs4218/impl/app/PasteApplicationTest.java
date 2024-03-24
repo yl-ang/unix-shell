@@ -190,7 +190,7 @@ public class PasteApplicationTest {
             String result = pasteApplication.mergeFileAndStdin(false, inputStreamB, "-", "fileA.txt", "-");
 
             // THEN
-            String expectedOutput = "1\tA\t2\n3\tB\t4\n \tC\t \n \tD\t ";
+            String expectedOutput = "1\tA\t2\n3\tB\t4\n\tC\t\n\tD\t";
             assertEquals(expectedOutput, result);
         }
     }
