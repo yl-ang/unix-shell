@@ -3,8 +3,8 @@ package sg.edu.nus.comp.cs4218.impl.parser;
 import java.util.List;
 
 public class RmArgsParser extends ArgsParser {
-    private static final char FLAG_IS_RECURSIVE = 'r';
-    private static final char FLAG_IS_EMPTY_FOLDER = 'd';
+    public static final char FLAG_IS_RECURSIVE = 'r';
+    public static final char FLAG_IS_EMPTY_FOLDER = 'd';
 
     public RmArgsParser() {
         super();
