@@ -240,6 +240,7 @@ public class SequenceCommandIT {
     @Test
     @Tag("SequenceCommandIT:Pairwise:7")
     @Disabled
+    // NEGATIVE TEST CASE - PAIRWISE
     public void callCommandIT_PipeCommandThenCallCommand_ShouldReturnCorrectResult() throws ShellException, FileNotFoundException, AbstractApplicationException {
         String commandInputStr = String.format("echo Hello, World | tee %s %s /%s/%s; echo sequence_continued", FILE_NAME_1, FILE_NAME_2, FOLDER_NAME_NON, FILE_NAME_3);
         Command command = CommandBuilder.parseCommand(commandInputStr, applicationRunner);
@@ -346,6 +347,7 @@ public class SequenceCommandIT {
         assertEquals(expectedOutput, outputStream.toString());
     }
 
+    // NEGATIVE TEST CASE - Milestone 1
     @Test
     public void sequenceCommandIT_EchoThenCat_ShouldReturnCorrectOutput() throws ShellException, IOException, AbstractApplicationException {
         String commandInputStr = String.format("echo hello world; cat %s", FILE_NAME_2);
