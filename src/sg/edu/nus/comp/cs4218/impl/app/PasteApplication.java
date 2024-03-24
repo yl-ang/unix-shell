@@ -24,7 +24,6 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.*;
 
 public class PasteApplication implements PasteInterface  {
-    public static final String ERR_READING_FILE = "Could not read file";
     public static final String ERR_WRITE_STREAM = "Could not write to output stream";
 
     /**
