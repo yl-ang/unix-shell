@@ -12,6 +12,7 @@ import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_TAB;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -233,7 +234,7 @@ class CatApplicationTest {
         String output = catApplication.catFiles(isLineNumber, args);
 
         // THEN
-        String expectedOutput = String.format("1 Hello%s1 World%s", System.lineSeparator(), System.lineSeparator());
+        String expectedOutput = String.format("%s1 Hello%s%s1 World%s", CHAR_TAB, System.lineSeparator(), CHAR_TAB, System.lineSeparator());
         assertEquals(expectedOutput, output + StringUtils.STRING_NEWLINE);
     }
 
@@ -250,7 +251,7 @@ class CatApplicationTest {
         String output = catApplication.catStdin(isLineNumber, stdinContent);
 
         // THEN
-        String expectedOutput = String.format("1 Hello%s2 World%s", System.lineSeparator(), System.lineSeparator());
+        String expectedOutput = String.format("%s1 Hello%s%s2 World%s", CHAR_TAB, System.lineSeparator(), CHAR_TAB, System.lineSeparator());
         assertEquals(expectedOutput, output + StringUtils.STRING_NEWLINE);
     }
 }
