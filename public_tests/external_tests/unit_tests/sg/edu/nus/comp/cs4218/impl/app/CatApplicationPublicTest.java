@@ -24,8 +24,8 @@ import static sg.edu.nus.comp.cs4218.testutils.TestStringUtils.STRING_NEWLINE;
 public class CatApplicationPublicTest {
     private static final String TEXT_ONE = "Test line 1" + STRING_NEWLINE + "Test line 2" + STRING_NEWLINE +
             "Test line 3";
-    private static final String EXPECT_ONE_NUM = "1 Test line 1" + STRING_NEWLINE + "2 Test line 2" +
-            STRING_NEWLINE + "3 Test line 3";
+    private static final String EXPECT_ONE_NUM = "\t1 Test line 1" + STRING_NEWLINE + "\t2 Test line 2" +
+            STRING_NEWLINE + "\t3 Test line 3";
     private static final String TEST_DIR = "temp-cat";
     private static final String TEST_FILE = "fileA.txt";
     private static Path TEST_DIR_PATH;
