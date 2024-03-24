@@ -94,7 +94,7 @@ public class GrepApplicationTest {
 
         String results  = grepApplication.grepFromFiles(HELLO_LOWERCASE, false, false, true, TEST_FILE);
 
-        assertEquals(TEST_FILE + ": " + HELLO_LOWERCASE_LONG + STRING_NEWLINE, results);
+        assertEquals(TEST_FILE + ":" + HELLO_LOWERCASE_LONG + STRING_NEWLINE, results);
     }
 
     @Test
@@ -105,7 +105,7 @@ public class GrepApplicationTest {
 
         String results  = grepApplication.grepFromFiles(HELLO_LOWERCASE, true, false, true, TEST_FILE);
 
-        assertEquals(TEST_FILE + ": " + HELLO_UPPERCASE_LONG + STRING_NEWLINE, results);
+        assertEquals(TEST_FILE + ":" + HELLO_UPPERCASE_LONG + STRING_NEWLINE, results);
     }
 
     @Test
@@ -148,7 +148,7 @@ public class GrepApplicationTest {
 
         String results = grepApplication.grepFromFiles("line2", false, false, false, files);
 
-        assertEquals("file1.txt: line2" + STRING_NEWLINE + "file2.txt: line2" + STRING_NEWLINE, results);
+        assertEquals("file1.txt:line2" + STRING_NEWLINE + "file2.txt:line2" + STRING_NEWLINE, results);
 
         for (String file : files) {
             Files.deleteIfExists(Path.of(file));
