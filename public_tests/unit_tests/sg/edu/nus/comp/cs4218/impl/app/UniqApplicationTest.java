@@ -23,6 +23,8 @@ public class UniqApplicationTest {
 
     private static final String TEST_FILENAME = "uniqTestFile.txt";
     private static final String OUTPUTTEST_FILENAME = "uniqTestFile2.txt";
+
+    private static final String EMPTY_FILE = "emptyFile.txt";
     private static final String TEST_INPUT = "HELLO_WORLD" + STRING_NEWLINE +
             "HELLO_WORLD" + STRING_NEWLINE +
             "ALICE" + STRING_NEWLINE +
@@ -49,10 +51,13 @@ public class UniqApplicationTest {
     static void setUp() throws IOException {
         Path path1 = Paths.get(TEST_FILENAME);
         Path path2 = Paths.get(OUTPUTTEST_FILENAME);
+        Path path3 = Paths.get(EMPTY_FILE);
 
         Files.deleteIfExists(path1);
         Files.deleteIfExists(path2);
+        Files.deleteIfExists(path3);
         Files.writeString(path1, TEST_INPUT);
+        Files.writeString(path3, "");
     }
 
     @BeforeEach
@@ -75,9 +80,20 @@ public class UniqApplicationTest {
 
         path = Paths.get(OUTPUTTEST_FILENAME);
         Files.deleteIfExists(path);
+
+        path = Paths.get(EMPTY_FILE);
+        Files.deleteIfExists(path);
     }
 
-    // Not sure if it will read the content correctly, after implementation will relook into this
+    @Test
+    void uniqFromFile_EmptyFile_ReturnsEmptyOutput() throws Exception {
+        String output = uniqApplication.uniqFromFile(false, false, false, EMPTY_FILE, OUTPUTTEST_FILENAME);
+        Path path = Paths.get(OUTPUTTEST_FILENAME);
+        Files.write(path, output.getBytes());
+        String actualOutput = new String(Files.readAllBytes(path));
+        assertEquals(STRING_NEWLINE, actualOutput);
+    }
+
     @Test
     public void uniqFromFile_NoOption_returnsExpectedOutputToFile() throws Exception {
         String output = uniqApplication.uniqFromFile(false, false, false, TEST_FILENAME, OUTPUTTEST_FILENAME);
@@ -98,8 +114,6 @@ public class UniqApplicationTest {
         String output = uniqApplication.uniqFromFile(true, true, true, TEST_FILENAME, OUTPUTTEST_FILENAME);
         Path path = Paths.get(OUTPUTTEST_FILENAME);
         Files.write(path, output.getBytes());
-
-        // Read the content of the output test file
         String content = new String(Files.readAllBytes(path));
         assertEquals(expected, content);
     }

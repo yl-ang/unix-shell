@@ -16,7 +16,7 @@ public interface UniqInterface extends Application {
      * @param isAllRepeated  Boolean option to print all duplicate lines (takes precedence if isRepeated is set to true)
      * @param inputFileName  of path to input file
      * @param outputFileName of path to output file (if any)
-     * @throws Exception
+     * @throws AbstractApplicationException
      */
     String uniqFromFile(Boolean isCount, Boolean isRepeated, Boolean isAllRepeated, String inputFileName, String outputFileName) throws AbstractApplicationException, IOException;
 
@@ -29,7 +29,7 @@ public interface UniqInterface extends Application {
      * @param isAllRepeated Boolean option to print all duplicate lines (takes precedence if isRepeated is set to true)
      * @param stdin         InputStream containing arguments from Stdin
      * @param outputFileName of path to output file (if any)
-     * @throws Exception
+     * @throws AbstractApplicationException
      */
     String uniqFromStdin(Boolean isCount, Boolean isRepeated, Boolean isAllRepeated, InputStream stdin, String outputFileName) throws AbstractApplicationException;
 }

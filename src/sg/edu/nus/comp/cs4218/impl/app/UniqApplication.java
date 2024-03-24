@@ -218,7 +218,6 @@ public class UniqApplication implements UniqInterface {
         output.append(line).append("\n");
     }
 
-
 }
 
 
