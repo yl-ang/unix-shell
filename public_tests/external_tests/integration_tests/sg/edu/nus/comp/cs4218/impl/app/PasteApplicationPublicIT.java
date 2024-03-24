@@ -290,7 +290,7 @@ public class PasteApplicationPublicIT {
                 pasteApplication.run(toArgs("", nonexistentFileName), inputStream, output));
 
         assertInstanceOf(PasteException.class, exception);
-        assertTrue(exception.getMessage().contains(ERR_NO_SUCH_FILE));
+        assertEquals(String.format(ERR_NO_SUCH_FILE, nonexistentFileName), exception.getMessage());
     }
 
     // Assumption: paste should not be able to handle DIRECTORY similar to ubuntu shell
