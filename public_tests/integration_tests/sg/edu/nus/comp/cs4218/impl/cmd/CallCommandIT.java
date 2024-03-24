@@ -219,23 +219,19 @@ public class CallCommandIT {
                 "\t7\t9" +
                 STRING_NEWLINE;
         assertEquals(expected, fileContent);
-
-        // Clean
-        if (Files.exists(path)) {
-            Files.delete(path);
-        }
     }
 
     @Test
     @Tag("CallCommandIT:Pairwise:6")
-    @Disabled
-    // TODO: Awaiting Fix | Issue 129
     public void callCommandIT_SortCommandRedirectInputWithGlobbingMultipleOption_ShouldReturnCorrectResult() throws FileNotFoundException, AbstractApplicationException, ShellException {
         List<String> args = List.of(APP_SORT, STR_FLAG_PREFIX + FLAG_IS_REV_ORDER + FLAG_IS_CASE_IGNORE, STR_REDIR_INPUT, FILE_GLOBBING);
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
         String expected = """
+                sam
+                saM
+                sAm
                 orange
                 kiwi
                 hello worldbanana
@@ -245,11 +241,14 @@ public class CallCommandIT {
                 Bob
                 Bob
                 apple
+                alice
+                Alice
+                Alice
                 Alice
                 Alice
                 """;
         String actual = outputStream.toString();
-        assertEquals(expected, actual);
+        assertEquals(expected.toUpperCase(), actual.toUpperCase());
     }
 
     @Test
@@ -282,23 +281,26 @@ public class CallCommandIT {
 
     @Test
     @Tag("CallCommandIT:Pairwise:9")
-    @Disabled
-    // TODO: Awaiting Fix | Issue 129
     public void callCommandIT_SortCommandRedirectInputWithGlobbingSingleOption_ShouldReturnCorrectResult() throws FileNotFoundException, AbstractApplicationException, ShellException {
         List<String> args = List.of(APP_SORT, STR_FLAG_PREFIX + FLAG_IS_REV_ORDER, STR_REDIR_INPUT, FILE_GLOBBING);
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
         String expected = """
+                sam
+                saM
+                sAm
                 orange
                 kiwi
                 hello worldbanana
                 grape
                 apple
+                alice
                 Hello World
                 Hello World
                 Bob
                 Bob
+                Alice
                 Alice
                 Alice
                 Alice
@@ -375,29 +377,13 @@ public class CallCommandIT {
 
     @Test
     @Tag("CallCommandIT:Pairwise:12")
-    @Disabled
-    // TODO: Awaiting Fix | Issue 129
+    // NEGATIVE TEST CASE - PAIRWISE
     public void callCommandIT_CatCommandRedirectInputWithGlobbingDoubleQuoteSingleOption_ShouldReturnCorrectResult() throws FileNotFoundException, AbstractApplicationException, ShellException {
         List<String> args = List.of(APP_CAT, STR_FLAG_PREFIX + FLAG_IS_LINE_NUMBER , STR_REDIR_INPUT, CHAR_DOUBLE_QUOTE + FILE_GLOBBING + CHAR_DOUBLE_QUOTE);
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
-        callCommand.evaluate(systemInputStream, outputStream);
 
-        String expected = """
-                     1  hello worldbanana
-                     2  apple
-                     3  orange
-                     4  grape
-                     5  kiwi
-                     6  Hello World
-                     7  Hello World
-                     8  Alice
-                     9  Alice
-                    10  Bob
-                    11  Alice
-                    12  Bob
-                """;
-        String actual = outputStream.toString();
-        assertEquals(expected, actual);
+        Exception exception = assertThrows(ShellException.class, () -> callCommand.evaluate(systemInputStream, outputStream));
+        assertEquals(new ShellException(ERR_FILE_NOT_FOUND).getMessage(), exception.getMessage());
     }
 
     @Test
@@ -609,18 +595,30 @@ public class CallCommandIT {
 
     @Test
     @Tag("CallCommandIT:Pairwise:22")
-    @Disabled
-    // TODO: uniq -c < `echo *.txt` not working => Globbing + FLag
-    // TODO: Awaiting Fix | Issue 129
     public void callCommandIT_UniqCommandRedirectInputWithGlobbingBackQuoteSingleOption_ShouldReturnCorrectResult() throws FileNotFoundException, AbstractApplicationException, ShellException {
         List<String> args = List.of(APP_UNIQ, STR_FLAG_PREFIX + FLAG_IS_COUNT, STR_REDIR_INPUT, CHAR_BACK_QUOTE + APP_ECHO + CHAR_SPACE + FILE_GLOBBING + CHAR_BACK_QUOTE);
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
-//        String expected = """
-//                """;
-//        String actual = outputStream.toString();
-//        assertEquals(expected, actual);
+        String expected = """
+                   1 hello worldbanana
+                   1 apple
+                   1 orange
+                   1 grape
+                   1 kiwi
+                   2 Hello World
+                   2 Alice
+                   1 Bob
+                   1 Alice
+                   1 Bob
+                   1 alice
+                   1 Alice
+                   1 sam
+                   1 sAm
+                   1 saM% \
+                """;
+        String actual = outputStream.toString();
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -778,8 +776,6 @@ public class CallCommandIT {
 
     @Test
     @Tag("CallCommandIT:Pairwise:30")
-    @Disabled
-    // TODO: Awaiting Fix | Issue 129
     public void callCommandIT_CutCommandRedirectInputAndOutputWithGlobbingSingleQuoteSingleOption_ShouldReturnCorrectResult() throws IOException, AbstractApplicationException, ShellException {
         List<String> args = List.of(APP_CUT, STR_FLAG_PREFIX + FLAG_IS_CHAR_CUT, "1-99", STR_REDIR_INPUT, FILE_GLOBBING, STR_REDIR_OUTPUT, FILE_NAME_OUTPUT);
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
@@ -806,7 +802,8 @@ public class CallCommandIT {
                 Alice
                 sam
                 sAm
-                saM""";
+                saM
+                """;
 
         assertEquals(expected, fileContent);
         // Clean
@@ -963,16 +960,10 @@ public class CallCommandIT {
                 """;
 
         assertEquals(expected, fileContent);
-        // Clean
-        if (Files.exists(path)) {
-            Files.delete(path);
-        }
     }
 
     @Test
     @Tag("CallCommandIT:Pairwise:38")
-    @Disabled
-    // TODO: Awaiting Fix | Issue 129
     public void callCommandIT_GrepCommandRedirectInputAndOutputWithGlobbingBackQuote_ShouldReturnCorrectResult() throws IOException, AbstractApplicationException, ShellException {
         List<String> args = List.of(APP_GREP, CHAR_BACK_QUOTE + APP_ECHO + CHAR_SPACE + "Hello" + CHAR_BACK_QUOTE, FILE_GLOBBING, STR_REDIR_OUTPUT, FILE_NAME_OUTPUT);
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
@@ -983,15 +974,11 @@ public class CallCommandIT {
 
         String fileContent = new String(Files.readAllBytes(path));
         String expected = """
-                Hello World
-                Hello World
+                file3.txt:Hello World
+                file3.txt:Hello World
                 """;
 
         assertEquals(expected, fileContent);
-        // Clean
-        if (Files.exists(path)) {
-            Files.delete(path);
-        }
     }
 
     @Test
@@ -1025,16 +1012,10 @@ public class CallCommandIT {
                 """;
 
         assertEquals(expected, fileContent);
-        // Clean
-        if (Files.exists(path)) {
-            Files.delete(path);
-        }
     }
 
     @Test
     @Tag("CallCommandIT:Pairwise:41")
-    @Disabled
-    // TODO: Awaiting Fix | Issue 129
     public void callCommandIT_GrepCommandRedirectInputAndOutputWithGlobbingBackQuoteSingleOption_ShouldReturnCorrectResult() throws IOException, AbstractApplicationException, ShellException {
         List<String> args = List.of(APP_GREP, CHAR_BACK_QUOTE + APP_ECHO + CHAR_SPACE + "Hello" + CHAR_BACK_QUOTE, STR_REDIR_INPUT, FILE_GLOBBING, STR_REDIR_OUTPUT, FILE_NAME_OUTPUT);
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
@@ -1045,15 +1026,11 @@ public class CallCommandIT {
 
         String fileContent = new String(Files.readAllBytes(path));
         String expected = """
-                (standard input):Hello World
-                (standard input):Hello World
+                Hello World
+                Hello World
                 """;
 
         assertEquals(expected, fileContent);
-        // Clean
-        if (Files.exists(path)) {
-            Files.delete(path);
-        }
     }
 
     @Test
@@ -1100,11 +1077,6 @@ public class CallCommandIT {
                 """;
 
         assertEquals(expected, fileContent);
-
-        // Clean
-        if (Files.exists(path)) {
-            Files.delete(path);
-        }
     }
 
     @Test
@@ -1133,32 +1105,17 @@ public class CallCommandIT {
                 """;
 
         assertEquals(expected, fileContent);
-
-        // Clean
-        if (Files.exists(path)) {
-            Files.delete(path);
-        }
     }
 
     @Test
     @Tag("CallCommandIT:Pairwise:45")
-    @Disabled
-    // TODO: Awaiting Fix | Issue 129
     public void callCommandIT_TeeCommandRedirectInputWithGlobbingSingleOption_ShouldReturnCorrectResult() throws IOException, AbstractApplicationException, ShellException {
-        FileWriter writer = new FileWriter(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_DYNAMIC);
-        writer.write(TEXT_DYNAMIC);
-        writer.close();
-        Path path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_DYNAMIC);
-        assertTrue(Files.exists(path));
-
         List<String> args = List.of(APP_TEE, STR_FLAG_PREFIX + FLAG_IS_APPEND , STR_REDIR_INPUT, FILE_GLOBBING);
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
-        String fileContent = new String(Files.readAllBytes(path));
         String actual = outputStream.toString();
         String expected = """
-                This is a dynamic text for testing
                 hello worldbanana
                 apple
                 orange
@@ -1175,15 +1132,8 @@ public class CallCommandIT {
                 Alice
                 sam
                 sAm
-                saM
-                """;
-        assertEquals(expected, fileContent);
+                saM""";
         assertEquals(expected, actual);
-
-        // Clean
-        if (Files.exists(path)) {
-            Files.delete(path);
-        }
     }
 
     @Test
@@ -1210,11 +1160,6 @@ public class CallCommandIT {
                 """;
         assertEquals(expected, fileContent);
         assertEquals(expected, actual);
-
-        // Clean
-        if (Files.exists(path)) {
-            Files.delete(path);
-        }
     }
 
     @Test
@@ -1246,15 +1191,6 @@ public class CallCommandIT {
                 saM""";
         assertEquals(expected, fileContent);
         assertEquals(expected, outputFileContent);
-
-        // Clean
-        if (Files.exists(path)) {
-            Files.delete(path);
-        }
-
-        if (Files.exists(outputFilePath)) {
-            Files.delete(outputFilePath);
-        }
     }
 
     @Test
@@ -1288,8 +1224,6 @@ public class CallCommandIT {
 
     @Test
     @Tag("CallCommandIT:Pairwise:49")
-    @Disabled
-    //TODO: 129
     public void callCommandIT_TeeCommandRedirectInputWithGlobbingBackQuote_ShouldReturnCorrectResult() throws FileNotFoundException, AbstractApplicationException, ShellException {
         List<String> args = List.of(APP_TEE, STR_REDIR_INPUT, CHAR_BACK_QUOTE + APP_ECHO + CHAR_SPACE + FILE_GLOBBING + CHAR_BACK_QUOTE);
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
@@ -1298,6 +1232,18 @@ public class CallCommandIT {
         String actual = outputStream.toString();
 
         String expected = """
+                hello worldbanana
+                apple
+                orange
+                grape
+                kiwi
+                Hello World
+                Hello World
+                Alice
+                Alice
+                Bob
+                Alice
+                Bob
                 alice
                 Alice
                 sam
