@@ -34,6 +34,10 @@ public class RmApplication implements RmInterface {
         }
 
         String[] fileNames = parser.getFileNames().toArray(new String[0]);
+
+        if (fileNames.length == 0) {
+            throw new RmException(ERR_NO_FILE_ARGS);
+        }
         remove(parser.isEmptyFolder(), parser.isRecursive(), fileNames);
     }
 

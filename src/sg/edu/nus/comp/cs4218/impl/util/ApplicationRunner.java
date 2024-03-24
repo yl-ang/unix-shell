@@ -75,6 +75,7 @@ public class ApplicationRunner {
                 break;
             case APP_RM:
                 application = new RmApplication();
+                break;
             case APP_UNIQ:
                 application = new UniqApplication();
                 break;
