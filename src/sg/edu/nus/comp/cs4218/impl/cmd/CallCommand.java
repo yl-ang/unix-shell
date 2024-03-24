@@ -50,7 +50,6 @@ public class CallCommand implements Command {
             String app = parsedArgsList.remove(0);
             appRunner.runApp(app, parsedArgsList.toArray(new String[0]), inputStream, outputStream);
         }
-
     }
 
     @Override
