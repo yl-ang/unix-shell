@@ -25,7 +25,6 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FLAG_PREFIX;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class GrepApplication implements GrepInterface {
-    public static final String INVALID_PATTERN = "Invalid pattern syntax";
     public static final String EMPTY_PATTERN = "Pattern should not be empty.";
     public static final String IS_DIRECTORY = "Is a directory";
     public static final String NULL_POINTER = "Null Pointer Exception";
@@ -140,11 +139,11 @@ public class GrepApplication implements GrepInterface {
         while ((line = reader.readLine()) != null) {
             Matcher matcher = pattern.matcher(line);
             if (matcher.find()) {
-                lineResults.add(includeFileName ? filePath + ": " + line : line);
+                lineResults.add(includeFileName ? filePath + ":" + line : line);
                 matches++;
             }
         }
-        countResults.add(includeFileName ? filePath + ": " + matches : String.valueOf(matches));
+        countResults.add(includeFileName ? filePath + ":" + matches : String.valueOf(matches));
     }
 
     /**
@@ -235,7 +234,7 @@ public class GrepApplication implements GrepInterface {
             }
         } else {
             if (!stringJoiner.toString().isEmpty()) {
-                results = stringJoiner.toString() + STRING_NEWLINE;
+                results = stringJoiner + STRING_NEWLINE;
             }
         }
         return results;

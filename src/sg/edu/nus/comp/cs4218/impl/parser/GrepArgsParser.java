@@ -6,27 +6,27 @@ public class GrepArgsParser extends ArgsParser {
     private final static char FLAG_IS_INVERT = 'v';
     private final static int INDEX_PATTERN = 0;
     private final static int INDEX_FILES = 1;
-    private static final char CASE_INSEN_IDENT = 'i';
-    private static final char COUNT_IDENT = 'c';
-    private static final char PREFIX_FN = 'H';
+    public static final char FLAG_IS_CASING = 'i';
+    public static final char FLAG_IS_COUNT_LINES = 'c';
+    public static final char FLAG_IS_INCLUDE_FILENAME = 'H';
 
     public GrepArgsParser() {
         super();
-        legalFlags.add(CASE_INSEN_IDENT);
-        legalFlags.add(COUNT_IDENT);
-        legalFlags.add(PREFIX_FN);
+        legalFlags.add(FLAG_IS_CASING);
+        legalFlags.add(FLAG_IS_COUNT_LINES);
+        legalFlags.add(FLAG_IS_INCLUDE_FILENAME);
     }
 
     public Boolean isCaseInsensitive() {
-        return flags.contains(CASE_INSEN_IDENT);
+        return flags.contains(FLAG_IS_CASING);
     }
 
     public Boolean isCount() {
-        return flags.contains(COUNT_IDENT);
+        return flags.contains(FLAG_IS_COUNT_LINES);
     }
 
     public Boolean isPrintFileName() {
-        return flags.contains(PREFIX_FN);
+        return flags.contains(FLAG_IS_INCLUDE_FILENAME);
     }
 
     public Boolean isInvert() {

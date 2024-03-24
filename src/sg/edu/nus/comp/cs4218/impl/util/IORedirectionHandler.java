@@ -3,12 +3,8 @@ package sg.edu.nus.comp.cs4218.impl.util;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
+import java.io.*;
+import java.util.*;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.*;
@@ -61,28 +57,60 @@ public class IORedirectionHandler {
 
             // handle quoting + globing + command substitution in file arg
             List<String> fileSegment = argumentResolver.resolveOneArgument(file);
-            if (fileSegment.size() > 1) {
-                // ambiguous redirect if file resolves to more than one parsed arg
-                throw new ShellException(ERR_SYNTAX);
-            }
-            file = fileSegment.get(0);
 
-            // replace existing inputStream / outputStream
-            if (arg.equals(String.valueOf(CHAR_REDIR_INPUT))) {
-                IOUtils.closeInputStream(inputStream);
-                inputStream = IOUtils.openInputStream(file);
-                if (inputStream.equals(origInputStream)) { // Already have a stream
-                    throw new ShellException(ERR_MULTIPLE_STREAMS);
+            // globbing case
+            if (file.contains("*")) {
+
+                ArrayList<InputStream> streams = new ArrayList<>();
+                for (String s : fileSegment) {
+                    file = s;
+                    InputStream curr = IOUtils.openInputStream(file);
+                    streams.add(curr);
                 }
-                inputStream = IOUtils.openInputStream(file);
-            } else if (arg.equals(String.valueOf(CHAR_REDIR_OUTPUT))) {
-                IOUtils.closeOutputStream(outputStream);
-                outputStream = IOUtils.openOutputStream(file);
-                if (outputStream.equals(origOutputStream)) { // Already have a stream
-                    throw new ShellException(ERR_MULTIPLE_STREAMS);
+
+                if (arg.equals(String.valueOf(CHAR_REDIR_INPUT))) {
+                    IOUtils.closeInputStream(inputStream);
+                    inputStream = new SequenceInputStream(Collections.enumeration(streams));
+                    if (inputStream.equals(origInputStream)) { // Already have a stream
+                        throw new ShellException(ERR_MULTIPLE_STREAMS);
+                    }
+                    inputStream = new SequenceInputStream(Collections.enumeration(streams));
+                } else if (arg.equals(String.valueOf(CHAR_REDIR_OUTPUT))) {
+                    IOUtils.closeOutputStream(outputStream);
+                    outputStream = IOUtils.openOutputStream(file);
+                    if (outputStream.equals(origOutputStream)) { // Already have a stream
+                        throw new ShellException(ERR_MULTIPLE_STREAMS);
+                    }
+                    outputStream = IOUtils.openOutputStream(file);
                 }
-                outputStream = IOUtils.openOutputStream(file);
+            } else {
+                // other case
+                if (fileSegment.size() > 1) {
+                    // ambiguous redirect if file resolves to more than one parsed arg
+                    throw new ShellException(ERR_SYNTAX);
+                }
+                file = fileSegment.get(0);
+                handleStreams(arg, file);
             }
+        }
+    }
+
+    private void handleStreams(String arg, String file) throws ShellException, FileNotFoundException {
+        // replace existing inputStream / outputStream
+        if (arg.equals(String.valueOf(CHAR_REDIR_INPUT))) {
+            IOUtils.closeInputStream(inputStream);
+            inputStream = IOUtils.openInputStream(file);
+            if (inputStream.equals(origInputStream)) { // Already have a stream
+                throw new ShellException(ERR_MULTIPLE_STREAMS);
+            }
+            inputStream = IOUtils.openInputStream(file);
+        } else if (arg.equals(String.valueOf(CHAR_REDIR_OUTPUT))) {
+            IOUtils.closeOutputStream(outputStream);
+            outputStream = IOUtils.openOutputStream(file);
+            if (outputStream.equals(origOutputStream)) { // Already have a stream
+                throw new ShellException(ERR_MULTIPLE_STREAMS);
+            }
+            outputStream = IOUtils.openOutputStream(file);
         }
     }
 

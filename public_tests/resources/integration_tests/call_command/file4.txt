@@ -1,0 +1,5 @@
+alice
+Alice
+sam
+sAm
+saM
