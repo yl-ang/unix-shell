@@ -19,7 +19,6 @@ import java.util.Deque;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static sg.edu.nus.comp.cs4218.testutils.TestStringUtils.CHAR_FILE_SEP;
 import static sg.edu.nus.comp.cs4218.testutils.TestStringUtils.STRING_NEWLINE;
 
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
@@ -33,7 +32,7 @@ public class PasteApplicationPublicIT {
     private static final String DIR = "dir";
     private static final String TEST_LINE = "Test line 1\nTest line 2\nTest line 3";
     public static final String EXPECTED_TEXT = "Test line 1\tTest line 2\tTest line 3";
-    private static final String ERR_NO_SUCH_FILE = "paste: %s: No such file or directory" + STRING_NEWLINE;
+    private static final String ERR_NO_SUCH_FILE = "paste: %s: No such file or directory";
     private static final String ERR_IS_DIR = "paste: %s: Is a directory";
     private static final Deque<Path> files = new ArrayDeque<>();
     private static Path TEMP_PATH;
@@ -164,7 +163,7 @@ public class PasteApplicationPublicIT {
                 pasteApplication.run(toArgs("", nonexistentFileName), System.in, new ByteArrayOutputStream()));
 
         assertInstanceOf(PasteException.class, exception);
-        assertTrue(exception.getMessage().contains(ERR_NO_SUCH_FILE));
+        assertEquals(String.format(ERR_NO_SUCH_FILE, nonexistentFileName), exception.getMessage());
     }
 
     // Assumption, we are following Ubuntu Shell, changing requirements:
