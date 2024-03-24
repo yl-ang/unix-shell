@@ -44,10 +44,10 @@ public class UniqApplication implements UniqInterface {
         String inputFile = parser.getInputFile();
 
         try {
-            if (inputFile != null) {
-                output = uniqFromFile(parser.isCount(), parser.isOnlyDuplicates(), parser.isAllDuplicates(), inputFile, outputFile);
-            } else {
+            if (inputFile == null || "-".equals(inputFile)) {
                 output = uniqFromStdin(parser.isCount(), parser.isOnlyDuplicates(), parser.isAllDuplicates(), stdin, outputFile);
+            } else {
+                output = uniqFromFile(parser.isCount(), parser.isOnlyDuplicates(), parser.isAllDuplicates(), inputFile, outputFile);
             }
         } catch (Exception e) {
             throw new UniqException(e.getMessage());
@@ -92,13 +92,6 @@ public class UniqApplication implements UniqInterface {
             throw new UniqException(ERR_NO_INPUT);
         }
 
-        //if only "-"
-        if (inputFileName.toCharArray()[0] == '-' && inputFileName.length() == 1) {
-            List<String> linesFromInput = IOUtils.getLinesFromInputStream(stdin);
-            fileLines.addAll(linesFromInput);
-
-            return uniqProcessInputString(isCount, isRepeated, isAllRepeated, fileLines);
-        }
         File inputFile = IOUtils.resolveFilePath(inputFileName).toFile();
         if (inputFile.isDirectory()) {
             throw new UniqException(inputFileName + ": " + ERR_IS_DIR);
@@ -217,7 +210,6 @@ public class UniqApplication implements UniqInterface {
         }
         output.append(line).append("\n");
     }
-
 
 }
 
