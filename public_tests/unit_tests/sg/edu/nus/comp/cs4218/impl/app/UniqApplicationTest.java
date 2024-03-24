@@ -1,8 +1,12 @@
 package unit_tests.sg.edu.nus.comp.cs4218.impl.app;
 
 import org.junit.jupiter.api.*;
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.app.UniqInterface;
+import sg.edu.nus.comp.cs4218.exception.GrepException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
+import sg.edu.nus.comp.cs4218.exception.UniqException;
+import sg.edu.nus.comp.cs4218.impl.app.GrepApplication;
 import sg.edu.nus.comp.cs4218.impl.app.UniqApplication;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
@@ -11,7 +15,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class UniqApplicationTest {
@@ -86,6 +92,27 @@ public class UniqApplicationTest {
     }
 
     @Test
+    void uniqFromFile_InputFileNotFound_ThrowsException() {
+        String nonExistentFile = "nonexistent.txt";
+        String expectedErrorMessage = nonExistentFile + ": " + ERR_FILE_NOT_FOUND;
+        UniqException uniqException = assertThrows(UniqException.class, () ->
+                uniqApplication.uniqFromFile(false, false, false, nonExistentFile, null));
+        assertEquals(new UniqException(expectedErrorMessage).getMessage(), uniqException.getMessage());
+    }
+
+    @Test
+    void uniqFromFile_InputFileIsDirectory_ThrowsException() {
+        String directoryPath = "testDirectory";
+        File directory = new File(directoryPath);
+        directory.mkdir();
+        String expectedErrorMessage = directoryPath + ": " + ERR_IS_DIR;
+        UniqException uniqException = assertThrows(UniqException.class, () ->
+                uniqApplication.uniqFromFile(false, false, false, directoryPath, null));
+        assertEquals(new UniqException(expectedErrorMessage).getMessage(), uniqException.getMessage());
+        directory.delete();
+    }
+
+    @Test
     void uniqFromFile_EmptyFile_ReturnsEmptyOutput() throws Exception {
         String output = uniqApplication.uniqFromFile(false, false, false, EMPTY_FILE, OUTPUTTEST_FILENAME);
         Path path = Paths.get(OUTPUTTEST_FILENAME);
@@ -152,6 +179,27 @@ public class UniqApplicationTest {
     }
 
     @Test
+    void uniqFromStdin_WhenIOExceptionOccurs_ThrowsUniqException() {
+        InputStream inputStream = new InputStream() {
+            @Override
+            public int read() throws IOException {
+                throw new IOException("Simulated IO exception");
+            }
+        };
+
+        UniqException exception = assertThrows(UniqException.class, () ->
+                uniqApplication.uniqFromStdin(false, false, false, inputStream, null));
+        assertTrue(exception.getMessage().contains(ERR_IO_EXCEPTION));
+    }
+
+    @Test
+    void uniqFromStdin_WhenInputStreamIsNull_ThrowsUniqException() {
+        UniqException exception = assertThrows(UniqException.class, () ->
+                uniqApplication.uniqFromStdin(false, false, false, null, null));
+        assertTrue(exception.getMessage().contains("null"));
+    }
+
+    @Test
     void uniqFromStdin_NoOption_returnsExpectedOutput() throws Exception {
         inputStdin = new ByteArrayInputStream(TEST_INPUT.getBytes());
         String output = uniqApplication.uniqFromStdin(false, false, false, inputStdin, null);
@@ -188,6 +236,17 @@ public class UniqApplicationTest {
                 "2 " + "ALICE" + STRING_NEWLINE;
         String output = uniqApplication.uniqFromStdin(true, true, true, inputStdin, null);
         assertEquals(expected, output);
+    }
+
+    @Test
+    void run_InputFileIsDash_ReadsFromStdin() throws Exception {
+        String simulatedInput = "apple\nbanana\napple\ncherry\nbanana\n";
+        InputStream simulatedStdin = new ByteArrayInputStream(simulatedInput.getBytes());
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        String[] args = {"-"};
+        uniqApplication.run(args, simulatedStdin, output);
+        String expectedOutput = "apple\nbanana\napple\ncherry\nbanana\n";
+        assertEquals(expectedOutput, output.toString());
     }
 
 }
