@@ -61,16 +61,12 @@ public class PasteApplication implements PasteInterface  {
         }
 
         String mergedStr = "";
-        try {
-            if (fileNames.length > 0 && List.of(fileNames).contains(STRING_FLAG_PREFIX)) {
-                mergedStr = mergeFileAndStdin(parser.isSerial(), stdin, fileNames);
-            } else if (fileNames.length > 0) {
-                mergedStr = mergeFile(parser.isSerial(), fileNames);
-            } else {
-                mergedStr = mergeStdin(parser.isSerial(), stdin);
-            }
-        } catch (Exception e) {
-            throw new PasteException(e.toString());
+        if (fileNames.length > 0 && List.of(fileNames).contains(STRING_FLAG_PREFIX)) {
+            mergedStr = mergeFileAndStdin(parser.isSerial(), stdin, fileNames);
+        } else if (fileNames.length > 0) {
+            mergedStr = mergeFile(parser.isSerial(), fileNames);
+        } else {
+            mergedStr = mergeStdin(parser.isSerial(), stdin);
         }
 
         try {
