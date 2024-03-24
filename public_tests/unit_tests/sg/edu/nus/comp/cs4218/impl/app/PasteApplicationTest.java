@@ -8,11 +8,11 @@ import sg.edu.nus.comp.cs4218.impl.app.PasteApplication;
 import sg.edu.nus.comp.cs4218.impl.parser.PasteArgsParser;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,6 +29,9 @@ public class PasteApplicationTest {
 
     @Mock
     private IOUtils ioUtils;
+
+    @Mock
+    private File fileMock;
 
     @Mock
     private PasteArgsParser pasteArgsParser;
@@ -52,7 +55,8 @@ public class PasteApplicationTest {
         String inputA = "A\nB\nC\nD\n";
         String inputB = "1\n2\n3\n4\n";
 
-        try (MockedStatic<IOUtils> mockedStatic = mockStatic(IOUtils.class)) {
+        try (MockedStatic<IOUtils> mockedStatic = mockStatic(IOUtils.class);
+             MockedStatic<Paths> pathsMockedStatic = mockStatic(Paths.class)) {
             // Mocking input streams for fileA and fileB
             InputStream inputStreamA = new ByteArrayInputStream(inputA.getBytes(StandardCharsets.UTF_8));
             InputStream inputStreamB = new ByteArrayInputStream(inputB.getBytes(StandardCharsets.UTF_8));
@@ -64,6 +68,29 @@ public class PasteApplicationTest {
             // Mocking lines obtained from input streams
             mockedStatic.when(() -> IOUtils.getLinesFromInputStream(inputStreamA)).thenReturn(Arrays.asList("A", "B", "C", "D"));
             mockedStatic.when(() -> IOUtils.getLinesFromInputStream(inputStreamB)).thenReturn(Arrays.asList("1", "2", "3", "4"));
+
+            // Mocking Paths.get() to return mocked Path instances
+            Path pathToFileMockA = mock(Path.class);
+            Path pathToFileMockB = mock(Path.class);
+            pathsMockedStatic.when(() -> Paths.get("fileA.txt")).thenReturn(pathToFileMockA);
+            pathsMockedStatic.when(() -> Paths.get("fileB.txt")).thenReturn(pathToFileMockB);
+
+            // Mocking behavior of Path.toFile() for each mocked Path instance
+            File fileMockA = mock(File.class);
+            File fileMockB = mock(File.class);
+            when(pathToFileMockA.toFile()).thenReturn(fileMockA);
+            when(pathToFileMockB.toFile()).thenReturn(fileMockB);
+
+            // Mocking behavior of isAbsolute, node.exists(), node.isDirectory(), and node.canRead()
+            when(pathToFileMockA.isAbsolute()).thenReturn(true);
+            when(fileMockA.exists()).thenReturn(true);
+            when(fileMockA.isDirectory()).thenReturn(false);
+            when(fileMockA.canRead()).thenReturn(true);
+
+            when(pathToFileMockB.isAbsolute()).thenReturn(true);
+            when(fileMockB.exists()).thenReturn(true);
+            when(fileMockB.isDirectory()).thenReturn(false);
+            when(fileMockB.canRead()).thenReturn(true);
 
             // WHEN
             String result = pasteApplication.mergeFile(false, "fileA.txt", "fileB.txt");
@@ -81,7 +108,9 @@ public class PasteApplicationTest {
         String inputA = "A\nB\nC\nD\n";
         String inputB = "1\n2\n3\n4\n";
 
-        try (MockedStatic<IOUtils> mockedStatic = mockStatic(IOUtils.class)) {
+        try (MockedStatic<IOUtils> mockedStatic = mockStatic(IOUtils.class);
+             MockedStatic<Files> filesMockedStatic = mockStatic(Files.class)) {
+
             // Mocking input streams for fileA and fileB
             InputStream inputStreamA = new ByteArrayInputStream(inputA.getBytes(StandardCharsets.UTF_8));
             InputStream inputStreamB = new ByteArrayInputStream(inputB.getBytes(StandardCharsets.UTF_8));
@@ -93,6 +122,12 @@ public class PasteApplicationTest {
             // Mocking lines obtained from input streams
             mockedStatic.when(() -> IOUtils.getLinesFromInputStream(inputStreamA)).thenReturn(Arrays.asList("A", "B", "C", "D"));
             mockedStatic.when(() -> IOUtils.getLinesFromInputStream(inputStreamB)).thenReturn(Arrays.asList("1", "2", "3", "4"));
+
+            // Mocking file existence and readability checks
+            filesMockedStatic.when(() -> Files.exists(ArgumentMatchers.any())).thenReturn(false);
+            filesMockedStatic.when(() -> Files.exists(ArgumentMatchers.any())).thenReturn(true);
+            filesMockedStatic.when(() -> Files.isDirectory(ArgumentMatchers.any())).thenAnswer(invocation -> false);
+            filesMockedStatic.when(() -> Files.isReadable(ArgumentMatchers.any())).thenReturn(true);
 
             // WHEN
             String result = pasteApplication.mergeFile(true, "fileA.txt", "fileB.txt");

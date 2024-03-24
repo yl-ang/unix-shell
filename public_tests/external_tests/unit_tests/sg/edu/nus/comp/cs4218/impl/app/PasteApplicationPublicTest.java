@@ -10,7 +10,6 @@ import sg.edu.nus.comp.cs4218.impl.app.PasteApplication;
 import sg.edu.nus.comp.cs4218.testutils.TestStringUtils;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -25,8 +24,6 @@ public class PasteApplicationPublicTest {
 
     private static final File FILE_2 = new File("paste_2.txt");
     private static final String TEXT_FILE_2 = "1\n2\n3\n4\n5";
-    private static final String ERR_IS_DIR = String.format("paste: %s: Is a directory", DIRECTORY);
-    private static final String ERR_NO_SUCH_FILE = String.format("paste: %s: No such file or directory", NONEXISTENT);
 
     private static PasteApplication pasteApplication;
 
