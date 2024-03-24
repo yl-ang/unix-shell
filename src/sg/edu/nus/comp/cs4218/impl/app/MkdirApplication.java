@@ -38,6 +38,10 @@ public class MkdirApplication implements MkdirInterface {
             throw new MkdirException(ERR_NULL_ARGS);
         }
 
+        if (args.length == 0) {
+            throw new MkdirException("No arguments provided");
+        }
+
         MkdirParser mkdirParser = new MkdirParser();
         try {
             mkdirParser.parse(args);
@@ -71,7 +75,15 @@ public class MkdirApplication implements MkdirInterface {
     public void createFolder(String... folderPaths) throws MkdirException {
         String currentDirectory = Environment.currentDirectory;
 
+        if (folderPaths == null) {
+            throw new MkdirException("Folder paths cannot be null");
+        }
+
         for (String folderPath : folderPaths) {
+            if (folderPath == null || folderPath.isEmpty()) {
+                throw new MkdirException("Folder path cannot be null");
+            }
+
             String path = currentDirectory + FOLDER_SEPARATOR + folderPath;
             File folder = new File(path);
 
