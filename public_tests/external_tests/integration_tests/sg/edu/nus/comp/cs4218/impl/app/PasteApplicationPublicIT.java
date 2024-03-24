@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.testutils.TestStringUtils.CHAR_FILE_SEP;
 import static sg.edu.nus.comp.cs4218.testutils.TestStringUtils.STRING_NEWLINE;
 
+import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.PasteException;
 import sg.edu.nus.comp.cs4218.impl.app.PasteApplication;
 import sg.edu.nus.comp.cs4218.testutils.TestEnvironmentUtil;
@@ -33,6 +34,7 @@ public class PasteApplicationPublicIT {
     private static final String TEST_LINE = "Test line 1\nTest line 2\nTest line 3";
     public static final String EXPECTED_TEXT = "Test line 1\tTest line 2\tTest line 3";
     private static final String ERR_NO_SUCH_FILE = "paste: %s: No such file or directory" + STRING_NEWLINE;
+    private static final String ERR_IS_DIR = "paste: %s: Is a directory";
     private static final Deque<Path> files = new ArrayDeque<>();
     private static Path TEMP_PATH;
     private static Path DIR_PATH;
@@ -165,11 +167,16 @@ public class PasteApplicationPublicIT {
         assertTrue(exception.getMessage().contains(ERR_NO_SUCH_FILE));
     }
 
+    // Assumption, we are following Ubuntu Shell, changing requirements:
+    // paste: <DIR>: Is a directory
+    // Assumption: Error is throw ERR_IS_DIR
     @Test
-    void run_DirectoryNoFlag_DisplaysEmpty() throws Exception {
+    void run_DirectoryNoFlag_ThrowsException() throws Exception {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        pasteApplication.run(toArgs("", DIR), System.in, output);
-        assertEquals("", output.toString(StandardCharsets.UTF_8));
+        AbstractApplicationException exception = assertThrows(AbstractApplicationException.class, () -> {
+            pasteApplication.run(toArgs("", DIR), System.in, output);
+        });
+        assertEquals(String.format(ERR_IS_DIR, DIR), exception.getMessage());
     }
 
     @Test
@@ -284,17 +291,21 @@ public class PasteApplicationPublicIT {
                 pasteApplication.run(toArgs("", nonexistentFileName), inputStream, output));
 
         assertInstanceOf(PasteException.class, exception);
-        assertTrue(exception.getMessage().contains(String.format(ERR_NO_SUCH_FILE, TEMP + CHAR_FILE_SEP + nonexistentFileName)));
+        assertTrue(exception.getMessage().contains(ERR_NO_SUCH_FILE));
     }
 
+    // Assumption: paste should not be able to handle DIRECTORY similar to ubuntu shell
+    // Assumption: Error is throw ERR_IS_DIR
     @Test
-    void run_SingleStdinDirectoryNoFlag_DisplaysMergedStdinFileContents() throws Exception {
+    void run_SingleStdinDirectoryNoFlag_throwsException() throws Exception {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         String stdinText = "Test line 1.1\nTest line 1.2\nTest line 1.3";
         InputStream inputStream = new ByteArrayInputStream(stdinText.getBytes(StandardCharsets.UTF_8));
         String expectedText = "Test line 1.1\nTest line 1.2\nTest line 1.3\n";
-        pasteApplication.run(toArgs("", DIR, "-"), inputStream, output);
-        assertEquals(expectedText, output.toString(StandardCharsets.UTF_8));
+        Exception exception = assertThrows(Exception.class, () ->
+            pasteApplication.run(toArgs("", DIR, "-"), inputStream, output));
+        assertInstanceOf(PasteException.class, exception);
+        assertEquals(String.format(ERR_IS_DIR, DIR), exception.getMessage());
     }
 
     @Test
