@@ -13,9 +13,11 @@ import java.util.List;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
+@SuppressWarnings({"PMD.PreserveStackTrace"})
 public class WcApplication implements WcInterface {
 
     private static final String NUMBER_FORMAT = "\t%d";
+    private static final String WC_ERROR_START = "wc: ";
     private static final int LINES_INDEX = 0;
     private static final int WORDS_INDEX = 1;
     private static final int BYTES_INDEX = 2;
@@ -33,9 +35,19 @@ public class WcApplication implements WcInterface {
     @Override
     public void run(String[] args, InputStream stdin, OutputStream stdout)
             throws WcException {
-        // Format: wc [-clw] [FILES]
+        if (stdin == null) {
+            throw new WcException(ERR_NO_ISTREAM);
+        }
         if (stdout == null) {
-            throw new WcException(ERR_NULL_STREAMS);
+            throw new WcException(ERR_NO_OSTREAM);
+        }
+        if (args == null) {
+            throw new WcException(ERR_NULL_ARGS);
+        }
+        for (String arg : args) {
+            if (arg == null) {
+                throw new WcException(ERR_NULL_ARGS);
+            }
         }
         WcArgsParser wcArgsParser = new WcArgsParser();
         try {
@@ -58,7 +70,6 @@ public class WcApplication implements WcInterface {
         }
         try {
             stdout.write(result.getBytes());
-            stdout.write(STRING_NEWLINE.getBytes());
         } catch (IOException e) {
             throw new WcException(ERR_WRITE_STREAM);//NOPMD
         }
@@ -84,29 +95,24 @@ public class WcApplication implements WcInterface {
         for (String file : fileName) {
             File node = IOUtils.resolveFilePath(file).toFile();
             if (!node.exists()) {
-                result.add("wc: " + ERR_FILE_NOT_FOUND);
+                result.add(WC_ERROR_START + ERR_FILE_NOT_FOUND);
                 continue;
             }
             if (node.isDirectory()) {
-                result.add("wc: " + ERR_IS_DIR);
+                result.add(WC_ERROR_START + ERR_IS_DIR);
                 continue;
             }
             if (!node.canRead()) {
-                result.add("wc: " + ERR_NO_PERM);
+                result.add(WC_ERROR_START + ERR_NO_PERM);
                 continue;
             }
-
-            InputStream input = null;
-            try {
-                input = IOUtils.openInputStream(file);
+            long[] count;
+            try (InputStream input = IOUtils.openInputStream(file)) {
+                count = getCountReport(input); // lines words bytes
             } catch (ShellException e) {
                 throw new WcException(e.getMessage());
-            }
-            long[] count = getCountReport(input); // lines words bytes
-            try {
-                IOUtils.closeInputStream(input);
-            } catch (ShellException e) {
-                throw new WcException(e.getMessage());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
 
             // Update total count
@@ -156,7 +162,7 @@ public class WcApplication implements WcInterface {
             sb.append(" total");
             result.add(sb.toString());
         }
-        return String.join(STRING_NEWLINE, result);
+        return String.join(STRING_NEWLINE, result) + STRING_NEWLINE;
     }
 
     /**
@@ -192,11 +198,11 @@ public class WcApplication implements WcInterface {
             sb.append(String.format(NUMBER_FORMAT, count[BYTES_INDEX]));
         }
 
-        return sb.toString();
+        return sb + STRING_NEWLINE;
     }
 
     @Override
-    public String countFromFileAndStdin(Boolean isBytes, Boolean isLines, Boolean isWords, InputStream stdin, String... fileName) throws AbstractApplicationException {
+    public String countFromFileAndStdin(Boolean isBytes, Boolean isLines, Boolean isWords, InputStream stdin, String... fileName) throws AbstractApplicationException { //NOPMD
         if (fileName == null) {
             throw new WcException(ERR_GENERAL);
         }
@@ -208,35 +214,32 @@ public class WcApplication implements WcInterface {
         long[] count = {};
 
         for (String file : fileName) {
-            if (file.equals("-")) {
+            if ("-".equals(file)) {
                 count = getCountReport(stdin);
             } else {
                 File node = IOUtils.resolveFilePath(file).toFile();
                 if (!node.exists()) {
-                    result.add("wc: " + ERR_FILE_NOT_FOUND);
+                    result.add(WC_ERROR_START + ERR_FILE_NOT_FOUND);
                     continue;
                 }
                 if (node.isDirectory()) {
-                    result.add("wc: " + ERR_IS_DIR);
+                    result.add(WC_ERROR_START + ERR_IS_DIR);
                     continue;
                 }
                 if (!node.canRead()) {
-                    result.add("wc: " + ERR_NO_PERM);
+                    result.add(WC_ERROR_START + ERR_NO_PERM);
                     continue;
                 }
 
-                InputStream input = null;
-                try {
-                    input = IOUtils.openInputStream(file);
+                try (InputStream input = IOUtils.openInputStream(file)) {
+                    count = getCountReport(input); // lines words bytes
+
                 } catch (ShellException e) {
                     throw new WcException(e.getMessage());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
-                count = getCountReport(input); // lines words bytes
-                try {
-                    IOUtils.closeInputStream(input);
-                } catch (ShellException e) {
-                    throw new WcException(e.getMessage());
-                }
+
             }
 
             // Update total count
@@ -262,7 +265,9 @@ public class WcApplication implements WcInterface {
                 sb.append(String.format(NUMBER_FORMAT, count[BYTES_INDEX]));
             }
 
-            if (!file.equals("-")) {
+            if ("-".equals(file)) {
+                sb.append((" -"));
+            } else {
                 sb.append(String.format(" %s", file));
             }
             result.add(sb.toString());
@@ -288,7 +293,7 @@ public class WcApplication implements WcInterface {
             sb.append(" total");
             result.add(sb.toString());
         }
-        return String.join(STRING_NEWLINE, result);
+        return String.join(STRING_NEWLINE, result) + STRING_NEWLINE;
     }
 
     /**

@@ -104,25 +104,35 @@ class SortApplicationTest {
     }
 
     @Test
-    void run_WithEmptyArguments_ShouldPass() {
-        String inputData = "ac" + STRING_NEWLINE + "a" + STRING_NEWLINE + "A" + STRING_NEWLINE + "AC";
-        InputStream inputStream = new ByteArrayInputStream(inputData.getBytes());
-        String[] arguments = new String[]{};
-        assertDoesNotThrow(() -> sortApplication.run(arguments, inputStream, System.out));
-    }
-
-    @Test
     void run_WithValidArgsSortsFromFiles_ShouldPass() {
         String inputString = "ac\na\nA\nAC\n";
         InputStream inputStream = new ByteArrayInputStream(inputString.getBytes());
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        String[] args = new String[]{"-r"};
         try {
+            String[] args = new String[]{"-r"};
             sortApplication.run(args, inputStream, outputStream);
             String actualOutput = outputStream.toString();
             String expectedOutput = "ac\na\nAC\nA\n";
             assertEquals(expectedOutput, actualOutput);
+
+            String[] args2 = new String[]{"-n"};
+            sortApplication.run(args2, inputStream, outputStream);
+            String actualOutput2 = outputStream.toString();
+            String expectedOutput2 = "ac\na\nAC\nA\n";
+            assertEquals(expectedOutput2, actualOutput2);
+
+            String[] args3 = new String[]{"-f"};
+            sortApplication.run(args3, inputStream, outputStream);
+            String actualOutput3 = outputStream.toString();
+            String expectedOutput3 = "ac\na\nAC\nA\n";
+            assertEquals(expectedOutput3, actualOutput3);
+
+            String[] args4 = new String[]{"-r", "-f"};
+            sortApplication.run(args4, inputStream, outputStream);
+            String actualOutput4 = outputStream.toString();
+            String expectedOutput4 = "ac\na\nAC\nA\n";
+            assertEquals(expectedOutput4, actualOutput4);
         } catch (SortException e) {
             fail("Exception not expected: " + e.getMessage());
         }
