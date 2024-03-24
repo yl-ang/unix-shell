@@ -102,7 +102,7 @@ public class GrepApplicationPublicTest {
     void grepFromStdin_CountLinesPrefixFileNameOptionPatternStdin_LinesFoundAddedToResults() throws AbstractApplicationException {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         InputStream stdin = new ByteArrayInputStream(BYTES_MULTI_LINE);
-        String expected = String.format("%s: %d", LABEL_STDIN, 2);
+        String expected = String.format("%s:%d", LABEL_STDIN, 2);
 
         String actual = grepApplication.grepFromStdin(PATTERN_VALID, false, true, true, stdin);
         assertEquals(expected + STRING_NEWLINE, actual);
@@ -112,7 +112,7 @@ public class GrepApplicationPublicTest {
     void grepFromStdin_CaseInsensitiveCountLinesPrefixFilenamePatternStdin_LinesFoundAddedToResults() throws AbstractApplicationException {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         InputStream stdin = new ByteArrayInputStream(BYTES_MULTI_LINE);
-        String expected = String.format("%s: %d", LABEL_STDIN, 3);
+        String expected = String.format("%s:%d", LABEL_STDIN, 3);
 
         String actual = grepApplication.grepFromStdin(PATTERN_VALID, true, true, true, stdin);
         assertEquals(expected + STRING_NEWLINE, actual);

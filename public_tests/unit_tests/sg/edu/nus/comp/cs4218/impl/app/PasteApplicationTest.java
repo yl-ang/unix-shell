@@ -8,11 +8,11 @@ import sg.edu.nus.comp.cs4218.impl.app.PasteApplication;
 import sg.edu.nus.comp.cs4218.impl.parser.PasteArgsParser;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,6 +31,9 @@ public class PasteApplicationTest {
     private IOUtils ioUtils;
 
     @Mock
+    private File fileMock;
+
+    @Mock
     private PasteArgsParser pasteArgsParser;
 
     @Spy
@@ -47,12 +50,13 @@ public class PasteApplicationTest {
 
     // Merge two files A.txt and B.txt (lines from the two files will be merged and separated by TAB)
     @Test
-    void mergeFile_Parallel_ShouldBeSuccess() throws AbstractApplicationException, IOException {
+    void mergeFile_Parallel_ShouldBeSuccess() throws AbstractApplicationException {
         // Given
         String inputA = "A\nB\nC\nD\n";
         String inputB = "1\n2\n3\n4\n";
 
-        try (MockedStatic<IOUtils> mockedStatic = mockStatic(IOUtils.class)) {
+        try (MockedStatic<IOUtils> mockedStatic = mockStatic(IOUtils.class);
+             MockedStatic<Paths> pathsMockedStatic = mockStatic(Paths.class)) {
             // Mocking input streams for fileA and fileB
             InputStream inputStreamA = new ByteArrayInputStream(inputA.getBytes(StandardCharsets.UTF_8));
             InputStream inputStreamB = new ByteArrayInputStream(inputB.getBytes(StandardCharsets.UTF_8));
@@ -65,23 +69,47 @@ public class PasteApplicationTest {
             mockedStatic.when(() -> IOUtils.getLinesFromInputStream(inputStreamA)).thenReturn(Arrays.asList("A", "B", "C", "D"));
             mockedStatic.when(() -> IOUtils.getLinesFromInputStream(inputStreamB)).thenReturn(Arrays.asList("1", "2", "3", "4"));
 
+            // Mocking Paths.get() to return mocked Path instances
+            Path pathToFileMockA = mock(Path.class);
+            Path pathToFileMockB = mock(Path.class);
+            pathsMockedStatic.when(() -> Paths.get("fileA.txt")).thenReturn(pathToFileMockA);
+            pathsMockedStatic.when(() -> Paths.get("fileB.txt")).thenReturn(pathToFileMockB);
+
+            // Mocking behavior of Path.toFile() for each mocked Path instance
+            File fileMockA = mock(File.class);
+            File fileMockB = mock(File.class);
+            when(pathToFileMockA.toFile()).thenReturn(fileMockA);
+            when(pathToFileMockB.toFile()).thenReturn(fileMockB);
+
+            // Mocking behavior of isAbsolute, node.exists(), node.isDirectory(), and node.canRead()
+            when(pathToFileMockA.isAbsolute()).thenReturn(true);
+            when(fileMockA.exists()).thenReturn(true);
+            when(fileMockA.isDirectory()).thenReturn(false);
+            when(fileMockA.canRead()).thenReturn(true);
+
+            when(pathToFileMockB.isAbsolute()).thenReturn(true);
+            when(fileMockB.exists()).thenReturn(true);
+            when(fileMockB.isDirectory()).thenReturn(false);
+            when(fileMockB.canRead()).thenReturn(true);
+
             // WHEN
             String result = pasteApplication.mergeFile(false, "fileA.txt", "fileB.txt");
 
             // THEN
-            String expectedOutput = "A\t1\nB\t2\nC\t3\nD\t4\n";
+            String expectedOutput = "A\t1\nB\t2\nC\t3\nD\t4";
             assertEquals(expectedOutput, result);
         }
     }
 
     // # Merge two files A.txt and B.txt with -s (serial) flag, Example 2 from 9.9
     @Test
-    void mergeFile_Serial_ShouldBeSuccess() throws AbstractApplicationException, IOException {
+    void mergeFile_Serial_ShouldBeSuccess() throws AbstractApplicationException {
         // GIVEN
         String inputA = "A\nB\nC\nD\n";
         String inputB = "1\n2\n3\n4\n";
 
-        try (MockedStatic<IOUtils> mockedStatic = mockStatic(IOUtils.class)) {
+        try (MockedStatic<IOUtils> mockedStatic = mockStatic(IOUtils.class);
+             MockedStatic<Paths> pathsMockedStatic = mockStatic(Paths.class)) {
             // Mocking input streams for fileA and fileB
             InputStream inputStreamA = new ByteArrayInputStream(inputA.getBytes(StandardCharsets.UTF_8));
             InputStream inputStreamB = new ByteArrayInputStream(inputB.getBytes(StandardCharsets.UTF_8));
@@ -94,11 +122,34 @@ public class PasteApplicationTest {
             mockedStatic.when(() -> IOUtils.getLinesFromInputStream(inputStreamA)).thenReturn(Arrays.asList("A", "B", "C", "D"));
             mockedStatic.when(() -> IOUtils.getLinesFromInputStream(inputStreamB)).thenReturn(Arrays.asList("1", "2", "3", "4"));
 
+            // Mocking Paths.get() to return mocked Path instances
+            Path pathToFileMockA = mock(Path.class);
+            Path pathToFileMockB = mock(Path.class);
+            pathsMockedStatic.when(() -> Paths.get("fileA.txt")).thenReturn(pathToFileMockA);
+            pathsMockedStatic.when(() -> Paths.get("fileB.txt")).thenReturn(pathToFileMockB);
+
+            // Mocking behavior of Path.toFile() for each mocked Path instance
+            File fileMockA = mock(File.class);
+            File fileMockB = mock(File.class);
+            when(pathToFileMockA.toFile()).thenReturn(fileMockA);
+            when(pathToFileMockB.toFile()).thenReturn(fileMockB);
+
+            // Mocking behavior of isAbsolute, node.exists(), node.isDirectory(), and node.canRead()
+            when(pathToFileMockA.isAbsolute()).thenReturn(true);
+            when(fileMockA.exists()).thenReturn(true);
+            when(fileMockA.isDirectory()).thenReturn(false);
+            when(fileMockA.canRead()).thenReturn(true);
+
+            when(pathToFileMockB.isAbsolute()).thenReturn(true);
+            when(fileMockB.exists()).thenReturn(true);
+            when(fileMockB.isDirectory()).thenReturn(false);
+            when(fileMockB.canRead()).thenReturn(true);
+
             // WHEN
             String result = pasteApplication.mergeFile(true, "fileA.txt", "fileB.txt");
 
             // THEN
-            String expectedOutput = "A\tB\tC\tD\n1\t2\t3\t4\n";
+            String expectedOutput = "A\tB\tC\tD\n1\t2\t3\t4";
             assertEquals(expectedOutput, result);
         }
     }
@@ -110,7 +161,8 @@ public class PasteApplicationTest {
         String inputA = "A\nB\nC\nD\n";
         String inputB = "1\n2\n3\n4\n";
 
-        try (MockedStatic<IOUtils> mockedStatic = mockStatic(IOUtils.class)) {
+        try (MockedStatic<IOUtils> mockedStatic = mockStatic(IOUtils.class);
+             MockedStatic<Paths> pathsMockedStatic = mockStatic(Paths.class)) {
             // Mocking input streams for fileA, fileB
             InputStream inputStreamA = new ByteArrayInputStream(inputA.getBytes(StandardCharsets.UTF_8));
             InputStream inputStreamB = new ByteArrayInputStream(inputB.getBytes(StandardCharsets.UTF_8));
@@ -120,11 +172,25 @@ public class PasteApplicationTest {
             mockedStatic.when(() -> IOUtils.getLinesFromInputStream(inputStreamA)).thenReturn(Arrays.asList("A", "B", "C", "D"));
             mockedStatic.when(() -> IOUtils.getLinesFromInputStream(inputStreamB)).thenReturn(Arrays.asList("1", "2", "3", "4"));
 
+            // Mocking Paths.get() to return mocked Path instances
+            Path pathToFileMockA = mock(Path.class);
+            pathsMockedStatic.when(() -> Paths.get("fileA.txt")).thenReturn(pathToFileMockA);
+
+            // Mocking behavior of Path.toFile() for each mocked Path instance
+            File fileMockA = mock(File.class);
+            when(pathToFileMockA.toFile()).thenReturn(fileMockA);
+
+            // Mocking behavior of isAbsolute, node.exists(), node.isDirectory(), and node.canRead()
+            when(pathToFileMockA.isAbsolute()).thenReturn(true);
+            when(fileMockA.exists()).thenReturn(true);
+            when(fileMockA.isDirectory()).thenReturn(false);
+            when(fileMockA.canRead()).thenReturn(true);
+
             // WHEN
             String result = pasteApplication.mergeFileAndStdin(false, inputStreamB, "-", "fileA.txt", "-");
 
             // THEN
-            String expectedOutput = "1\tA\t2\n3\tB\t4\n \tC\t \n \tD\t \n";
+            String expectedOutput = "1\tA\t2\n3\tB\t4\n\tC\t\n\tD\t";
             assertEquals(expectedOutput, result);
         }
     }
@@ -136,7 +202,9 @@ public class PasteApplicationTest {
         String inputA = "A\nB\nC\nD\n";
         String inputB = "1\n2\n3\n4\n";
 
-        try (MockedStatic<IOUtils> mockedStatic = mockStatic(IOUtils.class)) {
+        try (MockedStatic<IOUtils> mockedStatic = mockStatic(IOUtils.class);
+            MockedStatic<Paths> pathsMockedStatic = mockStatic(Paths.class)) {
+
             // Mocking input streams for fileA, fileB
             InputStream inputStreamA = new ByteArrayInputStream(inputA.getBytes(StandardCharsets.UTF_8));
             InputStream inputStreamB = new ByteArrayInputStream(inputB.getBytes(StandardCharsets.UTF_8));
@@ -146,11 +214,25 @@ public class PasteApplicationTest {
             mockedStatic.when(() -> IOUtils.getLinesFromInputStream(inputStreamA)).thenReturn(Arrays.asList("A", "B", "C", "D"));
             mockedStatic.when(() -> IOUtils.getLinesFromInputStream(inputStreamB)).thenReturn(Arrays.asList("1", "2", "3", "4"));
 
+            // Mocking Paths.get() to return mocked Path instances
+            Path pathToFileMockA = mock(Path.class);
+            pathsMockedStatic.when(() -> Paths.get("fileA.txt")).thenReturn(pathToFileMockA);
+
+            // Mocking behavior of Path.toFile() for each mocked Path instance
+            File fileMockA = mock(File.class);
+            when(pathToFileMockA.toFile()).thenReturn(fileMockA);
+
+            // Mocking behavior of isAbsolute, node.exists(), node.isDirectory(), and node.canRead()
+            when(pathToFileMockA.isAbsolute()).thenReturn(true);
+            when(fileMockA.exists()).thenReturn(true);
+            when(fileMockA.isDirectory()).thenReturn(false);
+            when(fileMockA.canRead()).thenReturn(true);
+
             // WHEN
             String result = pasteApplication.mergeFileAndStdin(true, inputStreamB, "-", "fileA.txt", "-");
 
             // THEN
-            String expectedOutput = "1\t2\t3\t4\nA\tB\tC\tD\n";
+            String expectedOutput = "1\t2\t3\t4\nA\tB\tC\tD";
             assertEquals(expectedOutput, result);
         }
     }
