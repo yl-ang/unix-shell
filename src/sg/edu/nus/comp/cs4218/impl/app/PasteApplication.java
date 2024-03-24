@@ -260,7 +260,7 @@ public class PasteApplication implements PasteInterface  {
                 if (i < lines.size()) {
                     mergedLines.append(lines.get(i)).append(CHAR_TAB);
                 } else {
-                    mergedLines.append(" ").append(CHAR_TAB);
+                    mergedLines.append(CHAR_TAB);
                 }
             }
             mergedLines.deleteCharAt(mergedLines.length() - 1);
