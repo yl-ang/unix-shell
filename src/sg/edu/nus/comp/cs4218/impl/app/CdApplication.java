@@ -19,7 +19,16 @@ public class CdApplication implements CdInterface {
 
     @Override
     public void changeToDirectory(String path) throws CdException {
-        Environment.currentDirectory = getNormalizedAbsolutePath(path);
+
+
+
+        String result = getNormalizedAbsolutePath(path);
+        File file = new File(result);
+        if (!file.canExecute()) {
+            throw new CdException(String.format(ERR_NO_PERM, file));
+        } else {
+            Environment.currentDirectory = result;
+        }
     }
 
     /**

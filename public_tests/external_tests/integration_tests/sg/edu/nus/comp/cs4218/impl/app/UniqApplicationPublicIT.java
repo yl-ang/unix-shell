@@ -236,3 +236,4 @@ public class UniqApplicationPublicIT {
         assertThrows(UniqException.class, () -> uniqApplication.run(args, stdin, outputStream));
     }
 }
+
