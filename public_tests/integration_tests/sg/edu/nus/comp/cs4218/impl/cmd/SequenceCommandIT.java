@@ -24,7 +24,6 @@ public class SequenceCommandIT {
     private ApplicationRunner applicationRunner;
     private ByteArrayOutputStream outputStream;
     private final InputStream systemInputStream = System.in;
-
     private static final String STR_FILE_SEP = String.valueOf(CHAR_FILE_SEP);
     private static final String ROOT_DIRECTORY = Environment.currentDirectory;
     private static final String FOLDER_NAME_1 = "folder1";
@@ -154,8 +153,8 @@ public class SequenceCommandIT {
         sequenceCommand.evaluate(systemInputStream, outputStream);
 
         String expectedOutput = """
-                wc: No such file or directory
-                wc: No such file or directory
+                wc: *.txt: No such file or directory
+                wc: *.txt: No such file or directory
                 \t0\t2\t9 file1.txt
                 \t4\t10\t29 file2.txt
                 \t11\t17\t82 file3.txt
@@ -239,7 +238,6 @@ public class SequenceCommandIT {
 
     @Test
     @Tag("SequenceCommandIT:Pairwise:7")
-    @Disabled
     // NEGATIVE TEST CASE - PAIRWISE
     public void callCommandIT_PipeCommandThenCallCommand_ShouldReturnCorrectResult() throws ShellException, FileNotFoundException, AbstractApplicationException {
         String commandInputStr = String.format("echo Hello, World | tee %s %s /%s/%s; echo sequence_continued", FILE_NAME_1, FILE_NAME_2, FOLDER_NAME_NON, FILE_NAME_3);
