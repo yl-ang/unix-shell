@@ -135,6 +135,14 @@ public class TeeApplication implements TeeInterface {
                 }
 
                 File node = pathToFile.toFile();
+
+                // Check if the parent directory exists before attempting to create a new file
+                File parentDir = node.getParentFile();
+                if (parentDir != null && !parentDir.exists()) {
+                    // If the parent directory does not exist, throw an exception and abort
+                    result.add("tee: " + ERR_FILE_NOT_FOUND + STRING_NEWLINE);
+                }
+
                 if (!node.exists()) {
                     boolean isCreated = node.createNewFile();
                     if (!isCreated) {
