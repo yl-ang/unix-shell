@@ -26,9 +26,6 @@ jobs:
       - name: Run Build
         run: mvn clean package
 
-      - name: Run tests with JaCoCo
-        run: mvn -B clean org.jacoco:jacoco-maven-plugin:prepare-agent test
-
       - name: Generate JaCoCo Coverage Report
         run: mvn -B org.jacoco:jacoco-maven-plugin:report
 
