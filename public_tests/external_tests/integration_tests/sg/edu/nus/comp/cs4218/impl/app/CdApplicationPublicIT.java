@@ -88,25 +88,25 @@ class CdApplicationPublicIT {
         assertEquals(tempDir.getAbsolutePath(), currDirectory);
     }
 
-//    // Cd with no args
-//    @Test
-//    public void run_CdWithNoArgs_Success() throws Exception {
-//        String finalPath = System.getProperty("user.dir");
-//        String[] argList = new String[]{};
-//        cdApplication.run(argList, System.in, System.out);
-//        String currDirectory = TestEnvironmentUtil.getCurrentDirectory();
-//        assertEquals(finalPath, currDirectory);
-//    }
-//
-//    // Cd with blank arg
-//    @Test
-//    public void run_CdIntoBlankPath_Success() throws Exception {
-//        String finalPath = System.getProperty("user.dir");
-//        String[] argList = new String[]{""};
-//        cdApplication.run(argList, System.in, System.out);
-//        String currDirectory = TestEnvironmentUtil.getCurrentDirectory();
-//        assertEquals(finalPath, currDirectory);
-//    }
+    // Cd with no args
+    @Test
+    public void run_CdWithNoArgs_Success() throws Exception {
+        String finalPath = System.getProperty("user.dir");
+        String[] argList = new String[]{};
+        cdApplication.run(argList, System.in, System.out);
+        String currDirectory = TestEnvironmentUtil.getCurrentDirectory();
+        assertEquals(finalPath, currDirectory);
+    }
+
+    // Cd with blank arg
+    @Test
+    public void run_CdIntoBlankPath_Success() throws Exception {
+        String finalPath = System.getProperty("user.dir");
+        String[] argList = new String[]{""};
+        cdApplication.run(argList, System.in, System.out);
+        String currDirectory = TestEnvironmentUtil.getCurrentDirectory();
+        assertEquals(finalPath, currDirectory);
+    }
 
     // Cd into invalid relative path
     @Test
@@ -140,13 +140,13 @@ class CdApplicationPublicIT {
         assertThrows(CdException.class, () -> cdApplication.run(argList, System.in, System.out));
     }
 
-//    // Cd into folder with no permissions
-//    @Test
-//    @DisabledOnOs(WINDOWS)
-//    public void run_BlockedFolder_ThrowsException() {
-//        String[] argList = new String[]{BLOCKED_FOLDER};
-//        assertThrows(CdException.class, () -> cdApplication.run(argList, System.in, System.out));
-//    }
+    // Cd into folder with no permissions
+    @Test
+    @DisabledOnOs(WINDOWS)
+    public void run_BlockedFolder_ThrowsException() {
+        String[] argList = new String[]{BLOCKED_FOLDER};
+        assertThrows(CdException.class, () -> cdApplication.run(argList, System.in, System.out));
+    }
 
     // Cd with too many args
     @Test
