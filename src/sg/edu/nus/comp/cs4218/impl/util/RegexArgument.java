@@ -4,10 +4,7 @@ import sg.edu.nus.comp.cs4218.Environment;
 
 import java.io.File;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_ASTERISK;
@@ -28,23 +25,19 @@ public final class RegexArgument {
         this();
         merge(str);
     }
-
-//    NOTE: not used, commented out for now
-    // Used for `find` command.
-    // `text` here corresponds to the folder that we want to look in.
-//    public RegexArgument(String str, String text, boolean isRegex) {
-//        this();
-//        this.plaintext.append(text);
-//        this.isRegex = isRegex;
-//        this.regex.append(".*"); // We want to match filenames
-//        for (char c : str.toCharArray()) {
-//            if (c == CHAR_ASTERISK) {
-//                this.regex.append("[^" + StringUtils.fileSeparator() + "]*");
-//            } else {
-//                this.regex.append(Pattern.quote(String.valueOf(c)));
-//            }
-//        }
-//    }
+    public RegexArgument(String str, String text, boolean isRegex) {
+        this();
+        this.plaintext.append(text);
+        this.contentIsRegex = isRegex;
+        this.regex.append(".*"); // We want to match filenames
+        for (char c : str.toCharArray()) {
+            if (c == CHAR_ASTERISK) {
+                this.regex.append("[^").append(StringUtils.fileSeparator()).append("]*");
+            } else {
+                this.regex.append(Pattern.quote(String.valueOf(c)));
+            }
+        }
+    }
 
     public void append(char chr) {
         plaintext.append(chr);
@@ -87,8 +80,8 @@ public final class RegexArgument {
 
             File currentDir = Paths.get(Environment.currentDirectory + File.separator + dir).toFile();
 
-            for (String candidate : currentDir.list()) {
-                if (regexPattern.matcher(candidate).matches()) {
+            for (String candidate : Objects.requireNonNull(currentDir.list())) {
+                if (regexPattern.matcher(dir + candidate).matches()) {
                     globbedFiles.add(dir + candidate);
                 }
             }
@@ -147,7 +140,7 @@ public final class RegexArgument {
     }
 
     public boolean isEmpty() {
-        return plaintext.length() == 0;
+        return plaintext.isEmpty();
     }
 
     public String toString() {
