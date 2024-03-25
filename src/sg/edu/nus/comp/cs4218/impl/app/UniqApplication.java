@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_SPACE;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class UniqApplication implements UniqInterface {
@@ -204,7 +205,7 @@ public class UniqApplication implements UniqInterface {
     // Helper method to append a single line to the output.
     private void appendLine(StringBuilder output, Boolean isCount, String line, int count) {
         if (isCount) {
-            output.append("\t").append(count).append(" ");
+            output.append("\t").append(count).append(CHAR_SPACE);
         }
         output.append(line).append("\n");
     }
