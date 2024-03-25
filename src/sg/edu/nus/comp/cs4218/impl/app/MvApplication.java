@@ -82,24 +82,25 @@ public class MvApplication implements MvInterface {
 
     @Override
     public String mvFilesToFolder(Boolean isOverwrite, String destFolder, String... fileName) throws MvException {
-        MvUtils.checkFileExists(destFolder);
+        for (String srcfile : fileName) {
+            MvUtils.checkFileExists(srcfile);
+            MvUtils.checkFileExists(destFolder);
 
-        if (!MvUtils.isDirectory(destFolder)) {
-            throw new MvException(ERR_IS_NOT_DIR + ": " + destFolder);
-        }
+            if (!MvUtils.isDirectory(destFolder)) {
+                throw new MvException(ERR_IS_NOT_DIR + ": " + destFolder);
+            }
 
-        MvException mvException = null;
-        for (String srcFile : fileName) {
+            MvException mvException = null;
             try {
-                mvSrcFileToDestFile(isOverwrite, srcFile, destFolder);
+                mvSrcFileToDestFile(isOverwrite, srcfile, destFolder);
             } catch (MvException e) {
-                mvException = e;
+                    mvException = e;
+            }
+
+            if (mvException != null) {
+                throw mvException;
             }
         }
-        if (mvException != null) {
-            throw mvException;
-        }
-
         return destFolder;
     }
 }
