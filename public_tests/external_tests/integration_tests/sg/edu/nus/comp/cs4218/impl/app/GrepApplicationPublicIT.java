@@ -352,3 +352,4 @@ public class GrepApplicationPublicIT {
         assertThrows(GrepException.class, () -> grepApplication.run(new String[]{"-c"}, System.in, System.out));
     }
 }
+

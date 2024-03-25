@@ -1,0 +1,32 @@
+name: CI with Code Coverage
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'oracle'
+          java-version: '17'
+          cache: maven
+
+      - name: Run Build
+        run: mvn clean package
+
+      - name: Run tests with JaCoCo
+        run: mvn -B clean org.jacoco:jacoco-maven-plugin:prepare-agent test
+
+      - name: Generate JaCoCo Coverage Report
+        run: mvn -B org.jacoco:jacoco-maven-plugin:report
+
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage-report
+          path: target/site/jacoco/index.html
