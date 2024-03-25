@@ -129,12 +129,11 @@ public class CallCommandIT {
     }
 
     @AfterAll
-    static void cleanUp() throws IOException {
+    static void cleanUp() {
         Environment.currentDirectory = ROOT_DIRECTORY;
     }
 
     // POSITIVE TEST CASE - PAIRWISE TESTING
-
 
     @Test
     @Tag("CallCommandIT:Pairwise:1")
@@ -379,8 +378,9 @@ public class CallCommandIT {
     @Test
     @Tag("CallCommandIT:Pairwise:12")
     // NEGATIVE TEST CASE - PAIRWISE
-    public void callCommandIT_CatCommandRedirectInputWithGlobbingDoubleQuoteSingleOption_ShouldReturnCorrectResult() throws FileNotFoundException, AbstractApplicationException, ShellException {
-        List<String> args = List.of(APP_CAT, STR_FLAG_PREFIX + FLAG_IS_LINE_NUMBER, STR_REDIR_INPUT, CHAR_DOUBLE_QUOTE + FILE_GLOBBING + CHAR_DOUBLE_QUOTE);
+    // RENAMED
+    public void callCommandIT_CatCommandRedirectInputWithGlobbingDoubleQuoteSingleOption_ShouldReturnNegativeOutput() throws FileNotFoundException, AbstractApplicationException, ShellException {
+        List<String> args = List.of(APP_CAT, STR_FLAG_PREFIX + FLAG_IS_LINE_NUMBER , STR_REDIR_INPUT, CHAR_DOUBLE_QUOTE + FILE_GLOBBING + CHAR_DOUBLE_QUOTE);
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
 
         Exception exception = assertThrows(ShellException.class, () -> callCommand.evaluate(systemInputStream, outputStream));
