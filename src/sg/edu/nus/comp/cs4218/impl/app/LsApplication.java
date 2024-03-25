@@ -57,7 +57,7 @@ public class LsApplication implements LsInterface {
             paths = resolvePaths(folderName);
         }
 
-        return buildResult(paths, isRecursive, isSortByExt);
+        return buildResult(paths, isRecursive, isSortByExt, true);
     }
 
     @Override
@@ -118,9 +118,10 @@ public class LsApplication implements LsInterface {
      * @param isSortByExt - sorts folder contents alphabetically by file extension (characters after the last ‘.’ (without quotes)). Files with no extension are sorted first.
      * @return String to be written to output stream.
      */
-    private String buildResult(List<Path> paths, Boolean isRecursive, Boolean isSortByExt) {
+    private String buildResult(List<Path> paths, Boolean isRecursive, Boolean isSortByExt, Boolean isTopLevel) {
         StringBuilder result = new StringBuilder();
-        for (Path path : paths) {
+        for (int i = 0; i < paths.size(); i++) {
+            Path path = paths.get(i);
             try {
                 List<Path> contents = getContents(path);
                 String formatted = formatContents(contents, isSortByExt);
@@ -137,7 +138,7 @@ public class LsApplication implements LsInterface {
 
                 // RECURSE!
                 if (isRecursive) {
-                    result.append(buildResult(contents, isRecursive, isSortByExt));
+                    result.append(buildResult(contents, true, isSortByExt, false));
                 }
             } catch (InvalidDirectoryException e) {
                 // NOTE: This is pretty hackish IMO - we should find a way to change this
@@ -155,6 +156,10 @@ public class LsApplication implements LsInterface {
                         result.append('\n');
                     }
                 }
+            }
+
+            if (isRecursive && isTopLevel && paths.size() > 1 && i != paths.size() - 1) {
+                result.append("\n\n");
             }
         }
 
