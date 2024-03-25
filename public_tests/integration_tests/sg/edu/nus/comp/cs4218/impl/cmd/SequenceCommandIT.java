@@ -343,7 +343,7 @@ public class SequenceCommandIT {
         Command command = CommandBuilder.parseCommand(commandInputStr, applicationRunner);
         sequenceCommand = (SequenceCommand) command;
         sequenceCommand.evaluate(systemInputStream, outputStream);
-        String expectedOutput = String.join(STRING_NEWLINE, new String[] {"hello world", "9 but not me", "5", "4", "2", "1 but who?"}) + STRING_NEWLINE;
+        String expectedOutput = String.join(STRING_NEWLINE, new String[]{"hello world", "9 but not me", "5", "4", "2", "1 but who?"}) + STRING_NEWLINE;
         assertEquals(expectedOutput, outputStream.toString());
     }
 
@@ -354,7 +354,7 @@ public class SequenceCommandIT {
         Command command = CommandBuilder.parseCommand(commandInputStr, applicationRunner);
         sequenceCommand = (SequenceCommand) command;
         sequenceCommand.evaluate(systemInputStream, outputStream);
-        String expectedOutput = String.join(STRING_NEWLINE, new String[] {"hello world","1 but who?", "2", "9 but not me", "4", "5" }) + STRING_NEWLINE;
+        String expectedOutput = String.join(STRING_NEWLINE, new String[]{"hello world", "1 but who?", "2", "9 but not me", "4", "5"}) + STRING_NEWLINE;
         assertEquals(expectedOutput, outputStream.toString());
     }
 
@@ -390,7 +390,7 @@ public class SequenceCommandIT {
         Command command = CommandBuilder.parseCommand(commandInputStr, applicationRunner);
         sequenceCommand = (SequenceCommand) command;
         sequenceCommand.evaluate(systemInputStream, outputStream);
-        String expectedOutput = String.join(STRING_NEWLINE, new String[] {"cd: No such file or directory", "9 but not me", "5", "4", "2", "1 but who?"}) + STRING_NEWLINE;
+        String expectedOutput = String.join(STRING_NEWLINE, new String[]{"cd: No such file or directory", "9 but not me", "5", "4", "2", "1 but who?"}) + STRING_NEWLINE;
         assertEquals(expectedOutput, outputStream.toString());
     }
 
@@ -400,7 +400,7 @@ public class SequenceCommandIT {
         Command command = CommandBuilder.parseCommand(commandInputStr, applicationRunner);
         sequenceCommand = (SequenceCommand) command;
         sequenceCommand.evaluate(systemInputStream, outputStream);
-        String expectedOutput = String.join(STRING_NEWLINE, new String[] {"cd: No such file or directory","1 but who?", "2", "9 but not me", "4", "5" }) + STRING_NEWLINE;
+        String expectedOutput = String.join(STRING_NEWLINE, new String[]{"cd: No such file or directory", "1 but who?", "2", "9 but not me", "4", "5"}) + STRING_NEWLINE;
         assertEquals(expectedOutput, outputStream.toString());
     }
 
@@ -408,18 +408,18 @@ public class SequenceCommandIT {
     public void sequenceCommandIT_BF1Application_ShouldReturnCorrectOutput() throws ShellException, IOException, AbstractApplicationException {
         String commandInputStr = String.format(
                 "mkdir %s; " +
-                "cd %s; " +
-                "cat %s; " +
-                "echo chicken-rice; " +
-                "wc %s; sort -n -r %s",
+                        "cd %s; " +
+                        "cat %s; " +
+                        "echo chicken-rice; " +
+                        "wc %s; sort -n -r %s",
                 FOLDER_NAME_2, FOLDER_NAME_2, FILE_NAME_2, FILE_NAME_1, FILE_NAME_1);
         Command command = CommandBuilder.parseCommand(commandInputStr, applicationRunner);
         sequenceCommand = (SequenceCommand) command;
         sequenceCommand.evaluate(systemInputStream, outputStream);
-        String[] expectedOResultArr = new String[] {
+        String[] expectedOResultArr = new String[]{
                 String.format("cat: %s: No such file or directory", FILE_NAME_2),
                 "chicken-rice",
-                "wc: No such file or directory",
+                String.format("wc: %s: No such file or directory", FILE_NAME_1),
                 "sort: No such file or directory"
         };
         String expectedOutput = String.join(STRING_NEWLINE, expectedOResultArr) + STRING_NEWLINE;

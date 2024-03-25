@@ -95,15 +95,15 @@ public class WcApplication implements WcInterface {
         for (String file : fileName) {
             File node = IOUtils.resolveFilePath(file).toFile();
             if (!node.exists()) {
-                result.add(WC_ERROR_START + ERR_FILE_NOT_FOUND);
+                result.add(WC_ERROR_START + file + ": " + ERR_FILE_NOT_FOUND);
                 continue;
             }
             if (node.isDirectory()) {
-                result.add(WC_ERROR_START + ERR_IS_DIR);
+                result.add(WC_ERROR_START + file + ": " + ERR_IS_DIR);
                 continue;
             }
             if (!node.canRead()) {
-                result.add(WC_ERROR_START + ERR_NO_PERM);
+                result.add(WC_ERROR_START + file + ": " + ERR_NO_PERM);
                 continue;
             }
             long[] count;
@@ -219,15 +219,15 @@ public class WcApplication implements WcInterface {
             } else {
                 File node = IOUtils.resolveFilePath(file).toFile();
                 if (!node.exists()) {
-                    result.add(WC_ERROR_START + ERR_FILE_NOT_FOUND);
+                    result.add(WC_ERROR_START + file + ": " + ERR_FILE_NOT_FOUND);
                     continue;
                 }
                 if (node.isDirectory()) {
-                    result.add(WC_ERROR_START + ERR_IS_DIR);
+                    result.add(WC_ERROR_START + file + ": " + ERR_IS_DIR);
                     continue;
                 }
                 if (!node.canRead()) {
-                    result.add(WC_ERROR_START + ERR_NO_PERM);
+                    result.add(WC_ERROR_START + file + ": " + ERR_NO_PERM);
                     continue;
                 }
 

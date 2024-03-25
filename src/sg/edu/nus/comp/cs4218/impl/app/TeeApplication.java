@@ -21,6 +21,7 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 @SuppressWarnings({"PMD.PreserveStackTrace"})   // Suppress as exception is thrown in the catch block
 public class TeeApplication implements TeeInterface {
 
+    private static final String TEE_ERROR_START = "tee: ";
 
     /**
      * Runs the tee application with the specified arguments.
@@ -84,7 +85,7 @@ public class TeeApplication implements TeeInterface {
 
         for (String file : fileName) {
             if (file == null) {
-                result.add("tee: " + ERR_NULL_ARGS + STRING_NEWLINE);
+                result.add(TEE_ERROR_START + ERR_NULL_ARGS + STRING_NEWLINE);
                 inValidFiles.add(file);
                 continue;
             }
@@ -93,12 +94,12 @@ public class TeeApplication implements TeeInterface {
                 continue;
             }
             if (node.isDirectory()) {
-                result.add("tee: " + ERR_IS_DIR + STRING_NEWLINE);
+                result.add(TEE_ERROR_START + file + ": " + ERR_IS_DIR + STRING_NEWLINE);
                 inValidFiles.add(file);
                 continue;
             }
             if (!node.canWrite()) {
-                result.add("tee: " + ERR_NO_PERM_WRITE_FILE + STRING_NEWLINE);
+                result.add(TEE_ERROR_START + file + ": " + ERR_NO_PERM_WRITE_FILE + STRING_NEWLINE);
                 inValidFiles.add(file);
                 continue;
             }
@@ -135,6 +136,15 @@ public class TeeApplication implements TeeInterface {
                 }
 
                 File node = pathToFile.toFile();
+
+                // Check if the parent directory exists before attempting to create a new file
+                File parentDir = node.getParentFile();
+                if (parentDir != null && !parentDir.exists()) {
+                    // If the parent directory does not exist, throw an exception and abort
+                    result.add(TEE_ERROR_START + file + ": " + ERR_FILE_NOT_FOUND + STRING_NEWLINE);
+                    continue;
+                }
+
                 if (!node.exists()) {
                     boolean isCreated = node.createNewFile();
                     if (!isCreated) {
