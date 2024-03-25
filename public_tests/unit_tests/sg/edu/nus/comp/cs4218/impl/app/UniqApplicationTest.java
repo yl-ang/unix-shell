@@ -125,8 +125,6 @@ public class UniqApplicationTest {
         String output = uniqApplication.uniqFromFile(false, false, false, TEST_FILENAME, OUTPUTTEST_FILENAME);
         Path path = Paths.get(OUTPUTTEST_FILENAME);
         Files.write(path, output.getBytes());
-
-        // Read the content of the output test file
         String actualOutput = new String(Files.readAllBytes(path));
         assertEquals(EXPECTEDOUTPUT_UNIQ, actualOutput);
     }
