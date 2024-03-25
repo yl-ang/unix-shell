@@ -84,7 +84,7 @@ public class TeeApplication implements TeeInterface {
 
         for (String file : fileName) {
             if (file == null) {
-                result.add("tee: " + ERR_NULL_ARGS + STRING_NEWLINE);
+                result.add("tee: " + file + ": " + ERR_NULL_ARGS + STRING_NEWLINE);
                 inValidFiles.add(file);
                 continue;
             }
@@ -93,12 +93,12 @@ public class TeeApplication implements TeeInterface {
                 continue;
             }
             if (node.isDirectory()) {
-                result.add("tee: " + ERR_IS_DIR + STRING_NEWLINE);
+                result.add("tee: " + file + ": " + ERR_IS_DIR + STRING_NEWLINE);
                 inValidFiles.add(file);
                 continue;
             }
             if (!node.canWrite()) {
-                result.add("tee: " + ERR_NO_PERM_WRITE_FILE + STRING_NEWLINE);
+                result.add("tee: " + file + ": " + ERR_NO_PERM_WRITE_FILE + STRING_NEWLINE);
                 inValidFiles.add(file);
                 continue;
             }
@@ -140,7 +140,8 @@ public class TeeApplication implements TeeInterface {
                 File parentDir = node.getParentFile();
                 if (parentDir != null && !parentDir.exists()) {
                     // If the parent directory does not exist, throw an exception and abort
-                    result.add("tee: " + ERR_FILE_NOT_FOUND + STRING_NEWLINE);
+                    result.add("tee: " + file + ": " + ERR_FILE_NOT_FOUND + STRING_NEWLINE);
+                    continue;
                 }
 
                 if (!node.exists()) {
