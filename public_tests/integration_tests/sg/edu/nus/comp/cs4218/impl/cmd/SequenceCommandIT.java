@@ -197,7 +197,6 @@ public class SequenceCommandIT {
 
     @Test
     @Tag("SequenceCommandIT:Pairwise:5")
-    @Disabled
     public void callCommandIT_SequenceCommandThenSequenceCommand_ShouldReturnCorrectResult() throws ShellException, FileNotFoundException, AbstractApplicationException {
         String commandInputStr = String.format("mkdir -p %s; cd %s; ls; mv %s %s; rm -d %s", FOLDER_PATH_SUB, FOLDER_NAME_3, FOLDER_NAME_SUB, FOLDER_NAME_1, FOLDER_NAME_1);
         Command command = CommandBuilder.parseCommand(commandInputStr, applicationRunner);
