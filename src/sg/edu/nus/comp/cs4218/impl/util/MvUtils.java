@@ -4,18 +4,25 @@ import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.MvException;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_BOTH_PATHS_SAME;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NOT_WRITEABLE;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_FILE_ARGS;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_PERM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_PERM_READ_FILE;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class MvUtils {
     /**
@@ -147,6 +154,37 @@ public class MvUtils {
         File destinationFile = new File(String.valueOf(absoluteDestPath));
         if (!isWriteable(destFile) && destinationFile.exists()) {
             throw new MvException(ERR_NOT_WRITEABLE + "dest:" + destFile);
+        }
+    }
+
+//    /**
+//     * Validates source path and end path is different.
+//     *
+//     * @param absoluteSrcPath absolute path of source
+//     * @param endPath end path as a result of the command
+//     * @throws MvException
+//     */
+//    public static void validateEndPathAndSrcPath(Path absoluteSrcPath, Path endPath) throws MvException {
+//        if (absoluteSrcPath.equals(endPath)) {
+//            throw new MvException(ERR_BOTH_PATHS_SAME + absoluteSrcPath + "=" + endPath);
+//        }
+//    }
+
+    /**
+     * Function that checks if the source is a subdirectory of itself.
+     * @param src path of the source
+     * @param dest path of the destination
+     * @throws MvException
+     * @throws IOException
+     */
+    //TODO RENAME FUNC NAME
+    public static void checkFolderIsWithinDirectoryOfFile(Path src, String dest) throws IOException, MvException {
+        File srcDir = src.toFile();
+        Path absoluteDestPath= Path.of(getNormalizedPath(dest));
+        File desDir = absoluteDestPath.toFile();
+        if (srcDir.getParentFile().getCanonicalFile().equals(desDir.getCanonicalFile())) {
+            //TODO CHANGE THIS ERROR
+            throw new MvException(ERR_NO_OSTREAM + ":" + dest);
         }
     }
 
