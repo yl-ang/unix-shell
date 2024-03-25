@@ -205,7 +205,7 @@ public class UniqApplication implements UniqInterface {
     // Helper method to append a single line to the output.
     private void appendLine(StringBuilder output, Boolean isCount, String line, int count) {
         if (isCount) {
-            output.append("\t").append(count).append(CHAR_SPACE);
+            output.append("\t").append(count).append(" ");
         }
         output.append(line).append("\n");
     }

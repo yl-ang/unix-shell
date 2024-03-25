@@ -37,33 +37,33 @@ public class UniqApplicationPublicIT {
 
     private UniqApplication uniqApplication;
 
-    private static final String testInput = CHAR_TAB + "Hello World" + STRING_NEWLINE +
-            CHAR_TAB + "Hello World" + STRING_NEWLINE +
-            CHAR_TAB + "Alice" + STRING_NEWLINE +
-            CHAR_TAB + "Alice" + STRING_NEWLINE +
-            CHAR_TAB + "Bob" + STRING_NEWLINE +
-            CHAR_TAB + "Alice" + STRING_NEWLINE +
-            CHAR_TAB + "Bob" + STRING_NEWLINE;
+    private static final String testInput = "Hello World" + STRING_NEWLINE +
+            "Hello World" + STRING_NEWLINE +
+            "Alice" + STRING_NEWLINE +
+            "Alice" + STRING_NEWLINE +
+            "Bob" + STRING_NEWLINE +
+            "Alice" + STRING_NEWLINE +
+            "Bob" + STRING_NEWLINE;
 
-    private static final String withoutFlagOutput = CHAR_TAB + "Hello World" + STRING_NEWLINE +
-            CHAR_TAB + "Alice" + STRING_NEWLINE +
-            CHAR_TAB + "Bob" + STRING_NEWLINE +
-            CHAR_TAB + "Alice" + STRING_NEWLINE +
-            CHAR_TAB + "Bob" + STRING_NEWLINE;
+    private static final String withoutFlagOutput = "Hello World" + STRING_NEWLINE +
+            "Alice" + STRING_NEWLINE +
+            "Bob" + STRING_NEWLINE +
+            "Alice" + STRING_NEWLINE +
+            "Bob" + STRING_NEWLINE;
 
-    private static final String withCountFlagOutput = CHAR_TAB + "2" + CHAR_SPACE + "Hello World" + STRING_NEWLINE +
+    private static final String withCountFlagOutput = CHAR_TAB + "2 Hello World" + STRING_NEWLINE +
             CHAR_TAB + "2 Alice" + STRING_NEWLINE +
             CHAR_TAB + "1 Bob" + STRING_NEWLINE +
             CHAR_TAB + "1 Alice" + STRING_NEWLINE +
             CHAR_TAB + "1 Bob" + STRING_NEWLINE;
 
-    private static final String withDuplicateFlagOutput = CHAR_TAB + "Hello World" + STRING_NEWLINE +
-            CHAR_TAB + "Alice" + STRING_NEWLINE;
+    private static final String withDuplicateFlagOutput = "Hello World" + STRING_NEWLINE +
+            "Alice" + STRING_NEWLINE;
 
-    private static final String withAllDuplicateFlagOutput = CHAR_TAB + "Hello World" + STRING_NEWLINE +
-            CHAR_TAB + "Hello World" + STRING_NEWLINE +
-            CHAR_TAB + "Alice" + STRING_NEWLINE +
-            CHAR_TAB + "Alice" + STRING_NEWLINE;
+    private static final String withAllDuplicateFlagOutput = "Hello World" + STRING_NEWLINE +
+            "Hello World" + STRING_NEWLINE +
+            "Alice" + STRING_NEWLINE +
+            "Alice" + STRING_NEWLINE;
 
     private static final String withCountAndDuplicateFlagsOutput = CHAR_TAB + "2" + CHAR_SPACE + "Hello World" + STRING_NEWLINE +
             CHAR_TAB + "2 Alice" + STRING_NEWLINE;
