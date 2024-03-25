@@ -90,22 +90,16 @@ class CdApplicationPublicIT {
 
     // Cd with no args
     @Test
-    public void run_CdWithNoArgs_Success() throws Exception {
-        String finalPath = System.getProperty("user.dir");
+    public void run_CdWithNoArgs_ThrowsException() {
         String[] argList = new String[]{};
-        cdApplication.run(argList, System.in, System.out);
-        String currDirectory = TestEnvironmentUtil.getCurrentDirectory();
-        assertEquals(finalPath, currDirectory);
+        assertThrows(CdException.class, () -> cdApplication.run(argList, System.in, System.out));
     }
 
     // Cd with blank arg
     @Test
-    public void run_CdIntoBlankPath_Success() throws Exception {
-        String finalPath = System.getProperty("user.dir");
+    public void run_CdIntoBlankPath_ThrowsException() {
         String[] argList = new String[]{""};
-        cdApplication.run(argList, System.in, System.out);
-        String currDirectory = TestEnvironmentUtil.getCurrentDirectory();
-        assertEquals(finalPath, currDirectory);
+        assertThrows(CdException.class, () -> cdApplication.run(argList, System.in, System.out));
     }
 
     // Cd into invalid relative path
