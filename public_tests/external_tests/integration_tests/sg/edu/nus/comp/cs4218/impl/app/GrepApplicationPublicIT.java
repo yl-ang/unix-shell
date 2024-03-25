@@ -243,7 +243,7 @@ public class GrepApplicationPublicIT {
         ByteArrayInputStream input = new ByteArrayInputStream(inputString.getBytes());
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         grepApplication.run(toArgs("Hi", "a"), input, output);
-        String expected = "(standard input):Abc" + STRING_NEWLINE + "(standard input):aaf" + STRING_NEWLINE;
+        String expected = "(standard input): Abc" + STRING_NEWLINE + "(standard input): aaf" + STRING_NEWLINE;
         assertArrayEquals(expected.getBytes(), output.toByteArray());
     }
 
@@ -253,7 +253,7 @@ public class GrepApplicationPublicIT {
         ByteArrayInputStream input = new ByteArrayInputStream(inputString.getBytes());
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         grepApplication.run(new String[]{"-c", "-Hi", "a"}, input, output);
-        String expected = "(standard input):2" + STRING_NEWLINE;
+        String expected = "(standard input): 2" + STRING_NEWLINE;
         assertArrayEquals(expected.getBytes(), output.toByteArray());
     }
 
@@ -272,7 +272,7 @@ public class GrepApplicationPublicIT {
         ByteArrayInputStream input = new ByteArrayInputStream(inputString.getBytes());
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         grepApplication.run(toArgs("Hi", "d", "-"), input, output);
-        String expected = "(standard input):Dbc" + STRING_NEWLINE + "(standard input):daf" + STRING_NEWLINE;
+        String expected = "(standard input): Dbc" + STRING_NEWLINE + "(standard input): daf" + STRING_NEWLINE;
         assertArrayEquals(expected.getBytes(), output.toByteArray());
     }
 
@@ -282,7 +282,7 @@ public class GrepApplicationPublicIT {
         ByteArrayInputStream input = new ByteArrayInputStream(inputString.getBytes());
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         grepApplication.run(new String[]{"-c", "-Hi", "b", "-"}, input, output);
-        String expected = "(standard input):2" + STRING_NEWLINE;
+        String expected = "(standard input): 2" + STRING_NEWLINE;
         assertArrayEquals(expected.getBytes(), output.toByteArray());
     }
 
@@ -292,7 +292,7 @@ public class GrepApplicationPublicIT {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         Files.write(createFile("aa.txt"), BYTES_B);
         grepApplication.run(toArgs("", "Fi", "-", "aa.txt"), input, output);
-        String expected = "(standard input):First line" + STRING_NEWLINE +
+        String expected = "(standard input): First line" + STRING_NEWLINE +
                 getRelativePath("aa.txt") + ": Fifth line" + STRING_NEWLINE;
         assertArrayEquals(expected.getBytes(), output.toByteArray());
     }
@@ -303,7 +303,7 @@ public class GrepApplicationPublicIT {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         Files.write(createFile("ab.txt"), BYTES_A);
         grepApplication.run(toArgs("Hi", "fi", "-", "ab.txt"), input, output);
-        String expected = "(standard input):Fifth line" + STRING_NEWLINE +
+        String expected = "(standard input): Fifth line" + STRING_NEWLINE +
                 getRelativePath("ab.txt") + ": First line" + STRING_NEWLINE;
         assertArrayEquals(expected.getBytes(), output.toByteArray());
     }
@@ -315,7 +315,7 @@ public class GrepApplicationPublicIT {
         Files.write(createFile("ac.txt"), BYTES_A);
         grepApplication.run(toArgs("cHi", "th", "ac.txt", "-"), input, output);
         String expected = getRelativePath("ac.txt") + ": 2" + STRING_NEWLINE +
-                "(standard input):4" + STRING_NEWLINE;
+                "(standard input): 4" + STRING_NEWLINE;
         assertArrayEquals(expected.getBytes(), output.toByteArray());
     }
 
