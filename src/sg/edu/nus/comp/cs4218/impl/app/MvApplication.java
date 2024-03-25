@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IO_EXCEPTION;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_NOT_DIR;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_TOO_MANY_ARGS;
 
@@ -50,15 +51,14 @@ public class MvApplication implements MvInterface {
         Path absoluteSrcPath = Path.of(MvUtils.getNormalizedPath(srcFile));
         Path absoluteTargetPath = Path.of(MvUtils.getNormalizedPath(destFile));
 
-        if (MvUtils.isDirectory(srcFile) && !MvUtils.isDirectory(destFile)) {
-            throw new MvException(ERR_IS_NOT_DIR + ": " + destFile);
-        }
-
         MvUtils.checkFileExists(srcFile);
-        MvUtils.checkFileExists(destFile);
         MvUtils.checkSrcIsWritable(srcFile);
         MvUtils.checkSrcAndTargetAreDifferent(absoluteSrcPath, absoluteTargetPath);
-
+        try {
+            MvUtils.checkFolderIsWithinDirectoryOfFile(absoluteSrcPath, absoluteTargetPath.toString());
+        } catch(IOException e) {
+            throw new MvException(ERR_IO_EXCEPTION);
+        }
         try {
             if (isOverwrite) {
                 MvUtils.checkDestIsWritable(absoluteTargetPath, destFile);
@@ -70,7 +70,9 @@ public class MvApplication implements MvInterface {
                 if (Files.isDirectory(absoluteTargetPath)) {
                     absoluteTargetPath = absoluteTargetPath.resolve(absoluteSrcPath.getFileName());
                 }
-                Files.move(absoluteSrcPath, absoluteTargetPath);
+                if (!Files.exists(absoluteTargetPath)) {
+                    Files.move(absoluteSrcPath, absoluteTargetPath);
+                }
             }
         } catch (IOException e) {
             throw new MvException(e.getMessage());
