@@ -42,10 +42,8 @@ public class CallCommandIT {
     private ByteArrayOutputStream outputStream;
 
     private final InputStream systemInputStream = System.in;
-
     private static final String STR_FILE_SEP = String.valueOf(CHAR_FILE_SEP);
     private static final String ROOT_DIRECTORY = Environment.currentDirectory;
-
     private static final String FOLDER_NAME_1 = "folder1";
     private static final String FOLDER_NAME_2 = "folder2";
     private static final String FOLDER_NAME_3 = "folder3";
@@ -56,7 +54,6 @@ public class CallCommandIT {
     private static final String FILE_NAME_4 = "file4.txt";
     private static final String FILE_NAME_OUTPUT = "tempfile.txt";
     private static final String FILE_NAME_DYNAMIC = "tempfile2.txt";
-    private static final String FILE_NAME_DYNAMIC_EMPTY = "emptyfile.txt";
     private static final String FILE_NAME_NONE = "nonfile.txt";
     private static final String FILE_GLOBBING = "*.txt";
     private static final String TEXT_DYNAMIC = "This is a dynamic text for testing" + STRING_NEWLINE;
@@ -197,11 +194,6 @@ public class CallCommandIT {
                 \t21 total
                 """;
         assertEquals(expected, fileContent);
-
-        // Clean
-        if (Files.exists(path)) {
-            Files.delete(path);
-        }
     }
 
     @Test
