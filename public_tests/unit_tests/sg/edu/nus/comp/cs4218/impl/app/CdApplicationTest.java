@@ -55,7 +55,7 @@ public class CdApplicationTest {
 
     @Test
     void run_EmptyArgs_ShouldThrowError() {
-        assertThrows(ArrayIndexOutOfBoundsException.class,
+        assertThrows(CdException.class,
                 () -> cdApplication.run(EMPTY_STRING_ARRAY, null, null));
     }
 

@@ -84,7 +84,7 @@ public class TeeApplicationTest {
         String[] fileNames = {"src"};
 
         String output = teeApplication.teeFromStdin(false, inputStdin, fileNames);
-        assertEquals("tee: " + ERR_IS_DIR + "\n" +
+        assertEquals("tee: src: " + ERR_IS_DIR + "\n" +
                 "test tee\n" +
                 "123456789\n", output);
     }
@@ -103,7 +103,7 @@ public class TeeApplicationTest {
 
         // then
         String output = teeApplication.teeFromStdin(false, inputStdin, fileNames);
-        assertEquals("tee: " + ERR_NO_PERM_WRITE_FILE + "\n" + "test tee\n" + "123456789\n", output);
+        assertEquals("tee: fileWithNoWritePermissions.txt: " + ERR_NO_PERM_WRITE_FILE + "\n" + "test tee\n" + "123456789\n", output);
 
         // remove file
         Files.deleteIfExists(filePath);
@@ -145,6 +145,22 @@ public class TeeApplicationTest {
         // check file changed
         String result = new String(Files.readAllBytes(outputFilePath));
         assertEquals(FILE_CONTENT, result);
+    }
+
+    @Test
+    void teeFromStdin_fileInNonExistentFolder_fileNotCreated() throws AbstractApplicationException {
+        String fileInNonExistentFolder = "nonExistentFolder/test.txt";
+
+        String[] fileNames = {fileInNonExistentFolder};
+
+        String output = teeApplication.teeFromStdin(false, inputStdin, fileNames);
+        assertEquals("tee: nonExistentFolder/test.txt: " + ERR_FILE_NOT_FOUND + "\n" +
+                "test tee\n" +
+                "123456789\n", output);
+
+        // Check that file is not created
+        Path path = Paths.get(fileInNonExistentFolder);
+        assertFalse(Files.exists(path));
     }
 
     @Test

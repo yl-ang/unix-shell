@@ -102,7 +102,7 @@ class WcApplicationTest {
         try {
             String fileName = "randomFileName1234.txt";
             String output = wcApplication.countFromFiles(false, false, false, fileName); // lines words bytes
-            assertEquals("wc: " + ERR_FILE_NOT_FOUND + STRING_NEWLINE, output);
+            assertEquals("wc: randomFileName1234.txt: " + ERR_FILE_NOT_FOUND + STRING_NEWLINE, output);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -113,7 +113,7 @@ class WcApplicationTest {
         try {
             String fileName = "src";
             String output = wcApplication.countFromFiles(false, false, false, fileName); // lines words bytes
-            assertEquals("wc: " + ERR_IS_DIR + STRING_NEWLINE, output);
+            assertEquals("wc: src: " + ERR_IS_DIR + STRING_NEWLINE, output);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -130,7 +130,7 @@ class WcApplicationTest {
             Files.createFile(filePath, permissions);
 
             String output = wcApplication.countFromFiles(false, false, false, filePath.toString()); // lines words bytes
-            assertEquals("wc: " + ERR_NO_PERM + STRING_NEWLINE, output);
+            assertEquals("wc: fileWithNoReadPermissions.txt: " + ERR_NO_PERM + STRING_NEWLINE, output);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
