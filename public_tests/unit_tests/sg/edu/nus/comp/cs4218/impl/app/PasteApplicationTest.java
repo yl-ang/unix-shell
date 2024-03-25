@@ -4,35 +4,24 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.exception.PasteException;
 import sg.edu.nus.comp.cs4218.impl.app.PasteApplication;
 import sg.edu.nus.comp.cs4218.impl.parser.PasteArgsParser;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static external_tests.integration_tests.sg.edu.nus.comp.cs4218.impl.app.CatApplicationPublicIT.ERR_NO_SUCH_FILE;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class PasteApplicationTest {
-    @Mock
-    private InputStream mockFileA;
-
-    @Mock
-    private InputStream mockFileB;
-
-    @Mock
-    private IOUtils ioUtils;
-
-    @Mock
-    private File fileMock;
-
+    private static final String ERR_NO_SUCH_FILE = "paste: %s: No such file or directory";
     @Mock
     private PasteArgsParser pasteArgsParser;
 
@@ -330,5 +319,38 @@ public class PasteApplicationTest {
 
         //VERIFY
         verify(pasteApplication, times(1)).mergeStdin(anyBoolean(), any(InputStream.class));
+    }
+
+    @Test
+    void mergeFileAndStdin_Serial_ShouldThrowException() throws Exception {
+        // GIVEN
+        String nonexistentFileName = "nonexistent_file.txt";
+        String inputB = "1\n2\n3\n4\n";
+
+        try (MockedStatic<IOUtils> mockedStatic = mockStatic(IOUtils.class);
+             MockedStatic<Paths> pathsMockedStatic = mockStatic(Paths.class)) {
+
+            InputStream inputStreamB = new ByteArrayInputStream(inputB.getBytes(StandardCharsets.UTF_8));
+
+            // Mocking input streamB
+            mockedStatic.when(() -> IOUtils.getLinesFromInputStream(inputStreamB)).thenReturn(Arrays.asList("1", "2", "3", "4"));
+
+            // Mocking Paths.get() to return mocked Path instances
+            Path pathToFileMockA = mock(Path.class);
+            pathsMockedStatic.when(() -> Paths.get(nonexistentFileName)).thenReturn(pathToFileMockA);
+            when(pathToFileMockA.getFileName()).thenReturn(Path.of(nonexistentFileName));
+
+            // Mocking node.exists() to be false
+            File fileMockA = mock(File.class);
+            when(pathToFileMockA.toFile()).thenReturn(fileMockA);
+            when(pathToFileMockA.isAbsolute()).thenReturn(true);
+            when(fileMockA.exists()).thenReturn(false);
+
+            Exception exception = assertThrows(Exception.class, () ->
+                    pasteApplication.mergeFileAndStdin(true, inputStreamB, "-", nonexistentFileName, "-"));
+
+            assertInstanceOf(PasteException.class, exception);
+            assertEquals(String.format(ERR_NO_SUCH_FILE, nonexistentFileName), exception.getMessage());
+        }
     }
 }
