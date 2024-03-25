@@ -36,7 +36,7 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.*;
 
 public class CallCommandIT {
 
-    private  CallCommand callCommand;
+    private CallCommand callCommand;
     private ArgumentResolver argumentResolver;
     private ApplicationRunner applicationRunner;
     private ByteArrayOutputStream outputStream;
@@ -177,6 +177,7 @@ public class CallCommandIT {
         String actual = outputStream.toString();
         assertEquals(expected, actual);
     }
+
     @Test
     @Tag("CallCommandIT:Pairwise:4")
     public void callCommandIT_WcCommandRedirectOutputWithGlobbingBackQuoteSingleOption_ShouldReturnCorrectResult() throws IOException, AbstractApplicationException, ShellException {
@@ -217,7 +218,7 @@ public class CallCommandIT {
         String fileContent = new String(Files.readAllBytes(path));
         String expected =
                 "\t7\t9" +
-                STRING_NEWLINE;
+                        STRING_NEWLINE;
         assertEquals(expected, fileContent);
     }
 
@@ -338,7 +339,7 @@ public class CallCommandIT {
     @Test
     @Tag("CallCommandIT:Pairwise:11")
     public void callCommandIT_CatCommandRedirectOutputWithGlobbingSingleOption_ShouldReturnCorrectResult() throws IOException, AbstractApplicationException, ShellException {
-        List<String> args = List.of(APP_CAT, STR_FLAG_PREFIX + FLAG_IS_LINE_NUMBER , FILE_GLOBBING, STR_REDIR_OUTPUT, FILE_NAME_OUTPUT);
+        List<String> args = List.of(APP_CAT, STR_FLAG_PREFIX + FLAG_IS_LINE_NUMBER, FILE_GLOBBING, STR_REDIR_OUTPUT, FILE_NAME_OUTPUT);
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
@@ -379,7 +380,7 @@ public class CallCommandIT {
     @Tag("CallCommandIT:Pairwise:12")
     // NEGATIVE TEST CASE - PAIRWISE
     public void callCommandIT_CatCommandRedirectInputWithGlobbingDoubleQuoteSingleOption_ShouldReturnCorrectResult() throws FileNotFoundException, AbstractApplicationException, ShellException {
-        List<String> args = List.of(APP_CAT, STR_FLAG_PREFIX + FLAG_IS_LINE_NUMBER , STR_REDIR_INPUT, CHAR_DOUBLE_QUOTE + FILE_GLOBBING + CHAR_DOUBLE_QUOTE);
+        List<String> args = List.of(APP_CAT, STR_FLAG_PREFIX + FLAG_IS_LINE_NUMBER, STR_REDIR_INPUT, CHAR_DOUBLE_QUOTE + FILE_GLOBBING + CHAR_DOUBLE_QUOTE);
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
 
         Exception exception = assertThrows(ShellException.class, () -> callCommand.evaluate(systemInputStream, outputStream));
@@ -389,7 +390,7 @@ public class CallCommandIT {
     @Test
     @Tag("CallCommandIT:Pairwise:13")
     public void callCommandIT_CatCommandRedirectInputBackQuoteSingleOption_ShouldReturnCorrectResult() throws FileNotFoundException, AbstractApplicationException, ShellException {
-        List<String> args = List.of(APP_CAT, STR_FLAG_PREFIX + FLAG_IS_LINE_NUMBER , STR_REDIR_INPUT, CHAR_DOUBLE_QUOTE + FILE_NAME_2 + CHAR_DOUBLE_QUOTE);
+        List<String> args = List.of(APP_CAT, STR_FLAG_PREFIX + FLAG_IS_LINE_NUMBER, STR_REDIR_INPUT, CHAR_DOUBLE_QUOTE + FILE_NAME_2 + CHAR_DOUBLE_QUOTE);
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
@@ -472,7 +473,7 @@ public class CallCommandIT {
                 file2.txt
 
                 file3.txt
-                
+                                
                 file4.txt
                 """;
         String actual = outputStream.toString();
@@ -507,7 +508,7 @@ public class CallCommandIT {
                 file1.txt
                 file2.txt
                 file3.txt
-                
+                                
                 folder3/folder1:
                 """;
 
@@ -556,7 +557,7 @@ public class CallCommandIT {
     @Test
     @Tag("CallCommandIT:Pairwise:20")
     public void callCommandIT_PasteCommandRedirectOutputWithGlobbingSingleOption_ShouldReturnCorrectResult() throws IOException, AbstractApplicationException, ShellException {
-        List<String> args = List.of(APP_PASTE, STR_FLAG_PREFIX + FLAG_IS_SERIAL, FILE_GLOBBING , STR_REDIR_OUTPUT, FILE_NAME_OUTPUT);
+        List<String> args = List.of(APP_PASTE, STR_FLAG_PREFIX + FLAG_IS_SERIAL, FILE_GLOBBING, STR_REDIR_OUTPUT, FILE_NAME_OUTPUT);
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
@@ -739,7 +740,7 @@ public class CallCommandIT {
     @Test
     @Tag("CallCommandIT:Pairwise:28")
     public void callCommandIT_CutCommandDoubleQuoteSingleOption_ShouldReturnCorrectResult() throws FileNotFoundException, AbstractApplicationException, ShellException {
-        List<String> args = List.of(APP_CUT, STR_FLAG_PREFIX + FLAG_IS_BYTE_CUT, "1,3", CHAR_DOUBLE_QUOTE +FILE_NAME_3 + CHAR_DOUBLE_QUOTE);
+        List<String> args = List.of(APP_CUT, STR_FLAG_PREFIX + FLAG_IS_BYTE_CUT, "1,3", CHAR_DOUBLE_QUOTE + FILE_NAME_3 + CHAR_DOUBLE_QUOTE);
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
@@ -861,9 +862,9 @@ public class CallCommandIT {
         callCommand.evaluate(systemInputStream, outputStream);
 
         String expected = """
-              Hello World
-              Hello World
-                """;
+                Hello World
+                Hello World
+                  """;
         String actual = outputStream.toString();
         assertEquals(expected, actual);
     }
@@ -986,7 +987,7 @@ public class CallCommandIT {
     @Test
     @Tag("CallCommandIT:Pairwise:39")
     public void callCommandIT_GrepCommandSingleOption_ShouldReturnCorrectResult() throws IOException, AbstractApplicationException, ShellException {
-        List<String> args = List.of(APP_GREP, STR_FLAG_PREFIX + FLAG_IS_COUNT , "alice", FILE_NAME_4);
+        List<String> args = List.of(APP_GREP, STR_FLAG_PREFIX + FLAG_IS_COUNT, "alice", FILE_NAME_4);
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
@@ -1000,7 +1001,7 @@ public class CallCommandIT {
     @Test
     @Tag("CallCommandIT:Pairwise:40")
     public void callCommandIT_GrepCommandRedirectOutputDoubleQuote_ShouldReturnCorrectResult() throws IOException, AbstractApplicationException, ShellException {
-        List<String> args = List.of(APP_GREP, "World" , CHAR_DOUBLE_QUOTE + FILE_NAME_3 + CHAR_DOUBLE_QUOTE, STR_REDIR_OUTPUT, FILE_NAME_OUTPUT);
+        List<String> args = List.of(APP_GREP, "World", CHAR_DOUBLE_QUOTE + FILE_NAME_3 + CHAR_DOUBLE_QUOTE, STR_REDIR_OUTPUT, FILE_NAME_OUTPUT);
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
@@ -1112,7 +1113,7 @@ public class CallCommandIT {
     @Test
     @Tag("CallCommandIT:Pairwise:45")
     public void callCommandIT_TeeCommandRedirectInputWithGlobbingSingleOption_ShouldReturnCorrectResult() throws IOException, AbstractApplicationException, ShellException {
-        List<String> args = List.of(APP_TEE, STR_FLAG_PREFIX + FLAG_IS_APPEND , STR_REDIR_INPUT, FILE_GLOBBING);
+        List<String> args = List.of(APP_TEE, STR_FLAG_PREFIX + FLAG_IS_APPEND, STR_REDIR_INPUT, FILE_GLOBBING);
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
@@ -1399,7 +1400,7 @@ public class CallCommandIT {
         List<String> args = List.of("sort", "-r", FILE_NAME_2);
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
-        String expected = String.join(STRING_NEWLINE, new String[] {"orange",  "kiwi", "grape", "banana", "apple"}) + STRING_NEWLINE;
+        String expected = String.join(STRING_NEWLINE, new String[]{"orange", "kiwi", "grape", "banana", "apple"}) + STRING_NEWLINE;
         assertEquals(expected, outputStream.toString());
     }
 
@@ -1408,7 +1409,7 @@ public class CallCommandIT {
         List<String> args = List.of("cat", "<", FILE_NAME_2);
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
-        String expected = String.join(STRING_NEWLINE, new String[] {"banana", "apple", "orange", "grape", "kiwi", }) + STRING_NEWLINE;
+        String expected = String.join(STRING_NEWLINE, new String[]{"banana", "apple", "orange", "grape", "kiwi",}) + STRING_NEWLINE;
         assertEquals(expected, outputStream.toString());
     }
 
@@ -1426,13 +1427,13 @@ public class CallCommandIT {
         List<String> args = List.of("ls");
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
-        String expected = String.join(STRING_NEWLINE, new String[] {FILE_NAME_1, FILE_NAME_2, FILE_NAME_3, FILE_NAME_4, FOLDER_NAME_1, FOLDER_NAME_3 }) + STRING_NEWLINE;
+        String expected = String.join(STRING_NEWLINE, new String[]{FILE_NAME_1, FILE_NAME_2, FILE_NAME_3, FILE_NAME_4, FOLDER_NAME_1, FOLDER_NAME_3}) + STRING_NEWLINE;
         assertEquals(expected, outputStream.toString());
     }
 
     @Test
     public void callCommandIT_SingleGrepCommand_ShouldReturnCorrectOutput() throws FileNotFoundException, AbstractApplicationException, ShellException {
-        List<String> args = List.of("grep", "Hello World" , FILE_NAME_3);
+        List<String> args = List.of("grep", "Hello World", FILE_NAME_3);
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
         String expected = "Hello World" + STRING_NEWLINE + "Hello World" + STRING_NEWLINE;
@@ -1467,7 +1468,7 @@ public class CallCommandIT {
 
     @Test
     public void callCommandIT_SingleCutCommand_ShouldReturnCorrectOutput() throws FileNotFoundException, AbstractApplicationException, ShellException {
-        List<String> args = List.of("cut", "-c", "1,2" , FILE_NAME_1);
+        List<String> args = List.of("cut", "-c", "1,2", FILE_NAME_1);
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
         String expected = "he\n";
@@ -1621,7 +1622,7 @@ public class CallCommandIT {
         List<String> args = List.of("wc", String.format("`echo -w -l -c %s`", FILE_NAME_NONE));
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
-        String expected = "wc: No such file or directory" + STRING_NEWLINE;
+        String expected = "wc: " + FILE_NAME_NONE + ": " + "No such file or directory" + STRING_NEWLINE;
         assertEquals(expected, outputStream.toString());
     }
 
