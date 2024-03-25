@@ -1,5 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.parser;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MvArgsParser extends ArgsParser{
@@ -23,10 +24,11 @@ public class MvArgsParser extends ArgsParser{
     }
 
     public List<String> getSrcFiles() {
-        if (nonFlagArgs.size() <= 1) {
-            return null;
-        } else {
-            return nonFlagArgs.subList(0, nonFlagArgs.size() - 1);
+        int len = nonFlagArgs.size() - 1;
+        List<String> srcFiles = new ArrayList<>();
+        for (int i = 0; i < len; i++) {
+            srcFiles.add(nonFlagArgs.get(i));
         }
+        return srcFiles;
     }
 }
