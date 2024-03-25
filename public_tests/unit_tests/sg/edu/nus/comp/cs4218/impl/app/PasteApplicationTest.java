@@ -346,9 +346,11 @@ public class PasteApplicationTest {
             when(pathToFileMockA.isAbsolute()).thenReturn(true);
             when(fileMockA.exists()).thenReturn(false);
 
+            // WHEN
             Exception exception = assertThrows(Exception.class, () ->
                     pasteApplication.mergeFileAndStdin(true, inputStreamB, "-", nonexistentFileName, "-"));
 
+            // THEN
             assertInstanceOf(PasteException.class, exception);
             assertEquals(String.format(ERR_NO_SUCH_FILE, nonexistentFileName), exception.getMessage());
         }
