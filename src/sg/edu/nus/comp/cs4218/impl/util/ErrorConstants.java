@@ -35,6 +35,7 @@ public class ErrorConstants {
     public static final String ERR_NO_PERM_READ_FILE = "No read permission to file";
     public static final String ERR_DELETING_FILE = "Could not delete file";
     public static final String ERR_DELETING_DIR = "Could not delete directory";
+    public static final String ERR_FOLDER_IN_FILE_DIR = "Folder is in file directory";
 
     // `date` related
     public static final String ERR_INVALID_FORMAT_PREFIX = "Invalid format. Date format must start with '+'";
