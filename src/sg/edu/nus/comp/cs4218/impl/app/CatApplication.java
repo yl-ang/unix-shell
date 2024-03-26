@@ -94,7 +94,7 @@ public class CatApplication implements CatInterface { //NOPMD - suppressed GodCl
     * @throws AbstractApplicationException If an exception occurs during file reading or processing.
     */
     @Override
-    public String catFiles(Boolean isLineNumber, String... fileNames) throws AbstractApplicationException {
+    public String catFiles(Boolean isLineNumber, String... fileNames) throws AbstractApplicationException { //NOPMD - suppressed ExcessiveMethodLength - Readability
         if (isLineNumber == null) {
             throw new CatException(ERR_NULL_ARGS);
         }

@@ -295,7 +295,7 @@ public class PasteApplication implements PasteInterface  { //NOPMD - suppressed 
      * @return List of lists of lines representing the processed input.
      * @throws PasteException If an error occurs during the processing of input.
      */
-    private List<List<String>> processInput(List<String> stdinLines, String[] fileNames,
+    private List<List<String>> processInput(List<String> stdinLines, String[] fileNames, //NOPMD - suppressed ExcessiveMethodLength - Readability
                                             int totalFlags, Boolean isSerial) throws PasteException {
         boolean hasProcessedSerialStdin = false; //NOPMD - suppressed LongVariable - Clarity
         int currFlagCount = 0;

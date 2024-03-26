@@ -83,7 +83,7 @@ public class GrepApplication implements GrepInterface { //NOPMD - suppressed God
     }
 
     @Override
-    public String grepFromStdin(String pattern, Boolean isCaseInsensitive, Boolean isCountLines, Boolean isPrefixFileName, InputStream stdin) throws AbstractApplicationException {
+    public String grepFromStdin(String pattern, Boolean isCaseInsensitive, Boolean isCountLines, Boolean isPrefixFileName, InputStream stdin) throws AbstractApplicationException { //NOPMD - suppressed ExcessiveMethodLength - Readability
         int count = 0;
         // java does not treat empty patterns as invalid
         if (pattern.isEmpty()) {
