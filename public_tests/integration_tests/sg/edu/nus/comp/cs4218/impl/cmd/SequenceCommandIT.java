@@ -42,12 +42,12 @@ public class SequenceCommandIT {
     private static final String FILE_GLOBBING = "*.txt";
 
     @TempDir
-    File TEMP_DIRECTORY;
+    File tempDirectory;
     @BeforeEach
     void setup() throws IOException {
-        Environment.currentDirectory = TEMP_DIRECTORY.getAbsolutePath();
+        Environment.currentDirectory = tempDirectory.getAbsolutePath();
 
-        String folderPrefix = TEMP_DIRECTORY + STR_FILE_SEP;
+        String folderPrefix = tempDirectory + STR_FILE_SEP;
 
         FileWriter writer = new FileWriter(folderPrefix + FILE_NAME_1);
         writer.write("bye world");
@@ -137,7 +137,7 @@ public class SequenceCommandIT {
                 tempfile.txt:john
                 """;
         assertEquals(expectedOutput, outputStream.toString());
-        Path path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_OUTPUT);
+        Path path = Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_OUTPUT);
         assertTrue(Files.exists(path));
     }
 
@@ -178,7 +178,7 @@ public class SequenceCommandIT {
         String expectedOutput = "She sells sea shells by the sea shore." + STRING_NEWLINE;
         assertEquals(expectedOutput, outputStream.toString());
 
-        Path path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_OUTPUT);
+        Path path = Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_OUTPUT);
         assertTrue(Files.exists(path));
     }
 
@@ -191,7 +191,7 @@ public class SequenceCommandIT {
         sequenceCommand.evaluate(systemInputStream, outputStream);
         String expectedOutput = "Hello, World!" + STRING_NEWLINE;
         assertEquals(expectedOutput, outputStream.toString());
-        Path path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_OUTPUT);
+        Path path = Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_OUTPUT);
         assertFalse(Files.exists(path));
     }
 
@@ -204,11 +204,11 @@ public class SequenceCommandIT {
         sequenceCommand.evaluate(systemInputStream, outputStream);
         String expectedOutput = FOLDER_NAME_SUB + STRING_NEWLINE;
         assertEquals(expectedOutput, outputStream.toString());
-        Path path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FOLDER_NAME_3);
+        Path path = Path.of(tempDirectory + STR_FILE_SEP + FOLDER_NAME_3);
         assertTrue(Files.exists(path));
-        path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FOLDER_NAME_3 + STR_FILE_SEP + FOLDER_NAME_SUB);
+        path = Path.of(tempDirectory + STR_FILE_SEP + FOLDER_NAME_3 + STR_FILE_SEP + FOLDER_NAME_SUB);
         assertFalse(Files.exists(path));
-        path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FOLDER_NAME_3 + STR_FILE_SEP + FOLDER_NAME_1);
+        path = Path.of(tempDirectory + STR_FILE_SEP + FOLDER_NAME_3 + STR_FILE_SEP + FOLDER_NAME_1);
         assertFalse(Files.exists(path));
     }
 
@@ -285,7 +285,7 @@ public class SequenceCommandIT {
                 """;
         assertEquals(expectedOutput, outputStream.toString());
 
-        Path path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_OUTPUT);
+        Path path = Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_OUTPUT);
         assertTrue(Files.exists(path));
 
         String fileContent = new String(Files.readAllBytes(path));
@@ -307,7 +307,7 @@ public class SequenceCommandIT {
         sequenceCommand = (SequenceCommand) command;
         sequenceCommand.evaluate(systemInputStream, outputStream);
         String expectedOutput = "hello world" + STRING_NEWLINE;
-        String expectedDir = TEMP_DIRECTORY.getAbsolutePath() + CHAR_FILE_SEP + FOLDER_NAME_1;
+        String expectedDir = tempDirectory.getAbsolutePath() + CHAR_FILE_SEP + FOLDER_NAME_1;
         assertEquals(expectedOutput, outputStream.toString());
         assertEquals(expectedDir, Environment.currentDirectory);
     }
@@ -330,7 +330,7 @@ public class SequenceCommandIT {
         sequenceCommand.evaluate(systemInputStream, outputStream);
         String expectedOutput = "hello world" + STRING_NEWLINE;
         assertEquals(expectedOutput, outputStream.toString());
-        Path path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FOLDER_NAME_2);
+        Path path = Path.of(tempDirectory + STR_FILE_SEP + FOLDER_NAME_2);
         assertTrue(Files.exists(path));
     }
 
@@ -363,7 +363,7 @@ public class SequenceCommandIT {
         sequenceCommand.evaluate(systemInputStream, outputStream);
         String expectedOutput = "cd: No such file or directory" + STRING_NEWLINE + "\t10 " + FILE_NAME_2 + STRING_NEWLINE;
         assertEquals(expectedOutput, outputStream.toString());
-        assertEquals(TEMP_DIRECTORY.getAbsolutePath(), Environment.currentDirectory);
+        assertEquals(tempDirectory.getAbsolutePath(), Environment.currentDirectory);
     }
 
     @Test
@@ -375,8 +375,8 @@ public class SequenceCommandIT {
         String expectedOutput = "cd: No such file or directory" + STRING_NEWLINE;
         assertEquals(expectedOutput, outputStream.toString());
 
-        Path path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FOLDER_PATH_SUB);
-        Path pathParent = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FOLDER_NAME_3);
+        Path path = Path.of(tempDirectory + STR_FILE_SEP + FOLDER_PATH_SUB);
+        Path pathParent = Path.of(tempDirectory + STR_FILE_SEP + FOLDER_NAME_3);
         assertTrue(Files.exists(path));
         assertTrue(Files.exists(pathParent));
     }
@@ -421,7 +421,7 @@ public class SequenceCommandIT {
         };
         String expectedOutput = String.join(STRING_NEWLINE, expectedOResultArr) + STRING_NEWLINE;
         assertEquals(expectedOutput, outputStream.toString());
-        String filePathStr = TEMP_DIRECTORY + STR_FILE_SEP + FOLDER_NAME_2;
+        String filePathStr = tempDirectory + STR_FILE_SEP + FOLDER_NAME_2;
         Path path = Path.of(filePathStr);
         assertTrue(Files.exists(path));
         assertEquals(Environment.currentDirectory, filePathStr);

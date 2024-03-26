@@ -36,12 +36,12 @@ public class PipeCommandIT { //NOPMD - suppressed ClassNamingConventions - Proje
 
     private static final String FOLDER_NAME_NON = "nonfolder";
     @TempDir
-    File TEMP_DIRECTORY;
+    File tempDirectory;
 
     @BeforeEach
     void setup() throws IOException {
-        Environment.currentDirectory = TEMP_DIRECTORY.getAbsolutePath();
-        String folderPrefix = TEMP_DIRECTORY + STR_FILE_SEP;
+        Environment.currentDirectory = tempDirectory.getAbsolutePath();
+        String folderPrefix = tempDirectory + STR_FILE_SEP;
 
         FileWriter writer = new FileWriter(folderPrefix + FILE_NAME_1);
         writer.write("""
@@ -126,7 +126,7 @@ public class PipeCommandIT { //NOPMD - suppressed ClassNamingConventions - Proje
         String actual = outputStream.toString();
         assertEquals(expected, actual);
 
-        expected = TEMP_DIRECTORY.getAbsolutePath() + STR_FILE_SEP + FOLDER_NAME_1;
+        expected = tempDirectory.getAbsolutePath() + STR_FILE_SEP + FOLDER_NAME_1;
         actual = Environment.currentDirectory;
         assertEquals(expected, actual);
     }
@@ -154,7 +154,7 @@ public class PipeCommandIT { //NOPMD - suppressed ClassNamingConventions - Proje
         String expected = "No such file or directory";
         assertEquals(new CdException(expected).getMessage(), exception.getMessage());
 
-        expected = TEMP_DIRECTORY.getAbsolutePath();
+        expected = tempDirectory.getAbsolutePath();
         String actual = Environment.currentDirectory;
         assertEquals(expected, actual);
     }

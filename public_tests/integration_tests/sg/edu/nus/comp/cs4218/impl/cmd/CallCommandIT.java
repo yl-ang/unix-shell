@@ -62,13 +62,13 @@ public class CallCommandIT {
     public static final String STR_FLAG_PREFIX = String.valueOf(CHAR_FLAG_PREFIX);
 
     @TempDir
-    File TEMP_DIRECTORY;
+    File tempDirectory;
 
     @BeforeEach
     void setup() throws IOException {
-        Environment.currentDirectory = TEMP_DIRECTORY.getAbsolutePath();
+        Environment.currentDirectory = tempDirectory.getAbsolutePath();
 
-        String folderPrefix = TEMP_DIRECTORY + STR_FILE_SEP;
+        String folderPrefix = tempDirectory + STR_FILE_SEP;
 
         FileWriter writer = new FileWriter(folderPrefix + FILE_NAME_1);
         writer.write("hello world");
@@ -139,7 +139,7 @@ public class CallCommandIT {
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
-        Path path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_OUTPUT);
+        Path path = Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_OUTPUT);
         assertTrue(Files.exists(path));
 
         String fileContent = new String(Files.readAllBytes(path));
@@ -181,7 +181,7 @@ public class CallCommandIT {
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
-        Path path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_OUTPUT);
+        Path path = Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_OUTPUT);
         assertTrue(Files.exists(path));
 
         String fileContent = new String(Files.readAllBytes(path));
@@ -203,7 +203,7 @@ public class CallCommandIT {
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
-        Path path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_OUTPUT);
+        Path path = Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_OUTPUT);
         assertTrue(Files.exists(path));
 
         String fileContent = new String(Files.readAllBytes(path));
@@ -250,7 +250,7 @@ public class CallCommandIT {
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
-        Path path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_OUTPUT);
+        Path path = Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_OUTPUT);
         assertTrue(Files.exists(path));
 
         String fileContent = new String(Files.readAllBytes(path));
@@ -308,7 +308,7 @@ public class CallCommandIT {
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
-        Path path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_OUTPUT);
+        Path path = Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_OUTPUT);
         assertTrue(Files.exists(path));
 
         String fileContent = new String(Files.readAllBytes(path));
@@ -334,7 +334,7 @@ public class CallCommandIT {
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
-        Path path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_OUTPUT);
+        Path path = Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_OUTPUT);
         assertTrue(Files.exists(path));
 
         String fileContent = new String(Files.readAllBytes(path));
@@ -404,7 +404,7 @@ public class CallCommandIT {
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
-        Path path = Path.of(TEMP_DIRECTORY.getAbsolutePath() + STR_FILE_SEP + FILE_NAME_OUTPUT);
+        Path path = Path.of(tempDirectory.getAbsolutePath() + STR_FILE_SEP + FILE_NAME_OUTPUT);
         assertTrue(Files.exists(path));
 
         String fileContent = new String(Files.readAllBytes(path));
@@ -432,7 +432,7 @@ public class CallCommandIT {
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
-        Path path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_OUTPUT);
+        Path path = Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_OUTPUT);
         assertTrue(Files.exists(path));
 
         String fileContent = new String(Files.readAllBytes(path));
@@ -479,7 +479,7 @@ public class CallCommandIT {
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
-        Path path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_OUTPUT);
+        Path path = Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_OUTPUT);
         assertTrue(Files.exists(path));
 
         String fileContent = new String(Files.readAllBytes(path));
@@ -533,7 +533,7 @@ public class CallCommandIT {
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
-        Path path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_OUTPUT);
+        Path path = Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_OUTPUT);
         assertTrue(Files.exists(path));
 
         String fileContent = new String(Files.readAllBytes(path));
@@ -553,7 +553,7 @@ public class CallCommandIT {
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
-        Path path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_OUTPUT);
+        Path path = Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_OUTPUT);
         assertTrue(Files.exists(path));
 
         String fileContent = new String(Files.readAllBytes(path));
@@ -656,7 +656,7 @@ public class CallCommandIT {
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
-        Path path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_OUTPUT);
+        Path path = Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_OUTPUT);
         assertTrue(Files.exists(path));
 
         String fileContent = new String(Files.readAllBytes(path));
@@ -682,7 +682,7 @@ public class CallCommandIT {
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
-        Path path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_OUTPUT);
+        Path path = Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_OUTPUT);
         assertTrue(Files.exists(path));
 
         String fileContent = new String(Files.readAllBytes(path));
@@ -708,7 +708,7 @@ public class CallCommandIT {
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
-        Path path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_OUTPUT);
+        Path path = Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_OUTPUT);
         assertTrue(Files.exists(path));
 
         String fileContent = new String(Files.readAllBytes(path));
@@ -776,7 +776,7 @@ public class CallCommandIT {
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
-        Path path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_OUTPUT);
+        Path path = Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_OUTPUT);
         assertTrue(Files.exists(path));
 
         String fileContent = new String(Files.readAllBytes(path));
@@ -814,7 +814,7 @@ public class CallCommandIT {
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
-        Path path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_OUTPUT);
+        Path path = Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_OUTPUT);
         assertTrue(Files.exists(path));
 
         String fileContent = new String(Files.readAllBytes(path));
@@ -868,7 +868,7 @@ public class CallCommandIT {
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
-        Path path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_OUTPUT);
+        Path path = Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_OUTPUT);
         assertTrue(Files.exists(path));
 
         String fileContent = new String(Files.readAllBytes(path));
@@ -923,7 +923,7 @@ public class CallCommandIT {
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
-        Path path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_OUTPUT);
+        Path path = Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_OUTPUT);
         assertTrue(Files.exists(path));
 
         String fileContent = new String(Files.readAllBytes(path));
@@ -946,7 +946,7 @@ public class CallCommandIT {
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
-        Path path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_OUTPUT);
+        Path path = Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_OUTPUT);
         assertTrue(Files.exists(path));
 
         String fileContent = new String(Files.readAllBytes(path));
@@ -964,7 +964,7 @@ public class CallCommandIT {
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
-        Path path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_OUTPUT);
+        Path path = Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_OUTPUT);
         assertTrue(Files.exists(path));
 
         String fileContent = new String(Files.readAllBytes(path));
@@ -997,7 +997,7 @@ public class CallCommandIT {
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
-        Path path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_OUTPUT);
+        Path path = Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_OUTPUT);
         assertTrue(Files.exists(path));
 
         String fileContent = new String(Files.readAllBytes(path));
@@ -1016,7 +1016,7 @@ public class CallCommandIT {
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
-        Path path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_OUTPUT);
+        Path path = Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_OUTPUT);
         assertTrue(Files.exists(path));
 
         String fileContent = new String(Files.readAllBytes(path));
@@ -1048,13 +1048,13 @@ public class CallCommandIT {
     @Test
     @Tag("CallCommandIT:Pairwise:43")
     public void callCommandIT_TeeCommandRedirectOutputSingleOption_ShouldReturnCorrectResult() throws IOException, AbstractApplicationException, ShellException {
-        FileWriter writer = new FileWriter(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_DYNAMIC);
+        FileWriter writer = new FileWriter(tempDirectory + STR_FILE_SEP + FILE_NAME_DYNAMIC);
         writer.write(TEXT_DYNAMIC);
         writer.close();
-        Path path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_DYNAMIC);
+        Path path = Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_DYNAMIC);
         assertTrue(Files.exists(path));
 
-        File teeInputFile = new File(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_2);
+        File teeInputFile = new File(tempDirectory + STR_FILE_SEP + FILE_NAME_2);
         InputStream teeInputStream = new FileInputStream(teeInputFile.getAbsolutePath());
 
         List<String> args = List.of(APP_TEE, STR_FLAG_PREFIX + FLAG_IS_APPEND, FILE_NAME_DYNAMIC);
@@ -1077,13 +1077,13 @@ public class CallCommandIT {
     @Test
     @Tag("CallCommandIT:Pairwise:44")
     public void callCommandIT_TeeCommandDoubleQuote_ShouldReturnCorrectResult() throws IOException, AbstractApplicationException, ShellException {
-        FileWriter writer = new FileWriter(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_DYNAMIC);
+        FileWriter writer = new FileWriter(tempDirectory + STR_FILE_SEP + FILE_NAME_DYNAMIC);
         writer.write(TEXT_DYNAMIC);
         writer.close();
-        Path path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_DYNAMIC);
+        Path path = Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_DYNAMIC);
         assertTrue(Files.exists(path));
 
-        File teeInputFile = new File(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_2);
+        File teeInputFile = new File(tempDirectory + STR_FILE_SEP + FILE_NAME_2);
         InputStream teeInputStream = new FileInputStream(teeInputFile.getAbsolutePath());
 
         List<String> args = List.of(APP_TEE, CHAR_DOUBLE_QUOTE + FILE_NAME_DYNAMIC + CHAR_DOUBLE_QUOTE);
@@ -1134,10 +1134,10 @@ public class CallCommandIT {
     @Test
     @Tag("CallCommandIT:Pairwise:46")
     public void callCommandIT_TeeCommandRedirectInputBackQuoteSingleOption_ShouldReturnCorrectResult() throws IOException, AbstractApplicationException, ShellException {
-        FileWriter writer = new FileWriter(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_DYNAMIC);
+        FileWriter writer = new FileWriter(tempDirectory + STR_FILE_SEP + FILE_NAME_DYNAMIC);
         writer.write(TEXT_DYNAMIC);
         writer.close();
-        Path path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_DYNAMIC);
+        Path path = Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_DYNAMIC);
         assertTrue(Files.exists(path));
 
         List<String> args = List.of(APP_TEE, FILE_NAME_DYNAMIC, STR_REDIR_INPUT, FILE_NAME_2);
@@ -1160,20 +1160,20 @@ public class CallCommandIT {
     @Test
     @Tag("CallCommandIT:Pairwise:47")
     public void callCommandIT_TeeCommandRedirectInputAndOutputSingleQuote_ShouldReturnCorrectResult() throws IOException, AbstractApplicationException, ShellException {
-        FileWriter writer = new FileWriter(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_DYNAMIC);
+        FileWriter writer = new FileWriter(tempDirectory + STR_FILE_SEP + FILE_NAME_DYNAMIC);
         writer.write(TEXT_DYNAMIC);
         writer.close();
-        Path path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_DYNAMIC);
+        Path path = Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_DYNAMIC);
         assertTrue(Files.exists(path));
 
-        File teeInputFile = new File(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_2);
+        File teeInputFile = new File(tempDirectory + STR_FILE_SEP + FILE_NAME_2);
         InputStream teeInputStream = new FileInputStream(teeInputFile.getAbsolutePath());
 
         List<String> args = List.of(APP_TEE, FILE_NAME_DYNAMIC, STR_REDIR_INPUT, FILE_NAME_4, STR_REDIR_OUTPUT, CHAR_SINGLE_QUOTE + FILE_NAME_OUTPUT + CHAR_SINGLE_QUOTE);
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(teeInputStream, outputStream);
 
-        Path outputFilePath = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_OUTPUT);
+        Path outputFilePath = Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_OUTPUT);
         assertTrue(Files.exists(outputFilePath));
 
         String fileContent = new String(Files.readAllBytes(path));
@@ -1191,18 +1191,18 @@ public class CallCommandIT {
     @Test
     @Tag("CallCommandIT:Pairwise:48")
     public void callCommandIT_TeeCommandRedirectOutputWithGlobbing_ShouldReturnCorrectResult() throws IOException, AbstractApplicationException, ShellException {
-        File teeInputFile = new File(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_2);
+        File teeInputFile = new File(tempDirectory + STR_FILE_SEP + FILE_NAME_2);
         InputStream teeInputStream = new FileInputStream(teeInputFile.getAbsolutePath());
 
         List<String> args = List.of(APP_TEE, FILE_GLOBBING, STR_REDIR_OUTPUT, FILE_NAME_OUTPUT);
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(teeInputStream, outputStream);
 
-        String file1 = new String(Files.readAllBytes(Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_1)));
-        String file2 = new String(Files.readAllBytes(Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_2)));
-        String file3 = new String(Files.readAllBytes(Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_3)));
-        String file4 = new String(Files.readAllBytes(Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_4)));
-        String fileOutput = new String(Files.readAllBytes(Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_OUTPUT)));
+        String file1 = new String(Files.readAllBytes(Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_1)));
+        String file2 = new String(Files.readAllBytes(Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_2)));
+        String file3 = new String(Files.readAllBytes(Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_3)));
+        String file4 = new String(Files.readAllBytes(Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_4)));
+        String fileOutput = new String(Files.readAllBytes(Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_OUTPUT)));
         String expected = """
                 banana
                 apple
@@ -1254,14 +1254,14 @@ public class CallCommandIT {
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
-        Path outputFilePath = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FOLDER_NAME_2);
+        Path outputFilePath = Path.of(tempDirectory + STR_FILE_SEP + FOLDER_NAME_2);
         assertTrue(Files.exists(outputFilePath));
     }
 
     @Test
     @Tag("CallCommandIT:Pairwise:51")
     public void callCommandIT_MvCommandWithGlobbingSingleOption_ShouldReturnCorrectResult() throws FileNotFoundException, AbstractApplicationException, ShellException {
-        String targetFolder = TEMP_DIRECTORY + STR_FILE_SEP + FOLDER_NAME_2 + STR_FILE_SEP;
+        String targetFolder = tempDirectory + STR_FILE_SEP + FOLDER_NAME_2 + STR_FILE_SEP;
 
         File folder1 = new File(targetFolder);
         assertTrue(folder1.mkdir());
@@ -1286,7 +1286,7 @@ public class CallCommandIT {
     @Test
     @Tag("CallCommandIT:Pairwise:52")
     public void callCommandIT_RmCommandDoubleQuoteSingleOption_ShouldReturnCorrectResult() throws FileNotFoundException, AbstractApplicationException, ShellException {
-        String targetFile = TEMP_DIRECTORY + STR_FILE_SEP + FOLDER_NAME_2 + FILE_NAME_1;
+        String targetFile = tempDirectory + STR_FILE_SEP + FOLDER_NAME_2 + FILE_NAME_1;
 
         List<String> args = List.of(APP_RM, CHAR_DOUBLE_QUOTE + FILE_NAME_1 + CHAR_DOUBLE_QUOTE);
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
@@ -1298,16 +1298,16 @@ public class CallCommandIT {
     @Test
     @Tag("CallCommandIT:Pairwise:53")
     public void callCommandIT_RmCommandBackQuoteMultipleOption_ShouldReturnCorrectResult() throws FileNotFoundException, AbstractApplicationException, ShellException {
-        List<String> args = List.of(APP_RM, STR_FLAG_PREFIX + RmArgsParser.FLAG_IS_RECURSIVE + FLAG_IS_EMPTY_FOLDER, TEMP_DIRECTORY + STR_FILE_SEP + FOLDER_NAME_3);
+        List<String> args = List.of(APP_RM, STR_FLAG_PREFIX + RmArgsParser.FLAG_IS_RECURSIVE + FLAG_IS_EMPTY_FOLDER, tempDirectory + STR_FILE_SEP + FOLDER_NAME_3);
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
-        assertFalse(Files.exists(Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FOLDER_NAME_3)));
+        assertFalse(Files.exists(Path.of(tempDirectory + STR_FILE_SEP + FOLDER_NAME_3)));
     }
 
     @Test
     @Tag("CallCommandIT:Pairwise:54")
     public void callCommandIT_RmCommandBackQuote_ShouldReturnCorrectResult() throws FileNotFoundException, AbstractApplicationException, ShellException {
-        String targetFile = TEMP_DIRECTORY + STR_FILE_SEP + FOLDER_NAME_2 + FILE_NAME_1;
+        String targetFile = tempDirectory + STR_FILE_SEP + FOLDER_NAME_2 + FILE_NAME_1;
 
         List<String> args = List.of(APP_RM, CHAR_BACK_QUOTE + APP_ECHO + CHAR_SPACE + FILE_NAME_1 + CHAR_BACK_QUOTE);
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
@@ -1355,7 +1355,7 @@ public class CallCommandIT {
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
-        Path path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_OUTPUT);
+        Path path = Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_OUTPUT);
         assertTrue(Files.exists(path));
 
         String fileContent = new String(Files.readAllBytes(path));
@@ -1410,7 +1410,7 @@ public class CallCommandIT {
         List<String> args = List.of("cd", FOLDER_NAME_1);
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
-        String expectedDir = TEMP_DIRECTORY + STR_FILE_SEP + FOLDER_NAME_1;
+        String expectedDir = tempDirectory + STR_FILE_SEP + FOLDER_NAME_1;
         assertEquals(expectedDir, Environment.currentDirectory);
     }
 
@@ -1472,7 +1472,7 @@ public class CallCommandIT {
         List<String> args = List.of("mkdir", FOLDER_NAME_2);
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
-        Path path = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FOLDER_NAME_2);
+        Path path = Path.of(tempDirectory + STR_FILE_SEP + FOLDER_NAME_2);
         assertTrue(Files.exists(path));
 
         // Clean
@@ -1486,7 +1486,7 @@ public class CallCommandIT {
         List<String> args = List.of("tee", STR_FLAG_PREFIX + FLAG_IS_APPEND, FILE_NAME_2);
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
 
-        String targetFile = TEMP_DIRECTORY + STR_FILE_SEP + FILE_NAME_2;
+        String targetFile = tempDirectory + STR_FILE_SEP + FILE_NAME_2;
 
         File teeInputFile = new File(targetFile);
         InputStream teeInputStream = new FileInputStream(teeInputFile.getAbsolutePath());
@@ -1522,7 +1522,7 @@ public class CallCommandIT {
         callCommand = new CallCommand(args, applicationRunner, argumentResolver);
         callCommand.evaluate(systemInputStream, outputStream);
 
-        Path outputFilePath = Path.of(TEMP_DIRECTORY + STR_FILE_SEP + FOLDER_NAME_2);
+        Path outputFilePath = Path.of(tempDirectory + STR_FILE_SEP + FOLDER_NAME_2);
         assertTrue(Files.exists(outputFilePath));
     }
 
