@@ -11,14 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class StringUtilsTest {
 
-    private final static String OSNAME = "os.name";
     private final Properties props = System.getProperties();
-    private String osName;
-
-    @BeforeEach
-    void storeOSName() {
-        osName = System.getProperty(OSNAME);
-    }
 
     @Test
     void testIsBlank_EmptyString_ReturnsTrue() {

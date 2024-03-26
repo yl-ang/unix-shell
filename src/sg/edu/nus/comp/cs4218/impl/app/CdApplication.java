@@ -24,7 +24,7 @@ public class CdApplication implements CdInterface {
 
         String result = getNormalizedAbsolutePath(path);
         File file = new File(result);
-        if (!file.canExecute()) {
+        if (!file.canExecute()) { //NOPMD - suppressed ConfusingTernary - NotConfusingAtAll
             throw new CdException(String.format(ERR_NO_PERM, file));
         } else {
             Environment.currentDirectory = result;

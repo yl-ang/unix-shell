@@ -14,6 +14,7 @@ import java.io.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@SuppressWarnings("PMD") // Provided by CS4218 Team
 public class PasteApplicationPublicTest {
     private static final File DIRECTORY = new File("pasteTestDirectory");
     private static final File NONEXISTENT = new File("paste_nonexistent.txt");

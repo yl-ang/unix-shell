@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@SuppressWarnings("PMD") // Provided by CS4218 Team
 public class CdApplicationPublicTest {
     private static final String TEST_DIR = "temp-cd";
     private static final Path TEST_DIR_PATH = Paths.get(TEST_DIR).toAbsolutePath();

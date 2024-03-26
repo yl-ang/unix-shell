@@ -7,8 +7,8 @@ public class GrepArgsParser extends ArgsParser {
     private final static int INDEX_PATTERN = 0;
     private final static int INDEX_FILES = 1;
     public static final char FLAG_IS_CASING = 'i';
-    public static final char FLAG_IS_COUNT_LINES = 'c';
-    public static final char FLAG_IS_INCLUDE_FILENAME = 'H';
+    public static final char FLAG_IS_COUNT_LINES = 'c'; //NOPMD - suppressed LongVariable - Clarity
+    public static final char FLAG_IS_INCLUDE_FILENAME = 'H'; //NOPMD - suppressed LongVariable - Clarity
 
     public GrepArgsParser() {
         super();
@@ -34,7 +34,7 @@ public class GrepArgsParser extends ArgsParser {
     }
 
     public String getPattern() {
-        return !nonFlagArgs.isEmpty() ? nonFlagArgs.get(INDEX_PATTERN) : null;
+        return !nonFlagArgs.isEmpty() ? nonFlagArgs.get(INDEX_PATTERN) : null; //NOPMD - suppressed ConfusingTernary - NotConfusingAtAll
     }
 
     public ArrayList<String> getFileNames() {

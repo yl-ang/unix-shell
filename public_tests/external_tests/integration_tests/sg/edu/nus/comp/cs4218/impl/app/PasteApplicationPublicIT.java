@@ -26,7 +26,7 @@ import sg.edu.nus.comp.cs4218.exception.PasteException;
 import sg.edu.nus.comp.cs4218.impl.app.PasteApplication;
 import sg.edu.nus.comp.cs4218.testutils.TestEnvironmentUtil;
 import sg.edu.nus.comp.cs4218.testutils.TestStringUtils;
-
+@SuppressWarnings("PMD") // Provided by CS4218 Team
 public class PasteApplicationPublicIT {
     private static final String TEMP = "temp-paste";
     private static final String DIR = "dir";

@@ -23,6 +23,7 @@ import sg.edu.nus.comp.cs4218.exception.GrepException;
 import sg.edu.nus.comp.cs4218.impl.app.GrepApplication;
 import sg.edu.nus.comp.cs4218.testutils.TestEnvironmentUtil;
 
+@SuppressWarnings("PMD") // Provided by CS4218 Team
 public class GrepApplicationPublicIT {
     private static final String TEMP = "temp-grep";
     private static final byte[] BYTES_A = "First line\nSecond line\nThird line\nFourth line\n".getBytes();

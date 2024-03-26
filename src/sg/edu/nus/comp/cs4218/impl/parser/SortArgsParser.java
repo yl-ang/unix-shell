@@ -5,7 +5,7 @@ import java.util.List;
 public class SortArgsParser extends ArgsParser {
     public static final char FLAG_IS_FIRST_NUM = 'n';
     public static final char FLAG_IS_REV_ORDER = 'r';
-    public static final char FLAG_IS_CASE_IGNORE = 'f';
+    public static final char FLAG_IS_CASE_IGNORE = 'f'; //NOPMD - suppressed LongVariable - Clarity
     private final static int INDEX_FILES = 0;
 
     public SortArgsParser() {

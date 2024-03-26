@@ -28,6 +28,7 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_SPACE;
 import static sg.edu.nus.comp.cs4218.testutils.TestStringUtils.CHAR_TAB;
 import static sg.edu.nus.comp.cs4218.testutils.TestStringUtils.STRING_NEWLINE;
 
+@SuppressWarnings("PMD") // Provided by CS4218 Team
 public class UniqApplicationPublicIT {
     private static final String INPUT_FILE_TXT = "input_file.txt";
     private static final String OUTPUT_FILE_TXT = "output_file.txt";

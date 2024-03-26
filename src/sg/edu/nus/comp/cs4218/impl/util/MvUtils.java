@@ -25,14 +25,14 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_PERM_READ_F
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
-public class MvUtils {
+public class MvUtils { //NOPMD - suppressed UseUtilityClass - Following project naming over PMD
     /**
      * Check if arguments are null
      *
      * @param args arguments received
      * @throws MvException
      */
-    public static void checkArgsIsNull(String[] args) throws MvException{
+    public static void checkArgsIsNull(String... args) throws MvException{
         if (args == null) {
             throw new MvException(ERR_NULL_ARGS);
         }
@@ -44,7 +44,7 @@ public class MvUtils {
      * @param args arguments received
      * @throws MvException
      */
-    public static void checkArgsHasFiles(String[] args) throws MvException{
+    public static void checkArgsHasFiles(String... args) throws MvException{
         if (args.length < 2) {
             throw new MvException(ERR_NO_FILE_ARGS);
         }
@@ -115,8 +115,8 @@ public class MvUtils {
      * @param absoluteTargetPath absolute path of target
      * @throws MvException
      */
-    public static void checkSrcAndTargetAreDifferent(Path absoluteSrcPath, Path absoluteTargetPath) throws MvException {
-        if (absoluteSrcPath.equals(absoluteTargetPath)) {
+    public static void checkSrcAndTargetAreDifferent(Path absoluteSrcPath, Path absoluteTargetPath) throws MvException { //NOPMD - suppressed LongVariable - Clarity
+         if (absoluteSrcPath.equals(absoluteTargetPath)) {
             throw new MvException(ERR_BOTH_PATHS_SAME + ": " + absoluteTargetPath + "=" + absoluteSrcPath);
         }
     }

@@ -19,6 +19,7 @@ import java.util.Deque;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static sg.edu.nus.comp.cs4218.testutils.TestStringUtils.STRING_NEWLINE;
 
+@SuppressWarnings("PMD") // Provided by CS4218 Team
 class SortApplicationPublicTest {
     private static final String TEMP = "temp-sort";
     private static final Path TEMP_PATH = Paths.get(TEMP);

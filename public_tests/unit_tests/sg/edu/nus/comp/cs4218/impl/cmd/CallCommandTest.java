@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
 
+@SuppressWarnings("PMD.LongVariable") // Testing Purpose for clarity
 public class CallCommandTest {
 
     private static CallCommand callCommand;

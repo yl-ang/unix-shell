@@ -3,7 +3,7 @@ package sg.edu.nus.comp.cs4218.impl.parser;
 import java.util.List;
 
 public class MkdirParser extends ArgsParser {
-    public static final char FLAG_IS_CREATE_PARENT = 'p';
+    public static final char FLAG_IS_CREATE_PARENT = 'p'; //NOPMD - suppressed LongVariable - Clarity
 
     public MkdirParser() {
         super();

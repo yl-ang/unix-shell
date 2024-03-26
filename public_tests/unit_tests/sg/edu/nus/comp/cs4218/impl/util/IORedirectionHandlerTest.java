@@ -28,6 +28,7 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_MULTIPLE_STREA
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.*;
 
+@SuppressWarnings("PMD.LongVariable") // Testing Purpose for clarity
 public class IORedirectionHandlerTest {
 
     private IORedirectionHandler ioRedirectionHandler;

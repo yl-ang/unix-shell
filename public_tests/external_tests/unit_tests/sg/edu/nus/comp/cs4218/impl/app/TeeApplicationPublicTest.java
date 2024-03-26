@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
-@SuppressWarnings("PMD")
+@SuppressWarnings("PMD") // Provided by CS4218 Team
 public class TeeApplicationPublicTest {
     private static final String TEMP = "temp-tee";
     private static final String TEXT_A = "textA.txt";

@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@SuppressWarnings("PMD") // Provided by CS4218 Team
 public class UniqApplicationPublicTest {
     private static final File TEMP = new File("temp-uniq");
     private static final File NONEXISTENT = new File("uniq_nonexistent.txt");

@@ -18,6 +18,7 @@ import static sg.edu.nus.comp.cs4218.exception.MkdirException.ERR_FOLDER_EXISTS;
 import static sg.edu.nus.comp.cs4218.exception.MkdirException.INVALID_DIR;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
 
+@SuppressWarnings("PMD.LongVariable") // Testing Purpose for clarity
 public class MkdirApplicationTest {
     private static MkdirApplication mkdirApplication;
 
@@ -62,7 +63,7 @@ public class MkdirApplicationTest {
     @Test
     void createFolder_WithoutParentFolder_ShouldCreateFolder() throws MkdirException {
         mkdirApplication.createFolder(FOLDER_WITHOUT_PARENT_DIRECTORY);
-        assertTrue(Files.exists(Paths.get(getFullPath(FOLDER_WITHOUT_PARENT_DIRECTORY))), "Folder should created");
+        assertTrue(Files.exists(Paths.get(getFullPath(FOLDER_WITHOUT_PARENT_DIRECTORY))), "Folder should created"); //NOPMD - suppressed AvoidDuplicateLiterals - Twice
     }
 
     @Test

@@ -3,7 +3,7 @@ package sg.edu.nus.comp.cs4218.impl.parser;
 import java.util.List;
 
 public class CatArgsParser extends ArgsParser {
-    public final static char FLAG_IS_LINE_NUMBER = 'n';
+    public final static char FLAG_IS_LINE_NUMBER = 'n'; //NOPMD - suppressed LongVariable - Clarity
 
     public CatArgsParser() {
         super();

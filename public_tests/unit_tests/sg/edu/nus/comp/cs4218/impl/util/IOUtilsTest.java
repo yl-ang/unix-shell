@@ -10,6 +10,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.impl.util.IOUtils.*;
 
+@SuppressWarnings("PMD.LongVariable") // Testing Purpose for clarity
 class IOUtilsTest {
 
     private final static String TEST_TXT = "test.txt";
@@ -28,68 +29,69 @@ class IOUtilsTest {
     }
 
     @Test
-    void testOpenInputStreamFromExistingFile_ShouldNotThrow() {
+    void openInputStream_OpenInputStreamFromExistingFile_ShouldNotThrow() {
         assertDoesNotThrow(() -> openInputStream(TEST_TXT));
     }
 
     @Test
-    void testOpenInputStreamFromNonExistentFile_ShouldThrow() {
+    void openInputStream_OpenInputStreamFromNonExistentFile_ShouldThrow() {
         assertThrows(ShellException.class, () -> openInputStream(NON_EXISTENT_TXT));
     }
 
     @Test
-    void testOpenOutputStreamFromExistingFile_ShouldNotThrow() {
+    void openOutputStream_OpenOutputStreamFromExistingFile_ShouldNotThrow() {
         assertDoesNotThrow(() -> openOutputStream(TEST_TXT));
     }
 
     @Test
-    void testOpenOutputStreamFromNonExistentFile_ShouldThrow() {
+    void openOutputStream_OpenOutputStreamFromNonExistentFile_ShouldThrow() {
         assertThrows(FileNotFoundException.class, () -> openOutputStream(NON_EXISTENT_TXT));
     }
 
     @Test
-    void testCloseOutputStream_Success() throws FileNotFoundException, ShellException {
-        OutputStream outputStream = openOutputStream(TEST_TXT);
+    void closeOutputStream_CloseOutputStream_Success() throws FileNotFoundException, ShellException {
+        OutputStream outputStream = openOutputStream(TEST_TXT); //NOPMD - suppressed CloseResource - Close via test
         assertDoesNotThrow(() -> closeOutputStream(outputStream));
         assertFalse(outputStream.toString().isEmpty());
     }
 
     @Test
-    void testCloseOutputStreamNullOutputStream_ShouldNotThrow() {
+    void closeOutputStream_CloseOutputStreamNullOutputStream_ShouldNotThrow() {
         assertDoesNotThrow(() -> closeOutputStream(null));
     }
 
     @Test
-    void testCloseOutputStreamSystemOut_ShouldNotThrow() {
-        OutputStream systemOut = System.out;
+    void closeOutputStream_CloseOutputStreamSystemOut_ShouldNotThrow() {
+        OutputStream systemOut = System.out; //NOPMD - suppressed CloseResource - System Close
         assertDoesNotThrow(() -> closeOutputStream(systemOut));
     }
 
     @Test
-    void testCloseInputStream_Success() throws ShellException {
-        InputStream inputStream = openInputStream(TEST_TXT);
+    void closeInputStream_CloseInputStream_Success() throws ShellException {
+        InputStream inputStream = openInputStream(TEST_TXT); //NOPMD - suppressed CloseResource - close via test
         assertDoesNotThrow(() -> closeInputStream(inputStream));
     }
 
     @Test
-    void testCloseInputStreamNullInputStream_ShouldNotThrow() {
+    void closeInputStream_NullInputStream_ShouldNotThrow() {
         assertDoesNotThrow(() -> closeInputStream(null));
     }
 
     @Test
-    void testCloseInputStreamSystemIn_ShouldNotThrow() {
-        InputStream systemIn = System.in;
+    void closeInputStream_StreamSystemIn_ShouldNotThrow() {
+        InputStream systemIn = System.in; //NOPMD - suppressed CloseResource - System Close
         assertDoesNotThrow(() -> closeInputStream(systemIn));
     }
 
     @Test
-    void testGetLinesFromInputStream_Success() throws IOException, ShellException {
-        InputStream inputStream = openInputStream(TEST_TXT);
+    void getLinesFromInputStream_TextInputStream_Success() throws IOException, ShellException {
+        InputStream inputStream = openInputStream(TEST_TXT); //NOPMD - suppressed CloseResource - already close
         List<String> lines = getLinesFromInputStream(inputStream);
         assertNotNull(lines);
         assertEquals(2, lines.size());
         assertEquals("hello", lines.get(0));
         assertEquals("cs4218", lines.get(1));
+        inputStream.close();
     }
 
     @AfterEach

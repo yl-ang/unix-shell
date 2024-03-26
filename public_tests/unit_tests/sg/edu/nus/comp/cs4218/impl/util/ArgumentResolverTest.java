@@ -22,6 +22,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@SuppressWarnings("PMD.LongVariable") // Testing Purpose for clarity
 public class ArgumentResolverTest {
 
     @Mock
@@ -37,10 +38,10 @@ public class ArgumentResolverTest {
     }
 
     @Test
-    void parseArguments_ShouldParseMultipleArguments() throws AbstractApplicationException, ShellException, FileNotFoundException {
+    void parseArguments_GivenMultipleValidArgInput_ShouldParseMultipleArguments() throws AbstractApplicationException, ShellException, FileNotFoundException {
 
         // GIVEN
-        List<String> inputArgsList = Arrays.asList("arg1", "'arg 2'", "`ls`");
+        List<String> inputArgsList = Arrays.asList("arg1", "'arg 2'", "`ls`"); //NOPMD - suppressed AvoidDuplicateLiterals - Clarity
 
         // Mocking resolveOneArgument method to isolate the test
         doReturn(List.of("arg1")).when(argumentResolverSpy).resolveOneArgument("arg1");
@@ -55,7 +56,7 @@ public class ArgumentResolverTest {
     }
 
     @Test
-    void parseArguments_ShouldHandleEmptyArgumentList() throws AbstractApplicationException, ShellException, FileNotFoundException {
+    void parseArguments_GivenEmptyArgList_ShouldHandleEmptyArgumentList() throws AbstractApplicationException, ShellException, FileNotFoundException {
         // GIVEN
         List<String> inputArgsList = List.of();
 
@@ -67,7 +68,7 @@ public class ArgumentResolverTest {
     }
 
     @Test
-    void resolveOneArgument_ShouldHandleCommandSubstitution() throws AbstractApplicationException, ShellException, FileNotFoundException {
+    void resolveOneArgument_GivenCommandSubstitution_ShouldHandleCorrectly() throws AbstractApplicationException, ShellException, FileNotFoundException {
 
         // Mocking a static method using Mockito's MockedStatic (static method mocking)
         try (MockedStatic<CommandBuilder> mockedCommandBuilder = mockStatic(CommandBuilder.class)) {
@@ -96,7 +97,7 @@ public class ArgumentResolverTest {
     }
 
     @Test
-    void resolveOneArgument_ShouldHandleAsterisk() throws AbstractApplicationException, ShellException, FileNotFoundException {
+    void resolveOneArgument_GivenGlobbing_ShouldHandleCorrectly() throws AbstractApplicationException, ShellException, FileNotFoundException {
         // GIVEN
         String inputArg = "file*.txt";
 
@@ -108,7 +109,7 @@ public class ArgumentResolverTest {
     }
 
     @Test
-    void resolveOneArgument_ShouldHandleQuoting() throws AbstractApplicationException, ShellException, FileNotFoundException {
+    void resolveOneArgument_GivenQuoting_ShouldCorrectly() throws AbstractApplicationException, ShellException, FileNotFoundException {
         // GIVEN
         String inputArg = "\"double-quoted text\"";
 
@@ -120,7 +121,7 @@ public class ArgumentResolverTest {
     }
 
     @Test
-    void resolveOneArgument_ShouldHandleSingleQuote() throws AbstractApplicationException, ShellException, FileNotFoundException {
+    void resolveOneArgument_GivenSingleQuote_ShouldHandleCorrectly() throws AbstractApplicationException, ShellException, FileNotFoundException {
         // GIVEN
         String inputArg = "'single-quoted text'";
 

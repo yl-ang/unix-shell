@@ -17,6 +17,7 @@ import java.util.Objects;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 
+@SuppressWarnings("PMD.PreserveStackTrace") // Stacktrace part of implementation
 public class RmApplication implements RmInterface {
     @Override
     public void run(String[] args, InputStream stdin, OutputStream stdout) throws AbstractApplicationException {

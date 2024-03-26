@@ -17,6 +17,7 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_TAB;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
+@SuppressWarnings("PMD.LongVariable") // Testing Purpose for clarity
 class CatApplicationTest {
     private static final String ROOT_DIRECTORY = Environment.currentDirectory;
     private static final String STR_FILE_SEP = String.valueOf(CHAR_FILE_SEP);
@@ -57,8 +58,8 @@ class CatApplicationTest {
     private void createFile(String filePath, String content) throws IOException {
         File file = new File(filePath);
         file.getParentFile().mkdirs();
-        try (OutputStream os = new FileOutputStream(file, false)) {
-            os.write(content.getBytes(StandardCharsets.UTF_8));
+        try (OutputStream outputStream = new FileOutputStream(file, false)) {
+            outputStream.write(content.getBytes(StandardCharsets.UTF_8));
         }
     }
 
@@ -167,15 +168,16 @@ class CatApplicationTest {
         InputStream stdin = new ByteArrayInputStream("Hello".getBytes());
 
         // Creating a custom OutputStream that throws IOException on write
-        OutputStream throwingOutputStream = new OutputStream() {
+        OutputStream throwingOutputStream = new OutputStream() { //NOPMD - suppressed CloseResource - already close
             @Override
-            public void write(int b) throws IOException {
+            public void write(int b) throws IOException { //NOPMD - suppressed ShortVariable - Overriding Java method
                 throw new IOException("Simulated write failure");
             }
         };
 
         // WHEN / THEN
         assertThrows(CatException.class, () -> catApplication.run(args, stdin, throwingOutputStream));
+        throwingOutputStream.close();
     }
 
     @Test

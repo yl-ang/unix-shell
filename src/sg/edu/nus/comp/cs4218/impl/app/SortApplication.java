@@ -18,6 +18,7 @@ import java.util.List;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
+@SuppressWarnings("PMD.PreserveStackTrace") // Stacktrace part of implementation
 public class SortApplication implements SortInterface {
 
     /**
@@ -85,7 +86,7 @@ public class SortApplication implements SortInterface {
             if (!node.canRead()) {
                 throw new SortException(ERR_NO_PERM);
             }
-            InputStream input = null;
+            InputStream input = null; //NOPMD - suppressed CloseResource - Already Close
 
             try {
                 input = IOUtils.openInputStream(file);

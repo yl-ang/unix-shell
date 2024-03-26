@@ -61,7 +61,7 @@ public final class IOUtils {
      * @throws ShellException If inputStream cannot be closed successfully.
      */
     public static void closeInputStream(InputStream inputStream) throws ShellException {
-        if (inputStream == System.in || inputStream == null) {
+        if (inputStream == null || inputStream.equals(System.in)) {
             return;
         }
 
@@ -79,7 +79,7 @@ public final class IOUtils {
      * @throws ShellException If outputStream cannot be closed successfully.
      */
     public static void closeOutputStream(OutputStream outputStream) throws ShellException {
-        if (outputStream == System.out || outputStream == null) {
+        if (outputStream == null || outputStream.equals(System.out)) {
             return;
         }
 

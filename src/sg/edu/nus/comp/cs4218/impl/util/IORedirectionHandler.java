@@ -64,7 +64,7 @@ public class IORedirectionHandler {
                 ArrayList<InputStream> streams = new ArrayList<>();
                 for (String s : fileSegment) {
                     file = s;
-                    InputStream curr = IOUtils.openInputStream(file);
+                    InputStream curr = IOUtils.openInputStream(file); //NOPMD - suppressed CloseResource - Close in downstream
                     streams.add(curr);
                 }
 

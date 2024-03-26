@@ -20,7 +20,7 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 
-public class CutApplication implements CutInterface {
+public class CutApplication implements CutInterface { //NOPMD - suppressed GodClass - Application
     private static final String CUT_ERROR_START = "cut: ";
 
     /**

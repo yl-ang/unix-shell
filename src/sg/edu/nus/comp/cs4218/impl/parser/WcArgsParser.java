@@ -3,11 +3,11 @@ package sg.edu.nus.comp.cs4218.impl.parser;
 import java.util.List;
 
 public class WcArgsParser extends ArgsParser {
-    public static final char FLAG_IS_BYTE_COUNT = 'c';
+    public static final char FLAG_IS_BYTE_COUNT = 'c'; //NOPMD - suppressed LongVariable - Clarity
 
-    public static final char FLAG_IS_LINE_COUNT = 'l';
+    public static final char FLAG_IS_LINE_COUNT = 'l'; //NOPMD - suppressed LongVariable - Clarity
 
-    public static final char FLAG_IS_WORD_COUNT = 'w';
+    public static final char FLAG_IS_WORD_COUNT = 'w'; //NOPMD - suppressed LongVariable - Clarity
 
     public WcArgsParser() {
         super();

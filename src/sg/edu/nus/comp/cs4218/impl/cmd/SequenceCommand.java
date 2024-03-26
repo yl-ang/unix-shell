@@ -22,6 +22,7 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
  * <p>
  * Command format: <Command> ; <Command>
  */
+@SuppressWarnings("PMD.PreserveStackTrace") // Stacktrace part of implementation
 public class SequenceCommand implements Command {
     private final List<Command> commands;
 

@@ -14,7 +14,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
+@SuppressWarnings("PMD.LongVariable") // Testing Purpose for clarity
 public class ApplicationRunnerTest {
+    
+    private static final String FILE_NAME_TXT = "file.txt";
 
     @InjectMocks
     private ApplicationRunner applicationRunner;
@@ -29,8 +32,8 @@ public class ApplicationRunnerTest {
         // GIVEN
         String unsupportedApp = "unsupportedApp";
         String[] argsArray = {};
-        InputStream inputStream = System.in;
-        OutputStream outputStream = System.out;
+        InputStream inputStream = System.in; //NOPMD - suppressed CloseResource - System Close
+        OutputStream outputStream = System.out; //NOPMD - suppressed CloseResource - System Close
 
         // WHEN / THEN
         assertThrows(ShellException.class, () -> applicationRunner.runApp(unsupportedApp, argsArray, inputStream, outputStream));
@@ -40,8 +43,8 @@ public class ApplicationRunnerTest {
     void testRunApp_CreateLsApplication_Success() throws Exception {
         // Given
         String[] argsArray = {"Hello"};
-        InputStream inputStream = System.in;
-        OutputStream outputStream = System.out;
+        InputStream inputStream = System.in; //NOPMD - suppressed CloseResource - System Close
+        OutputStream outputStream = System.out; //NOPMD - suppressed CloseResource - System Close
 
         try (MockedConstruction<LsApplication> lsApplicationMockedConstruction = Mockito.mockConstruction(LsApplication.class)) {
             // When
@@ -55,9 +58,9 @@ public class ApplicationRunnerTest {
     @Test
     void testRunApp_CreateWcApplication_Success() throws Exception {
         // Given
-        String[] argsArray = {"file.txt"};
-        InputStream inputStream = System.in;
-        OutputStream outputStream = System.out;
+        String[] argsArray = {FILE_NAME_TXT};
+        InputStream inputStream = System.in; //NOPMD - suppressed CloseResource - System Close
+        OutputStream outputStream = System.out; //NOPMD - suppressed CloseResource - System Close
 
         try (MockedConstruction<WcApplication> wcApplicationMockedConstruction = Mockito.mockConstruction(WcApplication.class)) {
             // When
@@ -72,8 +75,8 @@ public class ApplicationRunnerTest {
     void testRunApp_CreateEchoApplication_Success() throws Exception {
         // Given
         String[] argsArray = {"Hello", "World"};
-        InputStream inputStream = System.in;
-        OutputStream outputStream = System.out;
+        InputStream inputStream = System.in; //NOPMD - suppressed CloseResource - System Close
+        OutputStream outputStream = System.out; //NOPMD - suppressed CloseResource - System Close
 
         try (MockedConstruction<EchoApplication> echoApplicationMockedConstruction = Mockito.mockConstruction(EchoApplication.class)) {
             // When
@@ -88,8 +91,8 @@ public class ApplicationRunnerTest {
     void testRunApp_CreateExitApplication_Success() throws Exception {
         // Given
         String[] argsArray = {};
-        InputStream inputStream = System.in;
-        OutputStream outputStream = System.out;
+        InputStream inputStream = System.in; //NOPMD - suppressed CloseResource - System Close
+        OutputStream outputStream = System.out; //NOPMD - suppressed CloseResource - System Close
 
         try (MockedConstruction<ExitApplication> exitApplicationMockedConstruction = Mockito.mockConstruction(ExitApplication.class)) {
             // When
@@ -103,9 +106,9 @@ public class ApplicationRunnerTest {
     @Test
     void testRunApp_CreateGrepApplication_Success() throws Exception {
         // Given
-        String[] argsArray = {"pattern", "file.txt"};
-        InputStream inputStream = System.in;
-        OutputStream outputStream = System.out;
+        String[] argsArray = {"pattern", FILE_NAME_TXT};
+        InputStream inputStream = System.in; //NOPMD - suppressed CloseResource - System Close
+        OutputStream outputStream = System.out; //NOPMD - suppressed CloseResource - System Close
 
         try (MockedConstruction<GrepApplication> grepApplicationMockedConstruction = Mockito.mockConstruction(GrepApplication.class)) {
             // When
@@ -120,8 +123,8 @@ public class ApplicationRunnerTest {
     void testRunApp_CreateCdApplication_Success() throws Exception {
         // Given
         String[] argsArray = {"directory"};
-        InputStream inputStream = System.in;
-        OutputStream outputStream = System.out;
+        InputStream inputStream = System.in; //NOPMD - suppressed CloseResource - System Close
+        OutputStream outputStream = System.out; //NOPMD - suppressed CloseResource - System Close
 
         try (MockedConstruction<CdApplication> cdApplicationMockedConstruction = Mockito.mockConstruction(CdApplication.class)) {
             // When
@@ -135,9 +138,9 @@ public class ApplicationRunnerTest {
     @Test
     void testRunApp_CreateCatApplication_Success() throws Exception {
         // Given
-        String[] argsArray = {"file.txt"};
-        InputStream inputStream = System.in;
-        OutputStream outputStream = System.out;
+        String[] argsArray = {FILE_NAME_TXT};
+        InputStream inputStream = System.in; //NOPMD - suppressed CloseResource - System Close
+        OutputStream outputStream = System.out; //NOPMD - suppressed CloseResource - System Close
 
         try (MockedConstruction<CatApplication> catApplicationMockedConstruction = Mockito.mockConstruction(CatApplication.class)) {
             // When
@@ -152,8 +155,8 @@ public class ApplicationRunnerTest {
     void testRunApp_CreateMkdirApplication_Success() throws Exception {
         // Given
         String[] argsArray = {"dirName"};
-        InputStream inputStream = System.in;
-        OutputStream outputStream = System.out;
+        InputStream inputStream = System.in; //NOPMD - suppressed CloseResource - System Close
+        OutputStream outputStream = System.out; //NOPMD - suppressed CloseResource - System Close
 
         try (MockedConstruction<MkdirApplication> mkdirApplicationMockedConstruction = Mockito.mockConstruction(MkdirApplication.class)) {
             // When
@@ -167,9 +170,9 @@ public class ApplicationRunnerTest {
     @Test
     void testRunApp_CreateSortApplication_Success() throws Exception {
         // Given
-        String[] argsArray = {"file.txt"};
-        InputStream inputStream = System.in;
-        OutputStream outputStream = System.out;
+        String[] argsArray = {FILE_NAME_TXT};
+        InputStream inputStream = System.in; //NOPMD - suppressed CloseResource - System Close
+        OutputStream outputStream = System.out; //NOPMD - suppressed CloseResource - System Close
 
         try (MockedConstruction<SortApplication> sortApplicationMockedConstruction = Mockito.mockConstruction(SortApplication.class)) {
             // When

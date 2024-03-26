@@ -18,10 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_SPACE;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.*;
 
-public class UniqApplication implements UniqInterface {
+@SuppressWarnings("PMD.PreserveStackTrace") // Stacktrace part of implementation
+public class UniqApplication implements UniqInterface { //NOPMD - suppressed GodClass - Application
     InputStream stdin;
 
     @Override
@@ -103,7 +103,7 @@ public class UniqApplication implements UniqInterface {
         }
 
         try {
-            InputStream input = IOUtils.openInputStream(inputFileName);
+            InputStream input = IOUtils.openInputStream(inputFileName); //NOPMD - suppressed CloseResource - Already Close
             fileLines = IOUtils.getLinesFromInputStream(input);
             IOUtils.closeInputStream(input);
         } catch (ShellException e) {
@@ -142,8 +142,7 @@ public class UniqApplication implements UniqInterface {
         List<Integer> count = new ArrayList<>();
         countOccurrences(input, lines, count);
 
-        String output = generateOutput(isCount, isRepeated, isAllRepeated, lines, count);
-        return output;
+        return generateOutput(isCount, isRepeated, isAllRepeated, lines, count);
     }
 
     // Method to count occurrences of each string in the input.
@@ -205,11 +204,10 @@ public class UniqApplication implements UniqInterface {
     // Helper method to append a single line to the output.
     private void appendLine(StringBuilder output, Boolean isCount, String line, int count) {
         if (isCount) {
-            output.append("\t").append(count).append(" ");
+            output.append(CHAR_TAB).append(count).append(CHAR_SPACE);
         }
-        output.append(line).append("\n");
+        output.append(line).append(STRING_NEWLINE);
     }
-
 }
 
 

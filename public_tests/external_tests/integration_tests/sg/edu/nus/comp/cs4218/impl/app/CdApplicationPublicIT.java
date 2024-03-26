@@ -17,6 +17,7 @@ import sg.edu.nus.comp.cs4218.impl.app.CdApplication;
 import sg.edu.nus.comp.cs4218.testutils.TestStringUtils;
 import sg.edu.nus.comp.cs4218.testutils.TestEnvironmentUtil;
 
+@SuppressWarnings("PMD") // Provided by CS4218 Team
 class CdApplicationPublicIT {
 
     @TempDir

@@ -19,6 +19,7 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_WHITESPACE;
  * <b>Command format:</b> <code>echo [ARG]...</code>
  * </p>
  */
+@SuppressWarnings("PMD.PreserveStackTrace") // Stacktrace part of implementation
 public class EchoApplication implements EchoInterface {
 
     @Override

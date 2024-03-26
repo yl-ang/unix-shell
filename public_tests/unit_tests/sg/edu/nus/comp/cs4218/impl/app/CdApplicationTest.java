@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.*;
 
+@SuppressWarnings("PMD.LongVariable") // Testing Purpose for clarity
 public class CdApplicationTest {
 
     private static CdApplication cdApplication;

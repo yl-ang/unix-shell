@@ -40,9 +40,9 @@ public class CallCommand implements Command {
         // Handle IO redirection
         IORedirectionHandler redirHandler = new IORedirectionHandler(argsList, stdin, stdout, argumentResolver);
         redirHandler.extractRedirOptions();
-        List<String> noRedirArgsList = redirHandler.getNoRedirArgsList();
-        InputStream inputStream = redirHandler.getInputStream();
-        OutputStream outputStream = redirHandler.getOutputStream();
+        List<String> noRedirArgsList = redirHandler.getNoRedirArgsList(); //NOPMD - suppressed CloseResource - Close in downstream
+        InputStream inputStream = redirHandler.getInputStream(); //NOPMD - suppressed CloseResource - Close in downstream
+        OutputStream outputStream = redirHandler.getOutputStream(); //NOPMD - suppressed CloseResource - Close in downstream
 
         // Handle quoting + globing + command substitution
         List<String> parsedArgsList = argumentResolver.parseArguments(noRedirArgsList);

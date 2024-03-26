@@ -200,8 +200,8 @@ class LsApplicationTest {
         String lsOutput = lsApplication.listFolderContent(true, false, TEST_PATH);
 
         //THEN
-        assertTrue(lsOutput.contains("file1.iml"));
-        assertTrue(lsOutput.contains("file2.xml"));
+        assertTrue(lsOutput.contains(FILE_ONE));
+        assertTrue(lsOutput.contains(FILE_TWO));
         assertTrue(lsOutput.contains("file3.txt"));
         assertTrue(lsOutput.contains("file4.txt"));
     }
@@ -215,8 +215,8 @@ class LsApplicationTest {
         String lsOutput = lsApplication.listFolderContent(false, true, path);
 
         //THEN
-        int indexIml = lsOutput.indexOf("file1.iml");
-        int indexXml = lsOutput.indexOf("file2.xml");
+        int indexIml = lsOutput.indexOf(FILE_ONE);
+        int indexXml = lsOutput.indexOf(FILE_TWO);
         assertTrue(indexIml < indexXml);
     }
 
@@ -231,8 +231,8 @@ class LsApplicationTest {
 
         //THEN
         int indexTxt = lsOutput.indexOf("file4.txt");
-        int indexXml = lsOutput.indexOf("file2.xml");
-        int indexIml = lsOutput.indexOf("file1.iml");
+        int indexXml = lsOutput.indexOf(FILE_TWO);
+        int indexIml = lsOutput.indexOf(FILE_ONE);
         assertTrue(indexTxt > indexXml && indexIml < indexXml);
     }
 }

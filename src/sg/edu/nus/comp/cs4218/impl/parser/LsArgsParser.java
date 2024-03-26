@@ -4,7 +4,7 @@ import java.util.List;
 
 public class LsArgsParser extends ArgsParser {
     public final static char FLAG_IS_RECURSIVE = 'R';
-    public final static char FLAG_IS_SORT_BY_EXT = 'X';
+    public final static char FLAG_IS_SORT_BY_EXT = 'X'; //NOPMD - suppressed LongVariable - Clarity
 
     public LsArgsParser() {
         super();
