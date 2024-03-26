@@ -54,7 +54,7 @@ public class RmTest {
     public void remove_RemoveSingleFileNoFlag_ShouldRemoveFile() throws AbstractApplicationException, IOException {
         File file = new File(CREATE_TEST_FILE_PATH_1);
         boolean createFile = file.createNewFile();
-        assertTrue(createFile, "Create test file to removed by 'rm' has to be created");
+        assertTrue(createFile, "Create test file to removed by 'rm' has to be created"); //NOPMD - suppressed AvoidDuplicateLiterals - Clarity
         rmApplication.remove(false, false, CREATE_TEST_FILE_PATH_1);
         assertFalse(file.exists(), "File should not exist after removal");
     }
@@ -90,7 +90,7 @@ public class RmTest {
     @Test
     public void remove_RemoveNonEmptyFolderNoFlag_ThrowsExpcetion() throws AbstractApplicationException, IOException {
         File nonEmptyFolder = new File(CREATE_NON_EMPTY_FOLDER);
-        assertTrue(nonEmptyFolder.mkdir(), "Create test folder to be removed by 'rm'");
+        assertTrue(nonEmptyFolder.mkdir(), "Create test folder to be removed by 'rm'"); //NOPMD - suppressed AvoidDuplicateLiterals - Clarity
         File file = new File(CREATE_TEST_FILE_PATH_3);
         boolean createFile = file.createNewFile();
         assertTrue(createFile, "Create test file to removed by 'rm' has to be created");

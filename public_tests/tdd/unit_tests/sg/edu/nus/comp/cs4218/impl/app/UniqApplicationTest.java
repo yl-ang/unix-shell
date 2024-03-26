@@ -24,11 +24,11 @@ public class UniqApplicationTest {
 
     private static final String TEST_FILENAME = "uniqTestFile.txt";
     private static final String OUTPUTTEST_FILENAME = "uniqTestFile2.txt";
-    private static final String TEST_INPUT = "HELLO_WORLD" + STRING_NEWLINE +
+    private static final String TEST_INPUT = "HELLO_WORLD" + STRING_NEWLINE + //NOPMD - suppressed AvoidDuplicateLiterals - Clarity
             "HELLO_WORLD" + STRING_NEWLINE +
-            "ALICE" + STRING_NEWLINE +
+            "ALICE" + STRING_NEWLINE + //NOPMD - suppressed AvoidDuplicateLiterals - Clarity
             "ALICE" +  STRING_NEWLINE +
-            "BOB" + STRING_NEWLINE +
+            "BOB" + STRING_NEWLINE + //NOPMD - suppressed AvoidDuplicateLiterals - Clarity
             "ALICE" + STRING_NEWLINE + "BOB";
     private static final String EXPECTEDOUTPUT_UNIQ = "HELLO_WORLD" + STRING_NEWLINE +
             "ALICE" + STRING_NEWLINE +

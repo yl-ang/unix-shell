@@ -308,10 +308,10 @@ public class CutApplicationTest {
 
     @Test
     void run_charFlagGivenWithOneFilename_cutByCharFromFile() throws AbstractApplicationException {
-        String[] args = {"-c", "1-5", TEST_FILENAME};
+        String[] args = {"-c", "1-5", TEST_FILENAME}; //NOPMD - suppressed AvoidDuplicateLiterals - Clarity
 
         cutApplication.run(args, inputStdin, output);
-        assertEquals("12345\n12345\n", output.toString());
+        assertEquals("12345\n12345\n", output.toString()); //NOPMD - suppressed AvoidDuplicateLiterals - Clarity
     }
 
 
