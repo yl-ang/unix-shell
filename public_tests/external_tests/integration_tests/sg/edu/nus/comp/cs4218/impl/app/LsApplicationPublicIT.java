@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.impl.app.LsApplication;
 import sg.edu.nus.comp.cs4218.testutils.TestEnvironmentUtil;
 
+@SuppressWarnings("PMD") // Provided by CS4218 Team
 public class LsApplicationPublicIT {
     private static final String TEMP = "temp-ls";
     private static final String FOLDER = "folder";

@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static sg.edu.nus.comp.cs4218.testutils.TestStringUtils.CHAR_TAB;
 import static sg.edu.nus.comp.cs4218.testutils.TestStringUtils.STRING_NEWLINE;
 
-@SuppressWarnings("PMD")
+@SuppressWarnings("PMD") // Provided by CS4218 Team
 public class WcApplicationPublicTest {
     private static final String TEMP = "temp-wc";
     private static final Path TEMP_PATH = Paths.get(TEMP);

@@ -24,6 +24,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@SuppressWarnings("PMD") // Provided by CS4218 Team
 public class LsApplicationPublicTest {
 
     public static final String SRC = "src";

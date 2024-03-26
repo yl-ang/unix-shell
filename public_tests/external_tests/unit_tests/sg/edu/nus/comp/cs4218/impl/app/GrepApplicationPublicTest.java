@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static sg.edu.nus.comp.cs4218.testutils.TestStringUtils.STRING_NEWLINE;
 
+@SuppressWarnings("PMD") // Provided by CS4218 Team
 public class GrepApplicationPublicTest {
     private final static String LABEL_STDIN = "(standard input)";
     private final static String PATTERN_VALID = "test";

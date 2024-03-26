@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import sg.edu.nus.comp.cs4218.exception.RmException;
 import sg.edu.nus.comp.cs4218.impl.app.RmApplication;
 import sg.edu.nus.comp.cs4218.testutils.TestEnvironmentUtil;
-
+@SuppressWarnings("PMD") // Provided by CS4218 Team
 public class RmApplicationPublicIT {
     private static final String TEMP = "temp-rm";
     private static final Deque<Path> files = new ArrayDeque<>();

@@ -21,6 +21,7 @@ import sg.edu.nus.comp.cs4218.exception.MvException;
 import sg.edu.nus.comp.cs4218.impl.app.MvApplication;
 import sg.edu.nus.comp.cs4218.testutils.TestEnvironmentUtil;
 
+@SuppressWarnings("PMD") // Provided by CS4218 Team
 public class MvApplicationPublicIT {
 
     @TempDir

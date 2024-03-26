@@ -29,7 +29,7 @@ import sg.edu.nus.comp.cs4218.exception.WcException;
 import sg.edu.nus.comp.cs4218.impl.app.WcApplication;
 import sg.edu.nus.comp.cs4218.testutils.TestEnvironmentUtil;
 
-@SuppressWarnings("PMD")
+@SuppressWarnings("PMD") // Provided by CS4218 Team
 public class WcApplicationPublicIT {
     private static final String TEMP = "temp-wc";
 

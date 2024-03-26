@@ -17,6 +17,7 @@ import java.util.Comparator;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@SuppressWarnings("PMD") // Provided by CS4218 Team
 public class RmApplicationPublicTest {
     private static final String TEMP = "temp-rm" + File.separator;
     private static final String DIR_A = "rmDirectoryA";

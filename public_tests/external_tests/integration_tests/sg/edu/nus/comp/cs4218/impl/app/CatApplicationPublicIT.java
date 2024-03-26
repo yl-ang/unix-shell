@@ -27,6 +27,7 @@ import sg.edu.nus.comp.cs4218.exception.CatException;
 import sg.edu.nus.comp.cs4218.impl.app.CatApplication;
 import sg.edu.nus.comp.cs4218.testutils.TestEnvironmentUtil;
 
+@SuppressWarnings("PMD") // Provided by CS4218 Team
 public class CatApplicationPublicIT {
     private static final String TEMP = "temp-cat";
     private static final String DIR = "dir";

@@ -6,6 +6,7 @@ import com.ginsberg.junit.exit.ExpectSystemExitWithStatus;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.impl.app.ExitApplication;
 
+@SuppressWarnings("PMD") // Provided by CS4218 Team
 public class ExitApplicationPublicIT {
 
     public static final String EXIT_MSG = "exit: 0";

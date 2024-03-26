@@ -12,6 +12,7 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.*;
 
 
+@SuppressWarnings("PMD") // Provided by CS4218 Team
 public class MkdirApplicationPublicTest {
     MkdirApplication mkdirApplication;
     String pathToTestDir = "TestResources" + File.separator + "mkdirTestDir" + File.separator;

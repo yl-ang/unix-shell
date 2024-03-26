@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.impl.app.ExitApplication;
 
+@SuppressWarnings("PMD") // Provided by CS4218 Team
 public class ExitApplicationPublicTest {
     private ExitApplication app;
 

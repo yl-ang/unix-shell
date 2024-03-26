@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@SuppressWarnings("PMD") // Provided by CS4218 Team
 public class MvApplicationPublicTest {
     private MvApplication application;
     private static final String TEMP = "temp-mv" + File.separator;

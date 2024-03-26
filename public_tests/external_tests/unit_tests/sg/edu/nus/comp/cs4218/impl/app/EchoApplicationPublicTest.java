@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static sg.edu.nus.comp.cs4218.testutils.TestStringUtils.STRING_NEWLINE;
 
+@SuppressWarnings("PMD") // Provided by CS4218 Team
 public class EchoApplicationPublicTest {
     private static final String TEXT_TEST = "test";
     private static final String TEXT_NEW_LINE = "testing" + STRING_NEWLINE;

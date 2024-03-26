@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static sg.edu.nus.comp.cs4218.testutils.TestStringUtils.STRING_NEWLINE;
 
-@SuppressWarnings("PMD")
+@SuppressWarnings("PMD") // Provided by CS4218 Team
 public class CutApplicationPublicTest {
     CutApplication cutApplication;
 

@@ -26,7 +26,7 @@ import static sg.edu.nus.comp.cs4218.testutils.TestStringUtils.STRING_NEWLINE;
 import sg.edu.nus.comp.cs4218.exception.TeeException;
 import sg.edu.nus.comp.cs4218.testutils.TestEnvironmentUtil;
 
-@SuppressWarnings("PMD")
+@SuppressWarnings("PMD") // Provided by CS4218 Team
 class TeeApplicationPublicIT {
     @TempDir
     static File tempDir;
