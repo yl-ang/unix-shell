@@ -22,6 +22,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@SuppressWarnings("PMD.LongVariable") // Testing Purpose for clarity
 public class ArgumentResolverTest {
 
     @Mock
@@ -40,7 +41,7 @@ public class ArgumentResolverTest {
     void parseArguments_GivenMultipleValidArgInput_ShouldParseMultipleArguments() throws AbstractApplicationException, ShellException, FileNotFoundException {
 
         // GIVEN
-        List<String> inputArgsList = Arrays.asList("arg1", "'arg 2'", "`ls`");
+        List<String> inputArgsList = Arrays.asList("arg1", "'arg 2'", "`ls`"); //NOPMD - suppressed AvoidDuplicateLiterals - Clarity
 
         // Mocking resolveOneArgument method to isolate the test
         doReturn(List.of("arg1")).when(argumentResolverSpy).resolveOneArgument("arg1");

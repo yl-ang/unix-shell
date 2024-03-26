@@ -40,16 +40,18 @@ public class SequenceCommandIT {
     private static final String FILE_NAME_5 = "file5.txt";
     private static final String FILE_NAME_6 = "file6.txt";
     private static final String FILE_GLOBBING = "*.txt";
+    private static final String STR_RESULT_1 = "hello world";
+    private static final String STR_RESULT_2 = "cd: No such file or directory";
 
     @TempDir
     File tempDirectory;
     @BeforeEach
-    void setup() throws IOException {
+    void setup() throws IOException { //NOPMD - suppressed ExcessiveMethodLength - Test Setup
         Environment.currentDirectory = tempDirectory.getAbsolutePath();
 
         String folderPrefix = tempDirectory + STR_FILE_SEP;
 
-        FileWriter writer = new FileWriter(folderPrefix + FILE_NAME_1);
+        FileWriter writer = new FileWriter(folderPrefix + FILE_NAME_1); //NOPMD - suppressed CloseResource - Already Close
         writer.write("bye world");
         writer.close();
 
@@ -306,7 +308,7 @@ public class SequenceCommandIT {
         Command command = CommandBuilder.parseCommand(commandInputStr, applicationRunner);
         sequenceCommand = (SequenceCommand) command;
         sequenceCommand.evaluate(systemInputStream, outputStream);
-        String expectedOutput = "hello world" + STRING_NEWLINE;
+        String expectedOutput = STR_RESULT_1 + STRING_NEWLINE;
         String expectedDir = tempDirectory.getAbsolutePath() + CHAR_FILE_SEP + FOLDER_NAME_1;
         assertEquals(expectedOutput, outputStream.toString());
         assertEquals(expectedDir, Environment.currentDirectory);
@@ -318,7 +320,7 @@ public class SequenceCommandIT {
         Command command = CommandBuilder.parseCommand(commandInputStr, applicationRunner);
         sequenceCommand = (SequenceCommand) command;
         sequenceCommand.evaluate(systemInputStream, outputStream);
-        String expectedOutput = "hello world" + STRING_NEWLINE + "\t2 " + FILE_NAME_1 + STRING_NEWLINE;
+        String expectedOutput = STR_RESULT_1 + STRING_NEWLINE + "\t2 " + FILE_NAME_1 + STRING_NEWLINE;
         assertEquals(expectedOutput, outputStream.toString());
     }
 
@@ -328,7 +330,7 @@ public class SequenceCommandIT {
         Command command = CommandBuilder.parseCommand(commandInputStr, applicationRunner);
         sequenceCommand = (SequenceCommand) command;
         sequenceCommand.evaluate(systemInputStream, outputStream);
-        String expectedOutput = "hello world" + STRING_NEWLINE;
+        String expectedOutput = STR_RESULT_1 + STRING_NEWLINE;
         assertEquals(expectedOutput, outputStream.toString());
         Path path = Path.of(tempDirectory + STR_FILE_SEP + FOLDER_NAME_2);
         assertTrue(Files.exists(path));
@@ -340,7 +342,7 @@ public class SequenceCommandIT {
         Command command = CommandBuilder.parseCommand(commandInputStr, applicationRunner);
         sequenceCommand = (SequenceCommand) command;
         sequenceCommand.evaluate(systemInputStream, outputStream);
-        String expectedOutput = String.join(STRING_NEWLINE, new String[]{"hello world", "9 but not me", "5", "4", "2", "1 but who?"}) + STRING_NEWLINE;
+        String expectedOutput = String.join(STRING_NEWLINE, new String[]{STR_RESULT_1, "9 but not me", "5", "4", "2", "1 but who?"}) + STRING_NEWLINE; //NOPMD - suppressed AvoidDuplicateLiterals - Two Occurrence,clarity
         assertEquals(expectedOutput, outputStream.toString());
     }
 
@@ -351,7 +353,7 @@ public class SequenceCommandIT {
         Command command = CommandBuilder.parseCommand(commandInputStr, applicationRunner);
         sequenceCommand = (SequenceCommand) command;
         sequenceCommand.evaluate(systemInputStream, outputStream);
-        String expectedOutput = String.join(STRING_NEWLINE, new String[]{"hello world", "1 but who?", "2", "9 but not me", "4", "5"}) + STRING_NEWLINE;
+        String expectedOutput = String.join(STRING_NEWLINE, new String[]{STR_RESULT_1, "1 but who?", "2", "9 but not me", "4", "5"}) + STRING_NEWLINE;
         assertEquals(expectedOutput, outputStream.toString());
     }
 
@@ -361,7 +363,7 @@ public class SequenceCommandIT {
         Command command = CommandBuilder.parseCommand(commandInputStr, applicationRunner);
         sequenceCommand = (SequenceCommand) command;
         sequenceCommand.evaluate(systemInputStream, outputStream);
-        String expectedOutput = "cd: No such file or directory" + STRING_NEWLINE + "\t10 " + FILE_NAME_2 + STRING_NEWLINE;
+        String expectedOutput = STR_RESULT_2 + STRING_NEWLINE + "\t10 " + FILE_NAME_2 + STRING_NEWLINE;
         assertEquals(expectedOutput, outputStream.toString());
         assertEquals(tempDirectory.getAbsolutePath(), Environment.currentDirectory);
     }
@@ -372,7 +374,7 @@ public class SequenceCommandIT {
         Command command = CommandBuilder.parseCommand(commandInputStr, applicationRunner);
         sequenceCommand = (SequenceCommand) command;
         sequenceCommand.evaluate(systemInputStream, outputStream);
-        String expectedOutput = "cd: No such file or directory" + STRING_NEWLINE;
+        String expectedOutput = STR_RESULT_2 + STRING_NEWLINE;
         assertEquals(expectedOutput, outputStream.toString());
 
         Path path = Path.of(tempDirectory + STR_FILE_SEP + FOLDER_PATH_SUB);
@@ -387,7 +389,7 @@ public class SequenceCommandIT {
         Command command = CommandBuilder.parseCommand(commandInputStr, applicationRunner);
         sequenceCommand = (SequenceCommand) command;
         sequenceCommand.evaluate(systemInputStream, outputStream);
-        String expectedOutput = String.join(STRING_NEWLINE, new String[]{"cd: No such file or directory", "9 but not me", "5", "4", "2", "1 but who?"}) + STRING_NEWLINE;
+        String expectedOutput = String.join(STRING_NEWLINE, new String[]{STR_RESULT_2, "9 but not me", "5", "4", "2", "1 but who?"}) + STRING_NEWLINE;
         assertEquals(expectedOutput, outputStream.toString());
     }
 
@@ -397,7 +399,7 @@ public class SequenceCommandIT {
         Command command = CommandBuilder.parseCommand(commandInputStr, applicationRunner);
         sequenceCommand = (SequenceCommand) command;
         sequenceCommand.evaluate(systemInputStream, outputStream);
-        String expectedOutput = String.join(STRING_NEWLINE, new String[]{"cd: No such file or directory", "1 but who?", "2", "9 but not me", "4", "5"}) + STRING_NEWLINE;
+        String expectedOutput = String.join(STRING_NEWLINE, new String[]{STR_RESULT_2, "1 but who?", "2", "9 but not me", "4", "5"}) + STRING_NEWLINE;
         assertEquals(expectedOutput, outputStream.toString());
     }
 
@@ -413,7 +415,7 @@ public class SequenceCommandIT {
         Command command = CommandBuilder.parseCommand(commandInputStr, applicationRunner);
         sequenceCommand = (SequenceCommand) command;
         sequenceCommand.evaluate(systemInputStream, outputStream);
-        String[] expectedOResultArr = new String[]{
+        String[] expectedOResultArr = new String[]{ //NOPMD - suppressed LongVariable - Complex Test Case
                 String.format("cat: %s: No such file or directory", FILE_NAME_2),
                 "chicken-rice",
                 String.format("wc: %s: No such file or directory", FILE_NAME_1),

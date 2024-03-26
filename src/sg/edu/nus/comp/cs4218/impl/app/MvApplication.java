@@ -17,6 +17,7 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IO_EXCEPTION;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_NOT_DIR;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_TOO_MANY_ARGS;
 
+@SuppressWarnings("PMD.PreserveStackTrace") // Stacktrace part of implementation
 public class MvApplication implements MvInterface {
     @Override
     public void run(String[] args, InputStream stdin, OutputStream stdout) throws MvException {
@@ -49,11 +50,11 @@ public class MvApplication implements MvInterface {
     @Override
     public String mvSrcFileToDestFile(Boolean isOverwrite, String srcFile, String destFile) throws MvException {
         Path absoluteSrcPath = Path.of(MvUtils.getNormalizedPath(srcFile));
-        Path absoluteTargetPath = Path.of(MvUtils.getNormalizedPath(destFile));
+        Path absoluteTargetPath = Path.of(MvUtils.getNormalizedPath(destFile)); //NOPMD - suppressed LongVariable - Clarity
 
         MvUtils.checkFileExists(srcFile);
         MvUtils.checkSrcIsWritable(srcFile);
-        MvUtils.checkSrcAndTargetAreDifferent(absoluteSrcPath, absoluteTargetPath);
+        MvUtils.checkSrcAndTargetAreDifferent(absoluteSrcPath, absoluteTargetPath); //NOPMD - suppressed LongVariable - Clarity
         try {
             MvUtils.checkFolderIsWithinDirectoryOfFile(absoluteSrcPath, absoluteTargetPath.toString());
         } catch(IOException e) {

@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
+@SuppressWarnings("PMD.LongVariable") // Testing Purpose for clarity
 class SortArgsParserTest {
 
     private SortArgsParser parser;

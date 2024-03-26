@@ -8,7 +8,7 @@ public class MkdirException extends AbstractApplicationException {
 
     public static final String ERR_FOLDER_EXISTS = ": File exists";
 
-    public static final String ERR_MAKE_FOLDER_FAILED = "Failed to create folder.";
+    public static final String ERR_MAKE_FOLDER_FAILED = "Failed to create folder"; //NOPMD - suppressed LongVariable - Clarity
 
     public MkdirException(String message) {
         super("mkdir: " + message);

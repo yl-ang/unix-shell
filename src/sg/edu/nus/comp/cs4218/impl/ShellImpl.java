@@ -24,8 +24,8 @@ public class ShellImpl implements Shell {
      * @param args List of strings arguments, unused.
      */
     public static void main(String... args) {
-        InputStreamReader inputStreamReader = new InputStreamReader(System.in);
-        BufferedReader reader = new BufferedReader(inputStreamReader);
+        InputStreamReader inputStreamReader = new InputStreamReader(System.in); //NOPMD - suppressed CloseResource - System Close
+        BufferedReader reader = new BufferedReader(inputStreamReader); //NOPMD - suppressed CloseResource - System Close
         Shell shell = new ShellImpl();
 
         while (true) {

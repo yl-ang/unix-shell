@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.*;
 
+@SuppressWarnings("PMD.LongVariable") // Testing Purpose for clarity
 public class UniqApplicationTest {
 
     private UniqInterface uniqApplication;
@@ -30,11 +31,11 @@ public class UniqApplicationTest {
     private static final String OUTPUTTEST_FILENAME = "uniqTestFile2.txt";
 
     private static final String EMPTY_FILE = "emptyFile.txt";
-    private static final String TEST_INPUT = "HELLO_WORLD" + STRING_NEWLINE +
+    private static final String TEST_INPUT = "HELLO_WORLD" + STRING_NEWLINE + //NOPMD - suppressed AvoidDuplicateLiterals - Clarity
             "HELLO_WORLD" + STRING_NEWLINE +
-            "ALICE" + STRING_NEWLINE +
+            "ALICE" + STRING_NEWLINE + //NOPMD - suppressed AvoidDuplicateLiterals - Clarity
             "ALICE" +  STRING_NEWLINE +
-            "BOB" + STRING_NEWLINE +
+            "BOB" + STRING_NEWLINE + //NOPMD - suppressed AvoidDuplicateLiterals - Clarity
             "ALICE" + STRING_NEWLINE + "BOB";
     private static final String EXPECTEDOUTPUT_UNIQ = "HELLO_WORLD" + STRING_NEWLINE +
             "ALICE" + STRING_NEWLINE +
@@ -176,8 +177,8 @@ public class UniqApplicationTest {
     }
 
     @Test
-    void uniqFromStdin_WhenIOExceptionOccurs_ThrowsUniqException() {
-        InputStream inputStream = new InputStream() {
+    void uniqFromStdin_WhenIOExceptionOccurs_ThrowsUniqException() throws IOException {
+        InputStream inputStream = new InputStream() { //NOPMD - suppressed CloseResource - Already Close
             @Override
             public int read() throws IOException {
                 throw new IOException("Simulated IO exception");
@@ -187,6 +188,7 @@ public class UniqApplicationTest {
         UniqException exception = assertThrows(UniqException.class, () ->
                 uniqApplication.uniqFromStdin(false, false, false, inputStream, null));
         assertTrue(exception.getMessage().contains(ERR_IO_EXCEPTION));
+        inputStream.close();
     }
 
     @Test

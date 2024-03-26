@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@SuppressWarnings("PMD.LongVariable") // Testing Purpose for clarity
 public class MkdirParserTest {
 
     private static MkdirParser mkdirParser;

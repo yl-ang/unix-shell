@@ -24,7 +24,8 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FLAG_PREFIX;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
-public class GrepApplication implements GrepInterface {
+@SuppressWarnings("PMD.PreserveStackTrace") // Stacktrace part of implementation
+public class GrepApplication implements GrepInterface { //NOPMD - suppressed GodClass - Application
     public static final String EMPTY_PATTERN = "Pattern should not be empty.";
     public static final String IS_DIRECTORY = "Is a directory";
     public static final String NULL_POINTER = "Null Pointer Exception";
@@ -37,6 +38,104 @@ public class GrepApplication implements GrepInterface {
     private static final int COUNT_INDEX = 1;
     private static final int PREFIX_FN_IDX = 2;
 
+    @Override
+    public void run(String[] args, InputStream stdin, OutputStream stdout) throws AbstractApplicationException {
+        try {
+            GrepArgsParser parser = new GrepArgsParser();
+            boolean[] grepFlags = new boolean[NUM_ARGUMENTS];
+            parser.parse(args);
+
+            String pattern = parser.getPattern();
+            ArrayList<String> inputFilesList = parser.getFileNames();
+            grepFlags[CASE_INSEN_IDX] = parser.isCaseInsensitive();
+            grepFlags[COUNT_INDEX] = parser.isCount();
+            grepFlags[PREFIX_FN_IDX] = parser.isPrintFileName();
+
+            if (stdin == null && inputFilesList.isEmpty()) {
+                throw new Exception(ERR_NO_INPUT);
+            }
+            if (pattern == null) {
+                throw new Exception(ERR_SYNTAX);
+            }
+            if (pattern.isEmpty()) {
+                throw new Exception(EMPTY_PATTERN);
+            }
+
+            String result = "";
+            if (inputFilesList.isEmpty()) {
+                result = grepFromStdin(pattern, grepFlags[CASE_INSEN_IDX], grepFlags[COUNT_INDEX], grepFlags[PREFIX_FN_IDX], stdin);
+            } else {
+                String[] inputFilesArray = inputFilesList.toArray(new String[0]);
+
+                inputFilesArray = inputFilesList.toArray(inputFilesArray);
+                if (inputFilesList.contains("-")) {
+                    result = grepFromFileAndStdin(pattern, grepFlags[CASE_INSEN_IDX], grepFlags[COUNT_INDEX], grepFlags[PREFIX_FN_IDX], stdin, inputFilesArray);
+                } else {
+                    result = grepFromFiles(pattern, grepFlags[CASE_INSEN_IDX], grepFlags[COUNT_INDEX], grepFlags[PREFIX_FN_IDX], inputFilesArray);
+                }
+            }
+            stdout.write(result.getBytes());
+        } catch (GrepException grepException) {
+            throw grepException;
+        } catch (Exception e) {
+            throw new GrepException(e.getMessage());
+        }
+    }
+
+    @Override
+    public String grepFromStdin(String pattern, Boolean isCaseInsensitive, Boolean isCountLines, Boolean isPrefixFileName, InputStream stdin) throws AbstractApplicationException {
+        int count = 0;
+        // java does not treat empty patterns as invalid
+        if (pattern.isEmpty()) {
+            throw new GrepException(ERR_EMPTY_PATTERN);
+        }
+
+        StringJoiner stringJoiner = new StringJoiner(STRING_NEWLINE);
+
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(stdin));
+            String line;
+            Pattern compiledPattern;
+            if (isCaseInsensitive) {
+                compiledPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
+            } else {
+                compiledPattern = Pattern.compile(pattern);
+            }
+            while ((line = reader.readLine()) != null) {
+                Matcher matcher = compiledPattern.matcher(line);
+                if (matcher.find()) { // match
+                    if (isPrefixFileName) {
+                        stringJoiner.add("(standard input):" + line);
+                    } else {
+                        stringJoiner.add(line);
+                    }
+                    count++;
+                }
+            }
+            reader.close();
+        } catch (PatternSyntaxException pse) {
+            throw new GrepException(ERR_INVALID_REGEX);
+        } catch (NullPointerException npe) {
+            throw new GrepException(ERR_FILE_NOT_FOUND);
+        } catch (IOException e) {
+            throw new GrepException(ERR_IO_EXCEPTION);
+        }
+
+        String results = "";
+        if (isCountLines) {
+            if (isPrefixFileName) {
+                results = String.format("(standard input):%d%s", count, STRING_NEWLINE);
+            }
+            else {
+                results = String.format("%d%s", count, STRING_NEWLINE);
+            }
+        } else {
+            if (!stringJoiner.toString().isEmpty()) {
+                results = stringJoiner + STRING_NEWLINE;
+            }
+        }
+        return results;
+    }
 
     /**
      * Returns string containing lines which match the specified pattern in the given files
@@ -127,164 +226,6 @@ public class GrepApplication implements GrepInterface {
         return file;
     }
 
-    private Pattern compilePattern(String pattern, boolean isCaseInsensitive) {
-        int flags = isCaseInsensitive ? Pattern.CASE_INSENSITIVE : 0;
-        return Pattern.compile(pattern, flags);
-    }
-
-    private void processFile(String filePath, BufferedReader reader, Pattern pattern, boolean includeFileName,
-                             StringJoiner lineResults, StringJoiner countResults) throws Exception {
-        String line;
-        int matches = 0;
-        while ((line = reader.readLine()) != null) {
-            Matcher matcher = pattern.matcher(line);
-            if (matcher.find()) {
-                lineResults.add(includeFileName ? filePath + ":" + line : line);
-                matches++;
-            }
-        }
-        countResults.add(includeFileName ? filePath + ":" + matches : String.valueOf(matches));
-    }
-
-    /**
-     * Converts filename to absolute path, if initially was relative path
-     *
-     * @param fileName supplied by user
-     * @return a String of the absolute path of the filename
-     */
-    private String convertToAbsolutePath(String fileName) {
-        String home = System.getProperty("user.home").trim();
-        String currentDir = Environment.currentDirectory.trim();
-        String convertedPath = convertPathToSystemPath(fileName);
-
-        String newPath;
-        if (convertedPath.length() >= home.length() && convertedPath.substring(0, home.length()).trim().equals(home)) {
-            newPath = convertedPath;
-        } else {
-            newPath = currentDir + CHAR_FILE_SEP + convertedPath;
-        }
-        return newPath;
-    }
-
-    /**
-     * Converts path provided by user into path recognised by the system
-     *
-     * @param path supplied by user
-     * @return a String of the converted path
-     */
-    private String convertPathToSystemPath(String path) {
-        String convertedPath = path;
-        String pathIdentifier = "\\" + Character.toString(CHAR_FILE_SEP);
-        convertedPath = convertedPath.replaceAll("(\\\\)+", pathIdentifier);
-        convertedPath = convertedPath.replaceAll("/+", pathIdentifier);
-
-        if (convertedPath.length() != 0 && convertedPath.charAt(convertedPath.length() - 1) == CHAR_FILE_SEP) {
-            convertedPath = convertedPath.substring(0, convertedPath.length() - 1);
-        }
-
-        return convertedPath;
-    }
-
-    @Override
-    public String grepFromStdin(String pattern, Boolean isCaseInsensitive, Boolean isCountLines, Boolean isPrefixFileName, InputStream stdin) throws AbstractApplicationException {
-        int count = 0;
-        // java does not treat empty patterns as invalid
-        if (pattern.isEmpty()) {
-            throw new GrepException(ERR_EMPTY_PATTERN);
-        }
-
-        StringJoiner stringJoiner = new StringJoiner(STRING_NEWLINE);
-
-        try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(stdin));
-            String line;
-            Pattern compiledPattern;
-            if (isCaseInsensitive) {
-                compiledPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
-            } else {
-                compiledPattern = Pattern.compile(pattern);
-            }
-            while ((line = reader.readLine()) != null) {
-                Matcher matcher = compiledPattern.matcher(line);
-                if (matcher.find()) { // match
-                    if (isPrefixFileName) {
-                        stringJoiner.add("(standard input):" + line);
-                    } else {
-                        stringJoiner.add(line);
-                    }
-                    count++;
-                }
-            }
-            reader.close();
-        } catch (PatternSyntaxException pse) {
-            throw new GrepException(ERR_INVALID_REGEX);
-        } catch (NullPointerException npe) {
-            throw new GrepException(ERR_FILE_NOT_FOUND);
-        } catch (IOException e) {
-            throw new GrepException(ERR_IO_EXCEPTION);
-        }
-
-        String results = "";
-        if (isCountLines) {
-            if (isPrefixFileName) {
-                results = String.format("(standard input):%d%s", count, STRING_NEWLINE);
-            }
-            else {
-                results = String.format("%d%s", count, STRING_NEWLINE);
-            }
-        } else {
-            if (!stringJoiner.toString().isEmpty()) {
-                results = stringJoiner + STRING_NEWLINE;
-            }
-        }
-        return results;
-    }
-
-    @Override
-    public void run(String[] args, InputStream stdin, OutputStream stdout) throws AbstractApplicationException {
-        try {
-            GrepArgsParser parser = new GrepArgsParser();
-            boolean[] grepFlags = new boolean[NUM_ARGUMENTS];
-            parser.parse(args);
-
-            String pattern = parser.getPattern();
-            ArrayList<String> inputFilesList = parser.getFileNames();
-            grepFlags[CASE_INSEN_IDX] = parser.isCaseInsensitive();
-            grepFlags[COUNT_INDEX] = parser.isCount();
-            grepFlags[PREFIX_FN_IDX] = parser.isPrintFileName();
-
-            if (stdin == null && inputFilesList.isEmpty()) {
-                throw new Exception(ERR_NO_INPUT);
-            }
-            if (pattern == null) {
-                throw new Exception(ERR_SYNTAX);
-            }
-            if (pattern.isEmpty()) {
-                throw new Exception(EMPTY_PATTERN);
-            }
-
-            String result = "";
-            if (inputFilesList.isEmpty()) {
-                result = grepFromStdin(pattern, grepFlags[CASE_INSEN_IDX], grepFlags[COUNT_INDEX], grepFlags[PREFIX_FN_IDX], stdin);
-            } else {
-                String[] inputFilesArray = inputFilesList.toArray(new String[0]);
-
-                inputFilesArray = inputFilesList.toArray(inputFilesArray);
-                if (inputFilesList.contains("-")) {
-                    result = grepFromFileAndStdin(pattern, grepFlags[CASE_INSEN_IDX], grepFlags[COUNT_INDEX], grepFlags[PREFIX_FN_IDX], stdin, inputFilesArray);
-                } else {
-                    result = grepFromFiles(pattern, grepFlags[CASE_INSEN_IDX], grepFlags[COUNT_INDEX], grepFlags[PREFIX_FN_IDX], inputFilesArray);
-                }
-            }
-            stdout.write(result.getBytes());
-        } catch (GrepException grepException) {
-            throw grepException;
-        } catch (Exception e) {
-            throw new GrepException(e.getMessage());
-        }
-    }
-
-
     /**
      * Separates the arguments provided by user into the flags, pattern and input files.
      *
@@ -356,5 +297,62 @@ public class GrepApplication implements GrepInterface {
         return resultsBuilder.toString();
     }
 
+    private Pattern compilePattern(String pattern, boolean isCaseInsensitive) {
+        int flags = isCaseInsensitive ? Pattern.CASE_INSENSITIVE : 0;
+        return Pattern.compile(pattern, flags);
+    }
+
+    private void processFile(String filePath, BufferedReader reader, Pattern pattern, boolean includeFileName,
+                             StringJoiner lineResults, StringJoiner countResults) throws Exception {
+        String line;
+        int matches = 0;
+        while ((line = reader.readLine()) != null) {
+            Matcher matcher = pattern.matcher(line);
+            if (matcher.find()) {
+                lineResults.add(includeFileName ? filePath + ":" + line : line);
+                matches++;
+            }
+        }
+        countResults.add(includeFileName ? filePath + ":" + matches : String.valueOf(matches));
+    }
+
+    /**
+     * Converts filename to absolute path, if initially was relative path
+     *
+     * @param fileName supplied by user
+     * @return a String of the absolute path of the filename
+     */
+    private String convertToAbsolutePath(String fileName) {
+        String home = System.getProperty("user.home").trim();
+        String currentDir = Environment.currentDirectory.trim();
+        String convertedPath = convertPathToSystemPath(fileName);
+
+        String newPath;
+        if (convertedPath.length() >= home.length() && convertedPath.substring(0, home.length()).trim().equals(home)) {
+            newPath = convertedPath;
+        } else {
+            newPath = currentDir + CHAR_FILE_SEP + convertedPath;
+        }
+        return newPath;
+    }
+
+    /**
+     * Converts path provided by user into path recognised by the system
+     *
+     * @param path supplied by user
+     * @return a String of the converted path
+     */
+    private String convertPathToSystemPath(String path) {
+        String convertedPath = path;
+        String pathIdentifier = "\\" + Character.toString(CHAR_FILE_SEP);
+        convertedPath = convertedPath.replaceAll("(\\\\)+", pathIdentifier);
+        convertedPath = convertedPath.replaceAll("/+", pathIdentifier);
+
+        if (convertedPath.length() != 0 && convertedPath.charAt(convertedPath.length() - 1) == CHAR_FILE_SEP) {
+            convertedPath = convertedPath.substring(0, convertedPath.length() - 1);
+        }
+
+        return convertedPath;
+    }
 
 }

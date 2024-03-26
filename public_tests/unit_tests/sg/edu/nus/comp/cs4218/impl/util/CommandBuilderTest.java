@@ -18,6 +18,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings("PMD.LongVariable") // Testing Purpose for clarity
 public class CommandBuilderTest {
 
     @Mock

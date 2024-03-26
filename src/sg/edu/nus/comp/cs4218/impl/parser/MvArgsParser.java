@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MvArgsParser extends ArgsParser{
-    private final static char FLAG_NOT_OVERWRITE = 'n';
+    private final static char FLAG_NOT_OVERWRITE = 'n'; //NOPMD - suppressed LongVariable - Clarity
 
     public MvArgsParser() {
         super();

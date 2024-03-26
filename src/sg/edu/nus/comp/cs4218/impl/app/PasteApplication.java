@@ -23,7 +23,8 @@ import java.util.List;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.*;
 
-public class PasteApplication implements PasteInterface  {
+@SuppressWarnings("PMD.PreserveStackTrace") // Stacktrace part of implementation
+public class PasteApplication implements PasteInterface  { //NOPMD - suppressed GodClass - Application
     public static final String ERR_WRITE_STREAM = "Could not write to output stream";
 
     /**
@@ -133,7 +134,7 @@ public class PasteApplication implements PasteInterface  {
         }
 
         List<List<String>> allLines = new ArrayList<>();
-        InputStream fileStream = null;
+        InputStream fileStream = null; //NOPMD - suppressed CloseResource - Already Close
         String currentDirectory = Environment.currentDirectory;
         Path pathToFile;
 
@@ -155,8 +156,8 @@ public class PasteApplication implements PasteInterface  {
                 if (!node.canRead()) {
                     throw new PasteException(pathToFile.getFileName() + ": " + ERR_NO_PERM_READ_FILE);
                 }
-                InputStream inputStream = IOUtils.openInputStream(fileName);
-                List<String> lines = IOUtils.getLinesFromInputStream(inputStream);
+                InputStream inputStream = IOUtils.openInputStream(fileName); //NOPMD - suppressed CloseResource - Already Close
+                List<String> lines = IOUtils.getLinesFromInputStream(inputStream); //NOPMD - suppressed CloseResource - Already Close
                 allLines.add(lines);
             } catch (IOException | ShellException e) {
                 throw new PasteException(e.getMessage());
@@ -296,13 +297,13 @@ public class PasteApplication implements PasteInterface  {
      */
     private List<List<String>> processInput(List<String> stdinLines, String[] fileNames,
                                             int totalFlags, Boolean isSerial) throws PasteException {
-        boolean hasProcessedSerialStdin = false;
+        boolean hasProcessedSerialStdin = false; //NOPMD - suppressed LongVariable - Clarity
         int currFlagCount = 0;
         List<List<String>> allLines = new ArrayList<>();
         String currentDirectory = Environment.currentDirectory;
         Path pathToFile;
         File node;
-        InputStream fileStream = null;
+        InputStream fileStream = null; //NOPMD - suppressed CloseResource - Already Close
 
         for (String fileName : fileNames) {
             if (fileName == null) {

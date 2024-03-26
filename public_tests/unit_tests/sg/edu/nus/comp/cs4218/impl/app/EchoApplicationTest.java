@@ -18,7 +18,14 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IO_EXCEPTION;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
+@SuppressWarnings("PMD.LongVariable") // Testing Purpose for clarity
 public class EchoApplicationTest {
+
+    private static EchoApplication echoApplication;
+    private static MockOutputStream mockOutputStream;
+    private static final String[] VALID_ARGS_INPUT = {"Hello", "*", "\n", "  ", "World", "Java", "Echo", "Test"};
+    private static final String VALID_ARGS_INPUT_STR = "Hello * \n    World Java Echo Test\n";
+    private static final String[] VALID_ARGS_INPUT_EMPTY = new String[0];
 
     private static class MockOutputStream extends OutputStream {
         @Override
@@ -26,12 +33,6 @@ public class EchoApplicationTest {
             throw new IOException("Simulated IOException");
         }
     }
-
-    private static EchoApplication echoApplication;
-    private static MockOutputStream mockOutputStream;
-    private static final String[] VALID_ARGS_INPUT = {"Hello", "*", "\n", "  ", "World", "Java", "Echo", "Test"};
-    private static final String VALID_ARGS_INPUT_STR = "Hello * \n    World Java Echo Test\n";
-    private static final String[] VALID_ARGS_INPUT_EMPTY = new String[0];
 
     @BeforeEach
     public void setup() {

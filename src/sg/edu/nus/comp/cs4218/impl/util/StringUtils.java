@@ -10,7 +10,7 @@ public final class StringUtils {
     public static final String STRING_NEWLINE = System.lineSeparator();
     public static final String STRING_CURR_DIR = ".";
     public static final String STRING_PARENT_DIR = "..";
-    public static final String STRING_FLAG_PREFIX = "-";
+    public static final String STRING_FLAG_PREFIX = "-"; //NOPMD - suppressed LongVariable - Clarity
     public static final char CHAR_FILE_SEP = File.separatorChar;
     public static final char CHAR_TAB = '\t';
     public static final char CHAR_SPACE = ' ';

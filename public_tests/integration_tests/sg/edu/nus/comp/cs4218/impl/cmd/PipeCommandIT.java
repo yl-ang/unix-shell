@@ -43,7 +43,7 @@ public class PipeCommandIT { //NOPMD - suppressed ClassNamingConventions - Proje
         Environment.currentDirectory = tempDirectory.getAbsolutePath();
         String folderPrefix = tempDirectory + STR_FILE_SEP;
 
-        FileWriter writer = new FileWriter(folderPrefix + FILE_NAME_1);
+        FileWriter writer = new FileWriter(folderPrefix + FILE_NAME_1); //NOPMD - suppressed CloseResource - Already Close
         writer.write("""
                 north
                 south

@@ -4,7 +4,7 @@ import java.util.List;
 
 public class RmArgsParser extends ArgsParser {
     public static final char FLAG_IS_RECURSIVE = 'r';
-    public static final char FLAG_IS_EMPTY_FOLDER = 'd';
+    public static final char FLAG_IS_EMPTY_FOLDER = 'd'; //NOPMD - suppressed LongVariable - Clarity
 
     public RmArgsParser() {
         super();

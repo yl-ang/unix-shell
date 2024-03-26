@@ -89,11 +89,11 @@ public class RmApplicationTest {
     }
 
     @Test
-    void run_CallsRemove_Success() throws AbstractApplicationException {
+    void run_CallsRemove_Success() throws AbstractApplicationException, IOException {
 
         // GIVEN
         String[] args = {file.getAbsolutePath()};
-        InputStream inputStream = System.in;
+        InputStream inputStream = System.in; //NOPMD - suppressed CloseResource - System Close
         OutputStream outputStream = new ByteArrayOutputStream();
         try {
             // WHEN
@@ -104,6 +104,7 @@ public class RmApplicationTest {
 
         // THEN
         assert !file.exists();
+        outputStream.close();
     }
 
     @Test

@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 
+@SuppressWarnings("PMD.LongVariable") // Testing Purpose for clarity
 public class TeeApplicationTest {
 
     private TeeInterface teeApplication;
@@ -75,8 +76,7 @@ public class TeeApplicationTest {
 
         String output = teeApplication.teeFromStdin(false, inputStdin, fileNames);
         assertEquals("tee: " + ERR_NULL_ARGS + "\n" +
-                "test tee\n" +
-                "123456789\n", output);
+                FILE_CONTENT, output);
     }
 
     @Test
@@ -85,8 +85,7 @@ public class TeeApplicationTest {
 
         String output = teeApplication.teeFromStdin(false, inputStdin, fileNames);
         assertEquals("tee: src: " + ERR_IS_DIR + "\n" +
-                "test tee\n" +
-                "123456789\n", output);
+                FILE_CONTENT, output);
     }
 
     @Test
@@ -155,8 +154,7 @@ public class TeeApplicationTest {
 
         String output = teeApplication.teeFromStdin(false, inputStdin, fileNames);
         assertEquals("tee: nonExistentFolder/test.txt: " + ERR_FILE_NOT_FOUND + "\n" +
-                "test tee\n" +
-                "123456789\n", output);
+                FILE_CONTENT, output);
 
         // Check that file is not created
         Path path = Paths.get(fileInNonExistentFolder);

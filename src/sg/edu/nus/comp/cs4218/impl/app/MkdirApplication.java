@@ -18,9 +18,10 @@ import static sg.edu.nus.comp.cs4218.exception.MkdirException.ERR_MAKE_FOLDER_FA
 import static sg.edu.nus.comp.cs4218.exception.MkdirException.INVALID_DIR;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
 
+@SuppressWarnings("PMD.PreserveStackTrace") // Stacktrace part of implementation
 public class MkdirApplication implements MkdirInterface {
 
-    private final static int SINGLE_FOLDER_COUNT = 1;
+    private final static int SINGLE_FOLDER_COUNT = 1; //NOPMD - suppressed LongVariable - Clarity
     private final static String FOLDER_SEPARATOR = File.separator;
 
     /**

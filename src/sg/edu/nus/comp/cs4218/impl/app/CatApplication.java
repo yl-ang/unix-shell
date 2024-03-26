@@ -23,7 +23,8 @@ import java.util.List;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.*;
 
-public class CatApplication implements CatInterface {
+@SuppressWarnings("PMD.PreserveStackTrace") // Stacktrace part of implementation
+public class CatApplication implements CatInterface { //NOPMD - suppressed GodClass - Application
     public static final String ERR_READING_FILE = "Could not read file";
     public static final String ERR_WRITE_STREAM = "Could not write to output stream";
 
@@ -103,7 +104,7 @@ public class CatApplication implements CatInterface {
         }
 
         List<String> outputLines = new ArrayList<>();
-        InputStream fileStream = null;
+        InputStream fileStream = null; //NOPMD - suppressed CloseResource - Close in downstream
         String currentDirectory = Environment.currentDirectory;
         Path pathToFile;
 
@@ -208,7 +209,7 @@ public class CatApplication implements CatInterface {
 
         List<String> output = new ArrayList<String>();
         for (String name : fileName) {
-            if (name.equals("-")) {
+            if ("-".equals(name)) {
                 output.add(catStdin(isLineNumber, stdin));
             } else {
                 output.add(catFiles(isLineNumber, name));
@@ -227,7 +228,7 @@ public class CatApplication implements CatInterface {
         int lineNumber = 1;
         List<String> numberedLines = new ArrayList<>();
         for (String line : lines) {
-            numberedLines.add(CHAR_TAB + String.valueOf(lineNumber) + " " + line);
+            numberedLines.add(CHAR_TAB + String.valueOf(lineNumber) + " " + line); //NOPMD - suppressed UselessStringValueOf - not useless, affects result
             lineNumber++;
         }
         return numberedLines;

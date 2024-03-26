@@ -24,7 +24,8 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_CURR_DIR;
 
-public class LsApplication implements LsInterface {
+@SuppressWarnings("PMD.PreserveStackTrace") // Stacktrace part of implementation
+public class LsApplication implements LsInterface { //NOPMD - suppressed GodClass - Application
 
     private final static String PATH_CURR_DIR = STRING_CURR_DIR + CHAR_FILE_SEP;
 
@@ -181,7 +182,7 @@ public class LsApplication implements LsInterface {
         }
 
         if (isSortByExt) {
-            Comparator<String> fileExtensionComparator = (fileOne, fileTwo) -> {
+            Comparator<String> fileExtensionComparator = (fileOne, fileTwo) -> { //NOPMD - suppressed LongVariable - Clarity
                 String fileExtensionOne = getFileExtension(fileOne);
                 String fileExtensionTwo = getFileExtension(fileTwo);
                 if (!fileExtensionOne.isEmpty() && fileExtensionTwo.isEmpty()) {

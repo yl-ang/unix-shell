@@ -10,6 +10,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.impl.util.IOUtils.*;
 
+@SuppressWarnings("PMD.LongVariable") // Testing Purpose for clarity
 class IOUtilsTest {
 
     private final static String TEST_TXT = "test.txt";
@@ -49,7 +50,7 @@ class IOUtilsTest {
 
     @Test
     void closeOutputStream_CloseOutputStream_Success() throws FileNotFoundException, ShellException {
-        OutputStream outputStream = openOutputStream(TEST_TXT);
+        OutputStream outputStream = openOutputStream(TEST_TXT); //NOPMD - suppressed CloseResource - Close via test
         assertDoesNotThrow(() -> closeOutputStream(outputStream));
         assertFalse(outputStream.toString().isEmpty());
     }
@@ -61,13 +62,13 @@ class IOUtilsTest {
 
     @Test
     void closeOutputStream_CloseOutputStreamSystemOut_ShouldNotThrow() {
-        OutputStream systemOut = System.out;
+        OutputStream systemOut = System.out; //NOPMD - suppressed CloseResource - System Close
         assertDoesNotThrow(() -> closeOutputStream(systemOut));
     }
 
     @Test
     void closeInputStream_CloseInputStream_Success() throws ShellException {
-        InputStream inputStream = openInputStream(TEST_TXT);
+        InputStream inputStream = openInputStream(TEST_TXT); //NOPMD - suppressed CloseResource - close via test
         assertDoesNotThrow(() -> closeInputStream(inputStream));
     }
 
@@ -78,18 +79,19 @@ class IOUtilsTest {
 
     @Test
     void closeInputStream_StreamSystemIn_ShouldNotThrow() {
-        InputStream systemIn = System.in;
+        InputStream systemIn = System.in; //NOPMD - suppressed CloseResource - System Close
         assertDoesNotThrow(() -> closeInputStream(systemIn));
     }
 
     @Test
     void getLinesFromInputStream_TextInputStream_Success() throws IOException, ShellException {
-        InputStream inputStream = openInputStream(TEST_TXT);
+        InputStream inputStream = openInputStream(TEST_TXT); //NOPMD - suppressed CloseResource - already close
         List<String> lines = getLinesFromInputStream(inputStream);
         assertNotNull(lines);
         assertEquals(2, lines.size());
         assertEquals("hello", lines.get(0));
         assertEquals("cs4218", lines.get(1));
+        inputStream.close();
     }
 
     @AfterEach

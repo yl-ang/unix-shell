@@ -21,6 +21,7 @@ import java.nio.file.Paths;
 import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_REGEX;
 
+@SuppressWarnings("PMD.LongVariable") // Testing Purpose for clarity
 public class GrepApplicationTest {
     private GrepApplication grepApplication;
     private Path path;
@@ -88,7 +89,7 @@ public class GrepApplicationTest {
 
     @Test
     public void grepFromFiles_IsPrefixFileName_ShouldReturnLinesResults() throws Exception {
-        BufferedWriter writer = Files.newBufferedWriter(path);
+        BufferedWriter writer = Files.newBufferedWriter(path); //NOPMD - suppressed CloseResource - Already Close
         writer.write(HELLO_LOWERCASE_LONG);
         writer.close();
 
@@ -99,7 +100,7 @@ public class GrepApplicationTest {
 
     @Test
     public void grepFromFiles_IsPrefixFileNameCaseInsensitive_ShouldReturnLinesResults() throws Exception {
-        BufferedWriter writer = Files.newBufferedWriter(path);
+        BufferedWriter writer = Files.newBufferedWriter(path); //NOPMD - suppressed CloseResource - Already Close
         writer.write(HELLO_UPPERCASE_LONG);
         writer.close();
 
@@ -110,7 +111,7 @@ public class GrepApplicationTest {
 
     @Test
     public void grepFromFiles_CaseInsensitive_ShouldReturnLinesResultsWithoutFileName() throws Exception {
-        BufferedWriter writer = Files.newBufferedWriter(path);
+        BufferedWriter writer = Files.newBufferedWriter(path); //NOPMD - suppressed CloseResource - Already Close
         writer.write(HELLO_UPPERCASE);
         writer.close();
 
@@ -121,7 +122,7 @@ public class GrepApplicationTest {
 
     @Test
     public void grepFromFiles_CountLinesCaseInsensitive_ShouldReturnZero() throws Exception {
-        BufferedWriter writer = Files.newBufferedWriter(path);
+        BufferedWriter writer = Files.newBufferedWriter(path); //NOPMD - suppressed CloseResource - Already Close
         writer.write(COMBINED_INPUT);
         writer.close();
 
@@ -135,8 +136,8 @@ public class GrepApplicationTest {
         String[] files = {"file1.txt", "file2.txt"};
         String[] lines1 = {"line1", "line2"};
         String[] lines2 = {"line2", "line3"};
-        BufferedWriter writer1 = Files.newBufferedWriter(Path.of(files[0]));
-        BufferedWriter writer2 = Files.newBufferedWriter(Path.of(files[1]));
+        BufferedWriter writer1 = Files.newBufferedWriter(Path.of(files[0])); //NOPMD - suppressed CloseResource - Already Close
+        BufferedWriter writer2 = Files.newBufferedWriter(Path.of(files[1])); //NOPMD - suppressed CloseResource - Already Close
         for (String line : lines1) {
             writer1.write(line + STRING_NEWLINE);
         }
