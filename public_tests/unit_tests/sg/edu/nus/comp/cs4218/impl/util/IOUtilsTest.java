@@ -28,62 +28,62 @@ class IOUtilsTest {
     }
 
     @Test
-    void testOpenInputStreamFromExistingFile_ShouldNotThrow() {
+    void openInputStream_OpenInputStreamFromExistingFile_ShouldNotThrow() {
         assertDoesNotThrow(() -> openInputStream(TEST_TXT));
     }
 
     @Test
-    void testOpenInputStreamFromNonExistentFile_ShouldThrow() {
+    void openInputStream_OpenInputStreamFromNonExistentFile_ShouldThrow() {
         assertThrows(ShellException.class, () -> openInputStream(NON_EXISTENT_TXT));
     }
 
     @Test
-    void testOpenOutputStreamFromExistingFile_ShouldNotThrow() {
+    void openOutputStream_OpenOutputStreamFromExistingFile_ShouldNotThrow() {
         assertDoesNotThrow(() -> openOutputStream(TEST_TXT));
     }
 
     @Test
-    void testOpenOutputStreamFromNonExistentFile_ShouldThrow() {
+    void openOutputStream_OpenOutputStreamFromNonExistentFile_ShouldThrow() {
         assertThrows(FileNotFoundException.class, () -> openOutputStream(NON_EXISTENT_TXT));
     }
 
     @Test
-    void testCloseOutputStream_Success() throws FileNotFoundException, ShellException {
+    void closeOutputStream_CloseOutputStream_Success() throws FileNotFoundException, ShellException {
         OutputStream outputStream = openOutputStream(TEST_TXT);
         assertDoesNotThrow(() -> closeOutputStream(outputStream));
         assertFalse(outputStream.toString().isEmpty());
     }
 
     @Test
-    void testCloseOutputStreamNullOutputStream_ShouldNotThrow() {
+    void closeOutputStream_CloseOutputStreamNullOutputStream_ShouldNotThrow() {
         assertDoesNotThrow(() -> closeOutputStream(null));
     }
 
     @Test
-    void testCloseOutputStreamSystemOut_ShouldNotThrow() {
+    void closeOutputStream_CloseOutputStreamSystemOut_ShouldNotThrow() {
         OutputStream systemOut = System.out;
         assertDoesNotThrow(() -> closeOutputStream(systemOut));
     }
 
     @Test
-    void testCloseInputStream_Success() throws ShellException {
+    void closeInputStream_CloseInputStream_Success() throws ShellException {
         InputStream inputStream = openInputStream(TEST_TXT);
         assertDoesNotThrow(() -> closeInputStream(inputStream));
     }
 
     @Test
-    void testCloseInputStreamNullInputStream_ShouldNotThrow() {
+    void closeInputStream_NullInputStream_ShouldNotThrow() {
         assertDoesNotThrow(() -> closeInputStream(null));
     }
 
     @Test
-    void testCloseInputStreamSystemIn_ShouldNotThrow() {
+    void closeInputStream_StreamSystemIn_ShouldNotThrow() {
         InputStream systemIn = System.in;
         assertDoesNotThrow(() -> closeInputStream(systemIn));
     }
 
     @Test
-    void testGetLinesFromInputStream_Success() throws IOException, ShellException {
+    void getLinesFromInputStream_TextInputStream_Success() throws IOException, ShellException {
         InputStream inputStream = openInputStream(TEST_TXT);
         List<String> lines = getLinesFromInputStream(inputStream);
         assertNotNull(lines);

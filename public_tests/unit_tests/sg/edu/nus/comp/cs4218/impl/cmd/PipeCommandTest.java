@@ -37,7 +37,7 @@ public class PipeCommandTest {
     }
 
     @Test
-    void evaluate_ShouldEvaluateCommandsInPipeline() throws Exception {
+    void evaluate_TwoValidCommand_ShouldEvaluateCommandsInPipeline() throws Exception {
         // GIVEN
         InputStream stdin = new ByteArrayInputStream("".getBytes());
         OutputStream stdout = new ByteArrayOutputStream();
@@ -64,7 +64,7 @@ public class PipeCommandTest {
     }
 
     @Test
-    void evaluate_ShouldThrowShellExceptionIfAnyCommandThrowsShellException() throws Exception {
+    void evaluate_InvalidCommand_ShouldThrowShellExceptionIfAnyCommand() throws Exception {
         // GIVEN
         InputStream stdin = new ByteArrayInputStream("input".getBytes());
         OutputStream stdout = new ByteArrayOutputStream();

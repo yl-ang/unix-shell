@@ -37,7 +37,7 @@ public class ArgumentResolverTest {
     }
 
     @Test
-    void parseArguments_ShouldParseMultipleArguments() throws AbstractApplicationException, ShellException, FileNotFoundException {
+    void parseArguments_GivenMultipleValidArgInput_ShouldParseMultipleArguments() throws AbstractApplicationException, ShellException, FileNotFoundException {
 
         // GIVEN
         List<String> inputArgsList = Arrays.asList("arg1", "'arg 2'", "`ls`");
@@ -55,7 +55,7 @@ public class ArgumentResolverTest {
     }
 
     @Test
-    void parseArguments_ShouldHandleEmptyArgumentList() throws AbstractApplicationException, ShellException, FileNotFoundException {
+    void parseArguments_GivenEmptyArgList_ShouldHandleEmptyArgumentList() throws AbstractApplicationException, ShellException, FileNotFoundException {
         // GIVEN
         List<String> inputArgsList = List.of();
 
@@ -67,7 +67,7 @@ public class ArgumentResolverTest {
     }
 
     @Test
-    void resolveOneArgument_ShouldHandleCommandSubstitution() throws AbstractApplicationException, ShellException, FileNotFoundException {
+    void resolveOneArgument_GivenCommandSubstitution_ShouldHandleCorrectly() throws AbstractApplicationException, ShellException, FileNotFoundException {
 
         // Mocking a static method using Mockito's MockedStatic (static method mocking)
         try (MockedStatic<CommandBuilder> mockedCommandBuilder = mockStatic(CommandBuilder.class)) {
@@ -96,7 +96,7 @@ public class ArgumentResolverTest {
     }
 
     @Test
-    void resolveOneArgument_ShouldHandleAsterisk() throws AbstractApplicationException, ShellException, FileNotFoundException {
+    void resolveOneArgument_GivenGlobbing_ShouldHandleCorrectly() throws AbstractApplicationException, ShellException, FileNotFoundException {
         // GIVEN
         String inputArg = "file*.txt";
 
@@ -108,7 +108,7 @@ public class ArgumentResolverTest {
     }
 
     @Test
-    void resolveOneArgument_ShouldHandleQuoting() throws AbstractApplicationException, ShellException, FileNotFoundException {
+    void resolveOneArgument_GivenQuoting_ShouldCorrectly() throws AbstractApplicationException, ShellException, FileNotFoundException {
         // GIVEN
         String inputArg = "\"double-quoted text\"";
 
@@ -120,7 +120,7 @@ public class ArgumentResolverTest {
     }
 
     @Test
-    void resolveOneArgument_ShouldHandleSingleQuote() throws AbstractApplicationException, ShellException, FileNotFoundException {
+    void resolveOneArgument_GivenSingleQuote_ShouldHandleCorrectly() throws AbstractApplicationException, ShellException, FileNotFoundException {
         // GIVEN
         String inputArg = "'single-quoted text'";
 
