@@ -15,6 +15,7 @@ import java.util.List;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_BOTH_PATHS_SAME;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FOLDER_IN_FILE_DIR;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NOT_WRITEABLE;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_FILE_ARGS;
@@ -157,34 +158,19 @@ public class MvUtils { //NOPMD - suppressed UseUtilityClass - Following project 
         }
     }
 
-//    /**
-//     * Validates source path and end path is different.
-//     *
-//     * @param absoluteSrcPath absolute path of source
-//     * @param endPath end path as a result of the command
-//     * @throws MvException
-//     */
-//    public static void validateEndPathAndSrcPath(Path absoluteSrcPath, Path endPath) throws MvException {
-//        if (absoluteSrcPath.equals(endPath)) {
-//            throw new MvException(ERR_BOTH_PATHS_SAME + absoluteSrcPath + "=" + endPath);
-//        }
-//    }
-
     /**
-     * Function that checks if the source is a subdirectory of itself.
+     * Function that checks if the folder is in the directory of the file.
      * @param src path of the source
-     * @param dest path of the destination
-     * @throws MvException
+     * @param dest path in String of the destination
      * @throws IOException
+     * @throws MvException
      */
-    //TODO RENAME FUNC NAME
     public static void checkFolderIsWithinDirectoryOfFile(Path src, String dest) throws IOException, MvException {
         File srcDir = src.toFile();
         Path absoluteDestPath= Path.of(getNormalizedPath(dest));
         File desDir = absoluteDestPath.toFile();
         if (srcDir.getParentFile().getCanonicalFile().equals(desDir.getCanonicalFile())) {
-            //TODO CHANGE THIS ERROR
-            throw new MvException(ERR_NO_OSTREAM + ":" + dest);
+            throw new MvException(ERR_FOLDER_IN_FILE_DIR + ":" + dest);
         }
     }
 

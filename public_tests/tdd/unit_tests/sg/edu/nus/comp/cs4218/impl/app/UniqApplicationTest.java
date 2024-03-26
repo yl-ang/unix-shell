@@ -23,14 +23,14 @@ public class UniqApplicationTest {
 
 
     private static final String TEST_FILENAME = "uniqTestFile.txt";
-    private static final String OUTPUTTEST_FILENAME = "uniqTestFile2.txt";
-    private static final String TEST_INPUT = "HELLO_WORLD" + STRING_NEWLINE +
+    private static final String OUTPUTTEST_FILENAME = "uniqTestFile2.txt"; //NOPMD - suppressed LongVariable - Clarity
+    private static final String TEST_INPUT = "HELLO_WORLD" + STRING_NEWLINE + //NOPMD - suppressed AvoidDuplicateLiterals - Clarity
             "HELLO_WORLD" + STRING_NEWLINE +
-            "ALICE" + STRING_NEWLINE +
+            "ALICE" + STRING_NEWLINE + //NOPMD - suppressed AvoidDuplicateLiterals - Clarity
             "ALICE" +  STRING_NEWLINE +
-            "BOB" + STRING_NEWLINE +
+            "BOB" + STRING_NEWLINE + //NOPMD - suppressed AvoidDuplicateLiterals - Clarity
             "ALICE" + STRING_NEWLINE + "BOB";
-    private static final String EXPECTEDOUTPUT_UNIQ = "HELLO_WORLD" + STRING_NEWLINE +
+    private static final String EXPECTEDOUTPUT_UNIQ = "HELLO_WORLD" + STRING_NEWLINE + //NOPMD - suppressed LongVariable - Clarity
             "ALICE" + STRING_NEWLINE +
             "BOB" + STRING_NEWLINE +
             "ALICE" + STRING_NEWLINE + "BOB";
@@ -39,7 +39,7 @@ public class UniqApplicationTest {
             "1 " + "BOB" + STRING_NEWLINE +
             "1 " + "ALICE" + STRING_NEWLINE +
             "1 " + "BOB" + STRING_NEWLINE;
-    private static final String EXPECTEDOUTPUT_SMALLD = "HELLO_WORLD" + STRING_NEWLINE +
+    private static final String EXPECTEDOUTPUT_SMALLD = "HELLO_WORLD" + STRING_NEWLINE + //NOPMD - suppressed LongVariable - Clarity
             "ALICE" + STRING_NEWLINE;
     private static final String EXPECTEDOUTPUT_D = "HELLO_WORLD" + STRING_NEWLINE +
             "HELLO_WORLD" + STRING_NEWLINE +
