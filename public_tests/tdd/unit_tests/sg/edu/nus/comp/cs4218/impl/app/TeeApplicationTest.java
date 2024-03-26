@@ -135,7 +135,7 @@ public class TeeApplicationTest {
         String output = teeApplication.teeFromStdin(false, inputStdin, fileNames);
 
         // check output
-        assertEquals("test tee\n123456789\n", output);
+        assertEquals("test tee\n123456789\n", output); //NOPMD - suppressed AvoidDuplicateLiterals - Clarity
 
         // check file changed
         String result = new String(Files.readAllBytes(outputFilePath));

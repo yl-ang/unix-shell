@@ -48,8 +48,8 @@ public class PasteApplicationTest {
     @Test
     void mergeFile_Parallel_ShouldBeSuccess() throws AbstractApplicationException, IOException {
         // Given
-        String inputA = "A\nB\nC\nD\n";
-        String inputB = "1\n2\n3\n4\n";
+        String inputA = "A\nB\nC\nD\n"; //NOPMD - suppressed AvoidDuplicateLiterals - Clarity
+        String inputB = "1\n2\n3\n4\n"; //NOPMD - suppressed AvoidDuplicateLiterals - Clarity
 
         try (MockedStatic<IOUtils> mockedStatic = mockStatic(IOUtils.class)) {
             // Mocking input streams for fileA and fileB
@@ -57,8 +57,8 @@ public class PasteApplicationTest {
             InputStream inputStreamB = new ByteArrayInputStream(inputB.getBytes(StandardCharsets.UTF_8));
 
             // Mocking opening of files: A.txt and B.txt
-            mockedStatic.when(() -> IOUtils.openInputStream("fileA.txt")).thenReturn(inputStreamA);
-            mockedStatic.when(() -> IOUtils.openInputStream("fileB.txt")).thenReturn(inputStreamB);
+            mockedStatic.when(() -> IOUtils.openInputStream("fileA.txt")).thenReturn(inputStreamA); //NOPMD - suppressed AvoidDuplicateLiterals - Clarity
+            mockedStatic.when(() -> IOUtils.openInputStream("fileB.txt")).thenReturn(inputStreamB); //NOPMD - suppressed AvoidDuplicateLiterals - Clarity
 
             // Mocking lines obtained from input streams
             mockedStatic.when(() -> IOUtils.getLinesFromInputStream(inputStreamA)).thenReturn(Arrays.asList("A", "B", "C", "D"));

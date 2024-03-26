@@ -27,11 +27,11 @@ public class CutApplicationTest {
     private CutInterface cutApplication;
     private static InputStream inputStdin;
     private InputStream inputTestFile;
-    private InputStream inputEmptyTestFile;
+    private InputStream inputEmptyTestFile; //NOPMD - suppressed LongVariable - Complex Test Case
     private OutputStream output;
 
     private static final String TEST_FILENAME = "cutTestFile.txt";
-    private static final String EMPTY_TEST_FILENAME = "cutEmptyTestFile.txt";
+    private static final String EMPTY_TEST_FILENAME = "cutEmptyTestFile.txt"; //NOPMD - suppressed LongVariable - Clarity
 
     @BeforeAll
     static void setUp() throws IOException {
@@ -308,10 +308,10 @@ public class CutApplicationTest {
 
     @Test
     void run_charFlagGivenWithOneFilename_cutByCharFromFile() throws AbstractApplicationException {
-        String[] args = {"-c", "1-5", TEST_FILENAME};
+        String[] args = {"-c", "1-5", TEST_FILENAME}; //NOPMD - suppressed AvoidDuplicateLiterals - Clarity
 
         cutApplication.run(args, inputStdin, output);
-        assertEquals("12345\n12345\n", output.toString());
+        assertEquals("12345\n12345\n", output.toString()); //NOPMD - suppressed AvoidDuplicateLiterals - Clarity
     }
 
 
