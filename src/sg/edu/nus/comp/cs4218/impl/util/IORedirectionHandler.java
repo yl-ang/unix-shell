@@ -60,29 +60,7 @@ public class IORedirectionHandler {
 
             // globbing case
             if (file.contains("*")) {
-
-                ArrayList<InputStream> streams = new ArrayList<>();
-                for (String s : fileSegment) {
-                    file = s;
-                    InputStream curr = IOUtils.openInputStream(file); //NOPMD - suppressed CloseResource - Close in downstream
-                    streams.add(curr);
-                }
-
-                if (arg.equals(String.valueOf(CHAR_REDIR_INPUT))) {
-                    IOUtils.closeInputStream(inputStream);
-                    inputStream = new SequenceInputStream(Collections.enumeration(streams));
-                    if (inputStream.equals(origInputStream)) { // Already have a stream
-                        throw new ShellException(ERR_MULTIPLE_STREAMS);
-                    }
-                    inputStream = new SequenceInputStream(Collections.enumeration(streams));
-                } else if (arg.equals(String.valueOf(CHAR_REDIR_OUTPUT))) {
-                    IOUtils.closeOutputStream(outputStream);
-                    outputStream = IOUtils.openOutputStream(file);
-                    if (outputStream.equals(origOutputStream)) { // Already have a stream
-                        throw new ShellException(ERR_MULTIPLE_STREAMS);
-                    }
-                    outputStream = IOUtils.openOutputStream(file);
-                }
+                handleGlobbingCase(fileSegment, file, arg);
             } else {
                 // other case
                 if (fileSegment.size() > 1) {
@@ -92,6 +70,32 @@ public class IORedirectionHandler {
                 file = fileSegment.get(0);
                 handleStreams(arg, file);
             }
+        }
+    }
+
+    private void handleGlobbingCase(List<String> fileSegment, String inputFile, String arg) throws ShellException, FileNotFoundException {
+        ArrayList<InputStream> streams = new ArrayList<>();
+        String file = inputFile;
+        for (String s : fileSegment) {
+            file = s;
+            InputStream curr = IOUtils.openInputStream(file); //NOPMD - suppressed CloseResource - Close in downstream
+            streams.add(curr);
+        }
+
+        if (arg.equals(String.valueOf(CHAR_REDIR_INPUT))) {
+            IOUtils.closeInputStream(inputStream);
+            inputStream = new SequenceInputStream(Collections.enumeration(streams));
+            if (inputStream.equals(origInputStream)) { // Already have a stream
+                throw new ShellException(ERR_MULTIPLE_STREAMS);
+            }
+            inputStream = new SequenceInputStream(Collections.enumeration(streams));
+        } else if (arg.equals(String.valueOf(CHAR_REDIR_OUTPUT))) {
+            IOUtils.closeOutputStream(outputStream);
+            outputStream = IOUtils.openOutputStream(file);
+            if (outputStream.equals(origOutputStream)) { // Already have a stream
+                throw new ShellException(ERR_MULTIPLE_STREAMS);
+            }
+            outputStream = IOUtils.openOutputStream(file);
         }
     }
 
