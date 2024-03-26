@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
-public class PipeCommandIT {
+public class PipeCommandIT { //NOPMD - suppressed ClassNamingConventions - Project Naming Requirements
     private PipeCommand pipeCommand;
 
     private ApplicationRunner applicationRunner;
