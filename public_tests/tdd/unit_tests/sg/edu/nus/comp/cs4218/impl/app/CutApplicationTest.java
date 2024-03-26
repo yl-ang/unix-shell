@@ -27,11 +27,11 @@ public class CutApplicationTest {
     private CutInterface cutApplication;
     private static InputStream inputStdin;
     private InputStream inputTestFile;
-    private InputStream inputEmptyTestFile;
+    private InputStream inputEmptyTestFile; //NOPMD - suppressed LongVariable - Complex Test Case
     private OutputStream output;
 
     private static final String TEST_FILENAME = "cutTestFile.txt";
-    private static final String EMPTY_TEST_FILENAME = "cutEmptyTestFile.txt";
+    private static final String EMPTY_TEST_FILENAME = "cutEmptyTestFile.txt"; //NOPMD - suppressed LongVariable - Clarity
 
     @BeforeAll
     static void setUp() throws IOException {

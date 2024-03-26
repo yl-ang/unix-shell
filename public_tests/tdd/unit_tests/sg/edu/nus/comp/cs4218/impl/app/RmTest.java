@@ -26,15 +26,15 @@ public class RmTest {
 
     private static final String STR_FILE_SEP = String.valueOf(CHAR_FILE_SEP);
     private static final String ROOT_DIRECTORY = Environment.currentDirectory;
-    private static final String[] TEST_DIRECTORY_ARR = {ROOT_DIRECTORY, "public_tests", "resources", "tdd", "unit_tests", "rm"};
+    private static final String[] TEST_DIRECTORY_ARR = {ROOT_DIRECTORY, "public_tests", "resources", "tdd", "unit_tests", "rm"}; //NOPMD - suppressed LongVariable - Complex Test case
     private static final String TEST_DIRECTORY = String.join(STR_FILE_SEP, TEST_DIRECTORY_ARR);
-    private static final String CREATE_TEST_FILE_PATH_1 = TEST_DIRECTORY + STR_FILE_SEP + "file1.txt";
-    private static final String CREATE_TEST_FILE_PATH_2 = TEST_DIRECTORY + STR_FILE_SEP + "file2.txt";
-    private static final String CREATE_EMPTY_FOLDER = TEST_DIRECTORY + STR_FILE_SEP + "emptyFolder";
-    private static final String CREATE_NON_EMPTY_FOLDER = TEST_DIRECTORY + STR_FILE_SEP + "nonEmptyFolder";
-    private static final String CREATE_TEST_FILE_PATH_3 = CREATE_NON_EMPTY_FOLDER + STR_FILE_SEP + "file3.txt";
-    private static final String CREATE_NON_EMPTY_SUBFOLDER = CREATE_NON_EMPTY_FOLDER + STR_FILE_SEP + "subfolder";
-    private static final String CREATE_TEST_FILE_PATH_4 = CREATE_NON_EMPTY_SUBFOLDER + STR_FILE_SEP + "file4.txt";
+    private static final String CREATE_TEST_FILE_PATH_1 = TEST_DIRECTORY + STR_FILE_SEP + "file1.txt"; //NOPMD - suppressed LongVariable - Clarity
+    private static final String CREATE_TEST_FILE_PATH_2 = TEST_DIRECTORY + STR_FILE_SEP + "file2.txt"; //NOPMD - suppressed LongVariable - Clarity
+    private static final String CREATE_EMPTY_FOLDER = TEST_DIRECTORY + STR_FILE_SEP + "emptyFolder"; //NOPMD - suppressed LongVariable - Clarity
+    private static final String CREATE_NON_EMPTY_FOLDER = TEST_DIRECTORY + STR_FILE_SEP + "nonEmptyFolder"; //NOPMD - suppressed LongVariable - Clarity
+    private static final String CREATE_TEST_FILE_PATH_3 = CREATE_NON_EMPTY_FOLDER + STR_FILE_SEP + "file3.txt"; //NOPMD - suppressed LongVariable - Clarity
+    private static final String CREATE_NON_EMPTY_SUBFOLDER = CREATE_NON_EMPTY_FOLDER + STR_FILE_SEP + "subfolder"; //NOPMD - suppressed LongVariable - Clarity
+    private static final String CREATE_TEST_FILE_PATH_4 = CREATE_NON_EMPTY_SUBFOLDER + STR_FILE_SEP + "file4.txt"; //NOPMD - suppressed LongVariable - Clarity
 
     @BeforeEach
     void init() {
