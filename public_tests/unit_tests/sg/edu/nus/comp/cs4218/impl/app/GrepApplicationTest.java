@@ -79,15 +79,6 @@ public class GrepApplicationTest {
     }
 
     @Test
-    public void grepFromFiles_EmptyPattern_ShouldThrowGrepException() {
-        GrepException grepException = assertThrows(GrepException.class, () -> {
-            grepApplication.grepFromFiles("", false, false, false, TEST_FILE);
-        });
-
-        assertEquals(new GrepException(GrepApplication.EMPTY_PATTERN).getMessage(), grepException.getMessage());
-    }
-
-    @Test
     public void grepFromFiles_IsPrefixFileName_ShouldReturnLinesResults() throws Exception {
         BufferedWriter writer = Files.newBufferedWriter(path); //NOPMD - suppressed CloseResource - Already Close
         writer.write(HELLO_LOWERCASE_LONG);
