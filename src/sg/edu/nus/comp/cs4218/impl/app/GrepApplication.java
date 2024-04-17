@@ -57,9 +57,9 @@ public class GrepApplication implements GrepInterface { //NOPMD - suppressed God
             if (pattern == null) {
                 throw new Exception(ERR_SYNTAX);
             }
-            if (pattern.isEmpty()) {
-                throw new Exception(EMPTY_PATTERN);
-            }
+//            if (pattern.isEmpty()) {
+//                throw new Exception(EMPTY_PATTERN);
+//            }
 
             String result = "";
             if (inputFilesList.isEmpty()) {
@@ -85,10 +85,10 @@ public class GrepApplication implements GrepInterface { //NOPMD - suppressed God
     @Override
     public String grepFromStdin(String pattern, Boolean isCaseInsensitive, Boolean isCountLines, Boolean isPrefixFileName, InputStream stdin) throws AbstractApplicationException { //NOPMD - suppressed ExcessiveMethodLength - Readability
         int count = 0;
-        // java does not treat empty patterns as invalid
-        if (pattern.isEmpty()) {
-            throw new GrepException(ERR_EMPTY_PATTERN);
-        }
+//        // java does not treat empty patterns as invalid
+//        if (pattern.isEmpty()) {
+//            throw new GrepException(ERR_EMPTY_PATTERN);
+//        }
 
         StringJoiner stringJoiner = new StringJoiner(STRING_NEWLINE);
 
@@ -153,10 +153,10 @@ public class GrepApplication implements GrepInterface { //NOPMD - suppressed God
             throw new GrepException(NULL_POINTER);
         }
 
-        // java does not treat empty patterns as invalid
-        if (pattern.isEmpty()) {
-            throw new GrepException(ERR_EMPTY_PATTERN);
-        }
+//        // java does not treat empty patterns as invalid
+//        if (pattern.isEmpty()) {
+//            throw new GrepException(ERR_EMPTY_PATTERN);
+//        }
 
         StringJoiner lineResults = new StringJoiner(STRING_NEWLINE);
         StringJoiner countResults = new StringJoiner(STRING_NEWLINE);
