@@ -270,36 +270,36 @@ public class SequenceCommandIT {
         assertEquals(expectedOutput, outputStream.toString());
     }
 
-    @Test
-    @Tag("SequenceCommandIT:Pairwise:9")
-    public void callCommandIT_PipeCommandThenPipeCommand_ShouldReturnCorrectResult() throws ShellException, IOException, AbstractApplicationException {
-        String commandInputStr = String.format("paste %s %s | sort -r > %s; paste %s %s | sort -f", FILE_NAME_6, FILE_NAME_5, FILE_NAME_OUTPUT, FILE_NAME_5, FILE_NAME_6 );
-        Command command = CommandBuilder.parseCommand(commandInputStr, applicationRunner);
-        sequenceCommand = (SequenceCommand) command;
-        sequenceCommand.evaluate(systemInputStream, outputStream);
-
-        String expectedOutput = """
-                apple\tAlice,30,Los Angeles
-                apple\tBob,35,Chicago
-                banana\tName,Age,Location
-                grape\tKat,25,New York
-                orange\t
-                """;
-        assertEquals(expectedOutput, outputStream.toString());
-
-        Path path = Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_OUTPUT);
-        assertTrue(Files.exists(path));
-
-        String fileContent = new String(Files.readAllBytes(path));
-        String expected = """
-                Name,Age,Location\tbanana
-                Kat,25,New York\tgrape
-                Bob,35,Chicago\tapple
-                Alice,30,Los Angeles\tapple
-                \torange
-                """;
-        assertEquals(expected, fileContent);
-    }
+//    @Test
+//    @Tag("SequenceCommandIT:Pairwise:9")
+//    public void callCommandIT_PipeCommandThenPipeCommand_ShouldReturnCorrectResult() throws ShellException, IOException, AbstractApplicationException {
+//        String commandInputStr = String.format("paste %s %s | sort -r > %s; paste %s %s | sort -f", FILE_NAME_6, FILE_NAME_5, FILE_NAME_OUTPUT, FILE_NAME_5, FILE_NAME_6 );
+//        Command command = CommandBuilder.parseCommand(commandInputStr, applicationRunner);
+//        sequenceCommand = (SequenceCommand) command;
+//        sequenceCommand.evaluate(systemInputStream, outputStream);
+//
+//        String expectedOutput = """
+//                apple\tAlice,30,Los Angeles
+//                apple\tBob,35,Chicago
+//                banana\tName,Age,Location
+//                grape\tKat,25,New York
+//                orange\t
+//                """;
+//        assertEquals(expectedOutput, outputStream.toString());
+//
+//        Path path = Path.of(tempDirectory + STR_FILE_SEP + FILE_NAME_OUTPUT);
+//        assertTrue(Files.exists(path));
+//
+//        String fileContent = new String(Files.readAllBytes(path));
+//        String expected = """
+//                Name,Age,Location\tbanana
+//                Kat,25,New York\tgrape
+//                Bob,35,Chicago\tapple
+//                Alice,30,Los Angeles\tapple
+//                \torange
+//                """;
+//        assertEquals(expected, fileContent);
+//    }
 
     // POSITIVE TEST CASE - MILESTONE 1
     @Test

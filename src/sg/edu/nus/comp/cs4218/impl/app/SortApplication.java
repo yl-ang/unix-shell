@@ -10,10 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
@@ -145,32 +142,36 @@ public class SortApplication implements SortInterface {
     private void sortInputString(Boolean isFirstWordNumber, Boolean isReverseOrder, Boolean isCaseIndependent,
                                  List<String> input) {
         Collections.sort(input, new Comparator<String>() {
-            @Override
-            public int compare(String str1, String str2) {
-                String temp1 = isCaseIndependent ? str1.toLowerCase() : str1;//NOPMD
-                String temp2 = isCaseIndependent ? str2.toLowerCase() : str2;//NOPMD
+                    @Override
+                    public int compare(String str1, String str2) {
+                        String temp1 = isCaseIndependent ? str1.trim().toLowerCase(Locale.getDefault()) : str1.trim();
+                        String temp2 = isCaseIndependent ? str2.trim().toLowerCase(Locale.getDefault()) : str2.trim();
 
-                // Extract the first group of numbers if possible.
-                if (isFirstWordNumber && !temp1.isEmpty() && !temp2.isEmpty()) {
-                    String chunk1 = getChunk(temp1);//NOPMD
-                    String chunk2 = getChunk(temp2);//NOPMD
+                        if (isFirstWordNumber && !temp1.isEmpty() && !temp2.isEmpty()) {
+                            String chunk1 = getChunk(temp1);
+                            String chunk2 = getChunk(temp2);
 
-                    // If both chunks can be represented as numbers, sort them numerically.
-                    int result = 0;
-                    if (Character.isDigit(chunk1.charAt(0)) && Character.isDigit(chunk2.charAt(0))) {
-                        result = new BigInteger(chunk1).compareTo(new BigInteger(chunk2));
-                    } else {
-                        result = chunk1.compareTo(chunk2);
-                    }
-                    if (result != 0) {
-                        return result;
-                    }
-                    return temp1.substring(chunk1.length()).compareTo(temp2.substring(chunk2.length()));
-                }
+                            int result = 0;
+                            boolean isDigit1 = Character.isDigit(chunk1.charAt(chunk1.length() - 1)); // Check last character of chunk
+                            boolean isDigit2 = Character.isDigit(chunk2.charAt(chunk2.length() - 1)); // Check last character of chunk
 
-                return temp1.compareTo(temp2);
-            }
-        });
+                            if (isDigit1 && isDigit2) {
+                                result = new BigInteger(chunk1).compareTo(new BigInteger(chunk2));
+                            } else if (isDigit1 && !isDigit2) {
+                                result = 1;
+                            } else if (!isDigit1 && isDigit2) {
+                                result = -1;
+                            } else {
+                                result = chunk1.compareTo(chunk2);
+                            }
+                            if (result != 0) {
+                                return result;
+                            }
+                            return temp1.substring(chunk1.length()).compareTo(temp2.substring(chunk2.length()));
+                        }
+
+                        return temp1.compareTo(temp2);
+                    }});
         if (isReverseOrder) {
             Collections.reverse(input);
         }
@@ -185,8 +186,25 @@ public class SortApplication implements SortInterface {
         int startIndexLocal = 0;
         StringBuilder chunk = new StringBuilder();
         final int strLen = str.length();
-        char chr = str.charAt(startIndexLocal++);
-        chunk.append(chr);
+
+        // Check for a negative sign at the start
+        char chr = str.charAt(startIndexLocal);
+        if (chr == '-') {
+            chunk.append(chr);
+            startIndexLocal++;
+            if (startIndexLocal < strLen) {
+                chr = str.charAt(startIndexLocal++);
+                if (Character.isDigit(chr)) {
+                    chunk.append(chr);
+                } else {
+                    return chunk.toString(); // Return just the "-" if the following character is not a digit
+                }
+            }
+        } else {
+            chunk.append(chr);
+            startIndexLocal++;
+        }
+
         final boolean extractDigit = Character.isDigit(chr);
         while (startIndexLocal < strLen) {
             chr = str.charAt(startIndexLocal++);
